@@ -39,7 +39,9 @@ export function expandOptional(answer: string): string[] {
   if (!m) return [answer.replace(/\s+/g, ' ').trim()];
   const before = answer.slice(0, m.index);
   const after = answer.slice(m.index + m[0].length);
-  return [...new Set([...expandOptional(before + m[1] + after), ...expandOptional(before + ' ' + after)])];
+  // Midden in een woord ("allé(e)s") zonder spatie weglaten; anders met spatie ("(zich) wassen").
+  const inWord = /\S$/.test(before) && /^\S/.test(after);
+  return [...new Set([...expandOptional(before + m[1] + after), ...expandOptional(before + (inWord ? '' : ' ') + after)])];
 }
 
 /** Alle vormen die als goed tellen, vóór opschoning. */

@@ -17,6 +17,7 @@ Alles draait in je browser; je gegevens blijven op je eigen apparaat.
 | 3 | Oefenen (flashcards, typen, meerkeuze, toets) + streak, XP, levels, badges | ✅ |
 | 4 | Foto scannen (Tesseract, bijsnijden, controlescherm) | ✅ |
 | 5 | Slim herhalen (Leitner, 5 bakjes), Vandaag herhalen, gekend/bijna/nog leren | ✅ |
+| 6 | Werkwoordtrainer Frans, Duits, Engels, Spaans (4 oefenvormen, uitleg, statistiek) | ✅ |
 
 De volledige planning staat in [`docs/keuzes.md`](docs/keuzes.md).
 
@@ -71,6 +72,12 @@ Eenmalig instellen op GitHub: **Settings → Pages → Source: GitHub Actions**.
 - **Badges** staan in `src/features/progress/badges.ts`. Een nieuwe badge = één regel toevoegen.
 - **Op je beginscherm**: zet Woordwerk op je beginscherm (iPhone: Delen → Zet op beginscherm).
   Op iPhone kan je streak dan als getal op het icoon staan (Instellingen → Je streak op je beginscherm).
+
+## Een werkwoord toevoegen
+
+- Regelmatig: zet het in `src/data/verbs/<taal>.ts` met alleen infinitief en vertaling. De regels doen de rest.
+- Onregelmatig: schrijf de afwijkende vormen uit (zie de uitleg bovenaan elk databestand).
+- Draai `npm test`: de vervoegingstests (`tests/unit/verbs-*.test.ts`) controleren honderden vormen.
 
 ## Een startlijst toevoegen
 

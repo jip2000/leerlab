@@ -54,6 +54,12 @@ export async function recordWordResult(r: { wordId: string; listId: string; dir:
   });
 }
 
+async function verbsCorrect(): Promise<number> {
+  let n = 0;
+  await db.verbProgress.each((p) => (n += p.correctCount));
+  return n;
+}
+
 async function activeAndFrozen() {
   const days = await db.days.toArray();
   const active = new Set(days.filter((d) => d.answers > 0).map((d) => d.id));
@@ -153,6 +159,7 @@ export async function finishRewards(
     xp: after.xp,
     level: after.level.level,
     goalReachedToday: goalAfter,
+    verbsCorrect: await verbsCorrect(),
     session,
   };
   const badges = newlyEarned(stats, new Set(after.badges.keys()));
@@ -181,6 +188,7 @@ export async function checkQuietBadges(): Promise<BadgeDef[]> {
     xp: p.xp,
     level: p.level.level,
     goalReachedToday: false,
+    verbsCorrect: await verbsCorrect(),
   };
   const badges = newlyEarned(stats, new Set(p.badges.keys()));
   await db.badges.bulkPut(badges.map((b) => ({ id: b.id, earnedAt: Date.now() })));

@@ -129,3 +129,11 @@ describe('cijfer', () => {
     expect(formatGrade(10)).toBe('10,0');
   });
 });
+
+describe('haakjes midden in een woord', () => {
+  it('"allé(e)s" → allés en allées', () => {
+    expect(expandOptional('nous sommes allé(e)s').sort()).toEqual(['nous sommes allées', 'nous sommes allés']);
+    expect(expandOptional('vous êtes allé(e)(s)')).toHaveLength(4);
+    expect(checkAnswer('je suis allée', 'je suis allé(e)', rules).result).toBe('goed');
+  });
+});
