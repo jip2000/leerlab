@@ -11,6 +11,7 @@ import { deleteList, duplicateList, mergeInto, restoreList, reverseList } from '
 import { bookKey, yearLevelLabel } from '@/features/lists/books';
 import { WordTable } from '@/features/lists/components/WordTable';
 import { ListPhotos } from '@/features/lists/components/ListPhotos';
+import { MasteryBar } from '@/features/lists/components/MasteryBar';
 import { toCsv } from '@/lib/csv';
 import { encodeSharedList } from '@/lib/share';
 import { toast } from '@/lib/toast';
@@ -158,6 +159,12 @@ export function ListDetailPage() {
           )}
         </div>
       </div>
+
+      {words.length > 0 && (
+        <div className="mb-5 max-w-md">
+          <MasteryBar listId={list.id} total={words.length} showText />
+        </div>
+      )}
 
       {list.tags.length > 0 && (
         <ul className="mb-4 flex flex-wrap gap-1.5" aria-label="Tags">

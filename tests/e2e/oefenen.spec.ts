@@ -140,3 +140,22 @@ test('pauzeren en later verdergaan', async ({ page }) => {
   await page.getByRole('button', { name: 'Verder' }).click();
   await expect(page.getByText('1/5')).toBeVisible();
 });
+
+test('slim herhalen: foute woorden staan vandaag op Home', async ({ page }) => {
+  await maakLijst(page);
+  await page.goto('/#/lijsten');
+  await page.getByRole('link', { name: /Unité 1/ }).click();
+  await start(page, 'Toets');
+  const input = page.getByRole('textbox');
+  for (let i = 0; i < 5; i++) {
+    const q = await vraag(page);
+    await input.fill(i < 2 ? 'fout' : vertaling[q]!);
+    await input.press('Enter');
+    if (i < 4) await expect(page.getByText(`${i + 1}/5`)).toBeVisible();
+  }
+  await page.getByRole('link', { name: 'Klaar' }).click();
+  await expect(page.getByText('Vandaag herhalen')).toBeVisible();
+  await expect(page.getByText('2 woorden', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Start herhalen' }).click();
+  await expect(page.getByText('0/2')).toBeVisible();
+});

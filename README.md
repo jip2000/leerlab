@@ -16,6 +16,7 @@ Alles draait in je browser; je gegevens blijven op je eigen apparaat.
 | 2 | Woordenlijsten: boeken, mappen, plakken, CSV, delen, uitspraak, startlijsten | ✅ |
 | 3 | Oefenen (flashcards, typen, meerkeuze, toets) + streak, XP, levels, badges | ✅ |
 | 4 | Foto scannen (Tesseract, bijsnijden, controlescherm) | ✅ |
+| 5 | Slim herhalen (Leitner, 5 bakjes), Vandaag herhalen, gekend/bijna/nog leren | ✅ |
 
 De volledige planning staat in [`docs/keuzes.md`](docs/keuzes.md).
 

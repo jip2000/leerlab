@@ -7,6 +7,7 @@ import { applyFreezes, computeStreak, dayKey, MAX_FREEZES, type StreakInfo } fro
 import { levelFromXp } from './xp';
 import { newlyEarned, type BadgeDef, type BadgeStats } from './badges';
 import type { Settings } from '@/lib/settings';
+import { schedule } from '@/features/srs/leitner';
 
 async function getMeta<T>(key: string, fallback: T): Promise<T> {
   return ((await db.meta.get(key))?.value as T | undefined) ?? fallback;
@@ -34,14 +35,22 @@ export async function addXp(xp: number, today = dayKey()): Promise<void> {
   });
 }
 
-/** Houdt per woord bij hoe vaak het goed en fout ging (voor "alleen moeilijke woorden"). */
-export async function recordWordResult(r: { wordId: string; listId: string; dir: 'lr' | 'rl'; correct: boolean }) {
+/**
+ * Houdt per woord bij hoe vaak het goed en fout ging (voor "alleen moeilijke woorden")
+ * en plant de volgende herhaling (Leitner-bakjes).
+ */
+export async function recordWordResult(r: { wordId: string; listId: string; dir: 'lr' | 'rl'; correct: boolean }, now = Date.now()) {
   const id = `${r.wordId}:${r.dir}`;
   await db.transaction('rw', db.reviews, async () => {
     const cur = (await db.reviews.get(id)) ?? {
       id, wordId: r.wordId, listId: r.listId, direction: r.dir, box: 0, interval: 0, ease: 2.5, dueAt: 0, correctCount: 0, wrongCount: 0,
     };
-    await db.reviews.put({ ...cur, correctCount: cur.correctCount + (r.correct ? 1 : 0), wrongCount: cur.wrongCount + (r.correct ? 0 : 1) });
+    await db.reviews.put({
+      ...cur,
+      ...schedule(cur, r.correct, now),
+      correctCount: cur.correctCount + (r.correct ? 1 : 0),
+      wrongCount: cur.wrongCount + (r.correct ? 0 : 1),
+    });
   });
 }
 

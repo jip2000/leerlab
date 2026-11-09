@@ -46,7 +46,7 @@ Antwoorden op de startvragen (zie `opdracht.md`, hoofdstuk 17).
 | 2 | Woordenlijsten ✅ |
 | 3 | Oefenen (flashcards, typen, meerkeuze, toets) + streak, XP, levels, badges ✅ |
 | 4 | **Foto scannen** (was fase 7) ✅ |
-| 5 | Slim herhalen (spaced repetition) |
+| 5 | Slim herhalen (spaced repetition) ✅ |
 | 6 | Werkwoordtrainer |
 | 7 | Grammatica |
 | 8 | Extra oefenmodi |

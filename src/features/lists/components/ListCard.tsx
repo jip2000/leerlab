@@ -3,6 +3,7 @@ import { ChevronRight } from 'lucide-react';
 import { LanguageBadge } from '@/components/ui/LanguageBadge';
 import type { WordList } from '@/db/types';
 import { getLanguage } from '@/data/languages';
+import { MasteryBar } from './MasteryBar';
 
 /** Eén woordenlijst in een overzicht. */
 export function ListCard({ list, count }: { list: WordList; count: number }) {
@@ -17,6 +18,9 @@ export function ListCard({ list, count }: { list: WordList; count: number }) {
         <span className="block truncate font-bold">{list.title}</span>
         <span className="block text-sm text-ink-soft">
           {getLanguage(list.langLeft).name} – {getLanguage(list.langRight).name}, {count} {count === 1 ? 'woord' : 'woorden'}
+        </span>
+        <span className="mt-1.5 block">
+          <MasteryBar listId={list.id} total={count} />
         </span>
       </span>
       <ChevronRight size={18} className="shrink-0 text-ink-soft" aria-hidden="true" />

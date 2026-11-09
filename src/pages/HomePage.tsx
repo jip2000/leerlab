@@ -1,6 +1,8 @@
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Layers, Play, Plus } from 'lucide-react';
+import { Layers, Play, Plus, RefreshCw } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { dueToday, startReview } from '@/features/srs/repo';
 import { Card } from '@/components/ui/Card';
 import { ProgressRing } from '@/components/ui/ProgressRing';
 import { ButtonLink } from '@/components/ui/ButtonLink';
@@ -27,6 +29,8 @@ export function HomePage() {
   const profile = useProfile();
   const lists = useLists();
   const paused = useLiveQuery(() => openSession(), []);
+  const due = useLiveQuery(() => dueToday(), []);
+  const navigate = useNavigate();
 
   if (!profile || !lists) return null;
 
@@ -73,6 +77,28 @@ export function HomePage() {
           </div>
         </Card>
       </div>
+
+      {due && due.length > 0 && (
+        <Card tone="mint" className="flex flex-wrap items-center gap-4">
+          <div className="min-w-0 flex-1">
+            <h2 className="font-bold text-primary-ink">Vandaag herhalen</h2>
+            <p className="text-[34px] leading-none font-extrabold tracking-[-0.03em]">
+              {due.length} <span className="text-base font-bold text-ink-soft">{due.length === 1 ? 'woord' : 'woorden'}</span>
+            </p>
+            <p className="mt-1 text-sm text-ink-soft">Herhaal ze nu, dan onthoud je ze veel beter.</p>
+          </div>
+          <Button
+            size="lg"
+            icon={<RefreshCw size={18} aria-hidden="true" />}
+            onClick={async () => {
+              const id = await startReview();
+              if (id) navigate(`/oefenen/${id}`);
+            }}
+          >
+            Start herhalen
+          </Button>
+        </Card>
+      )}
 
       {paused ? (
         <Card tone="mint" className="flex flex-wrap items-center gap-4">
