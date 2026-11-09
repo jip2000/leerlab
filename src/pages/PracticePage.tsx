@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { CircleCheckBig, GalleryHorizontalEnd, Keyboard, ListChecks, Play, Trash2, type LucideIcon } from 'lucide-react';
+import { CircleCheckBig, Ear, GalleryHorizontalEnd, GraduationCap, Keyboard, ListChecks, Play, Puzzle, Trash2, Zap, type LucideIcon } from 'lucide-react';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Button } from '@/components/ui/Button';
@@ -22,8 +22,11 @@ const modes: { id: Mode; icon: LucideIcon; text: string }[] = [
   { id: 'typen', icon: Keyboard, text: 'Typ de vertaling. Fout? Dan komt hij later terug.' },
   { id: 'meerkeuze', icon: ListChecks, text: 'Kies het goede antwoord uit vier.' },
   { id: 'toets', icon: CircleCheckBig, text: 'Elk woord één keer, zonder hulp. Je krijgt een cijfer.' },
+  { id: 'leren', icon: GraduationCap, text: 'Slim: flashcard, dan meerkeuze, dan typen. Pas dan gekend.' },
+  { id: 'luisteren', icon: Ear, text: 'Je hoort het woord en typt wat je hoort.' },
+  { id: 'koppelen', icon: Puzzle, text: 'Tik de paren aan, zo snel mogelijk.' },
+  { id: 'snel', icon: Zap, text: '60 seconden: zoveel mogelijk goed.' },
 ];
-const later = ['Luisteren', 'Koppelen', 'Snel-ronde', 'Leren'];
 
 function Choice<T extends string>({ value, options, onChange, label }: { value: T; options: { id: T; label: string }[]; onChange: (v: T) => void; label: string }) {
   return (
@@ -165,7 +168,6 @@ export function PracticePage() {
                 </button>
               ))}
             </div>
-            <p className="mt-2 text-sm text-ink-soft">Later erbij: {later.join(', ')}.</p>
           </div>
 
           <div>

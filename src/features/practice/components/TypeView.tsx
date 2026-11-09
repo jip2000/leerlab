@@ -7,6 +7,8 @@ import { checkAnswer, type CheckResult } from '@/lib/check';
 import { insertAtCursor } from '@/lib/insert';
 import { useSettings } from '@/lib/settings';
 import { play } from '@/lib/sounds';
+import { canSpeak, speak } from '@/lib/speech';
+import { Volume2 } from 'lucide-react';
 import type { Card } from '../engine';
 import { AnswerDiff, Verdict } from './Feedback';
 
@@ -16,7 +18,7 @@ type Phase = { kind: 'vraag' } | { kind: 'uitslag'; check: CheckResult; given: s
  * Typen: je ziet het woord en typt de vertaling.
  * In de toets-modus krijg je geen uitslag tussendoor en hoef je niets over te typen.
  */
-export function TypeView({ card, test, onAnswer }: { card: Card; test: boolean; onAnswer: (correct: boolean, given: string) => void }) {
+export function TypeView({ card, test, listen = false, onAnswer }: { card: Card; test: boolean; listen?: boolean; onAnswer: (correct: boolean, given: string) => void }) {
   const rules = useSettings((s) => s.nakijkregels);
   const [value, setValue] = useState('');
   const [phase, setPhase] = useState<Phase>({ kind: 'vraag' });
@@ -30,6 +32,7 @@ export function TypeView({ card, test, onAnswer }: { card: Card; test: boolean; 
     setPhase({ kind: 'vraag' });
     setRetypeError(false);
     input.current?.focus();
+    if (listen) speak(card.answer, card.answerLang);
   }, [card.key]);
 
   useEffect(() => {
@@ -66,12 +69,28 @@ export function TypeView({ card, test, onAnswer }: { card: Card; test: boolean; 
 
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col items-center gap-5">
-      <div className="flex w-full flex-col items-center gap-1 rounded-[28px] border border-line bg-surface px-6 py-8 text-center shadow-soft">
-        <span className="text-[clamp(26px,7vw,40px)] leading-tight font-extrabold tracking-[-0.02em] break-words" lang={card.promptLang}>
-          {card.prompt}
-        </span>
-        {!test && <SpeakButton text={card.prompt} lang={card.promptLang} />}
-      </div>
+      {listen ? (
+        <div className="flex w-full flex-col items-center gap-3 rounded-[28px] border border-line bg-surface px-6 py-8 text-center shadow-soft">
+          {canSpeak(card.answerLang) ? (
+            <>
+              <div className="flex gap-2">
+                <Button size="lg" icon={<Volume2 size={22} aria-hidden="true" />} onClick={() => speak(card.answer, card.answerLang)}>Luister</Button>
+                <Button size="lg" variant="secondary" onClick={() => speak(card.answer, card.answerLang, 0.55)}>Langzaam</Button>
+              </div>
+              <p className="text-sm text-ink-soft">Typ wat je hoort.{phase.kind !== 'vraag' && <> Betekenis: <strong>{card.prompt}</strong></>}</p>
+            </>
+          ) : (
+            <p className="text-ink-soft">Voor deze taal is geen stem beschikbaar op dit apparaat. Betekenis: <strong>{card.prompt}</strong></p>
+          )}
+        </div>
+      ) : (
+        <div className="flex w-full flex-col items-center gap-1 rounded-[28px] border border-line bg-surface px-6 py-8 text-center shadow-soft">
+          <span className="text-[clamp(26px,7vw,40px)] leading-tight font-extrabold tracking-[-0.02em] break-words" lang={card.promptLang}>
+            {card.prompt}
+          </span>
+          {!test && <SpeakButton text={card.prompt} lang={card.promptLang} />}
+        </div>
+      )}
 
       {phase.kind === 'uitslag' && phase.check.result === 'goed' && (
         <Verdict kind="goed">

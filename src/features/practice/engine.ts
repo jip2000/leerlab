@@ -9,7 +9,10 @@ import type { LanguageCode } from '@/data/languages';
 import type { Direction, WordItem, WordList } from '@/db/types';
 import { withArticle } from '@/data/starter';
 
-export type Mode = 'flashcards' | 'typen' | 'meerkeuze' | 'toets';
+export type Mode = 'flashcards' | 'typen' | 'meerkeuze' | 'toets' | 'luisteren' | 'koppelen' | 'snel' | 'leren';
+
+/** Modi die niet met een vaste rij kaarten werken maar een eigen spelverloop hebben. */
+export const GAME_MODES: Mode[] = ['koppelen', 'snel', 'leren'];
 
 export interface Card {
   key: string; // `${wordId}:${dir}`
@@ -101,7 +104,7 @@ export function answerCard(s: EngineState, correct: boolean, given = ''): Engine
   const firstTry = !s.seen.includes(key);
   const queue = [...rest];
   const missed = !correct && !s.missed.includes(key) ? [...s.missed, key] : s.missed;
-  if (!correct && s.mode !== 'toets') queue.splice(Math.min(RETRY_GAP, queue.length), 0, key);
+  if (!correct && s.mode !== 'toets' && s.mode !== 'koppelen') queue.splice(Math.min(RETRY_GAP, queue.length), 0, key);
   return {
     ...s,
     queue,
@@ -134,4 +137,21 @@ export function summarize(s: EngineState): Summary {
 export function progress(s: EngineState): { done: number; total: number } {
   const remaining = new Set(s.queue).size;
   return { done: s.cards.length - remaining, total: s.cards.length };
+}
+
+/** Beantwoordt een bepaalde kaart (niet per se de eerste), voor spellen zoals koppelen. */
+export function answerKey(s: EngineState, key: string, correct: boolean, given = ''): EngineState {
+  const i = s.queue.indexOf(key);
+  if (i < 0) return s;
+  const moved = { ...s, queue: [key, ...s.queue.slice(0, i), ...s.queue.slice(i + 1)] };
+  return answerCard(moved, correct, given);
+}
+
+/** Dictee: je hoort het woord in de vreemde taal en typt wat je hoort. */
+export function toListening(c: Card): Card {
+  const foreignIsPrompt = c.promptLang !== 'nl';
+  const word = foreignIsPrompt ? c.prompt : withArticle(c.answer, c.answerArticle);
+  const lang = foreignIsPrompt ? c.promptLang : c.answerLang;
+  const meaning = foreignIsPrompt ? withArticle(c.answer, c.answerArticle) : c.prompt;
+  return { ...c, prompt: meaning, promptLang: foreignIsPrompt ? c.answerLang : c.promptLang, answer: word, answerArticle: undefined, answerLang: lang };
 }

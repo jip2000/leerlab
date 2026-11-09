@@ -5,4 +5,8 @@ export const modeLabels: Record<Mode, string> = {
   typen: 'Typen',
   meerkeuze: 'Meerkeuze',
   toets: 'Toets',
+  luisteren: 'Luisteren',
+  koppelen: 'Koppelen',
+  snel: 'Snel-ronde',
+  leren: 'Leren',
 };

@@ -49,7 +49,7 @@ Antwoorden op de startvragen (zie `opdracht.md`, hoofdstuk 17).
 | 5 | Slim herhalen (spaced repetition) ✅ |
 | 6 | Werkwoordtrainer ✅ |
 | 7 | Grammatica ✅ (FR, DE, EN, ES) |
-| 8 | Extra oefenmodi |
+| 8 | Extra oefenmodi ✅ |
 | 9 | Video's en planner |
 | 10 | Statistieken: grafieken, heatmap, moeilijkste woorden |
 | 11 | PWA, offline, back-up, afwerking |

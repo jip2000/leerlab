@@ -19,6 +19,7 @@ Alles draait in je browser; je gegevens blijven op je eigen apparaat.
 | 5 | Slim herhalen (Leitner, 5 bakjes), Vandaag herhalen, gekend/bijna/nog leren | ✅ |
 | 6 | Werkwoordtrainer Frans, Duits, Engels, Spaans (4 oefenvormen, uitleg, statistiek) | ✅ |
 | 7 | Grammatica: 70 onderwerpen met uitleg en oefeningen (FR, DE, EN, ES) | ✅ |
+| 8 | Extra modi: leren, luisteren/dictee, koppelen, snel-ronde | ✅ |
 
 De volledige planning staat in [`docs/keuzes.md`](docs/keuzes.md).
 

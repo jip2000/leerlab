@@ -6,7 +6,7 @@ export function canSpeak(code: LanguageCode): boolean {
 }
 
 /** Leest een woord voor in de juiste taal, met een passende stem als die er is. */
-export function speak(text: string, code: LanguageCode): void {
+export function speak(text: string, code: LanguageCode, rate = 0.9): void {
   if (!canSpeak(code)) return;
   const lang = getLanguage(code).speechLang;
   const synth = window.speechSynthesis;
@@ -16,6 +16,6 @@ export function speak(text: string, code: LanguageCode): void {
   const voices = synth.getVoices();
   const prefix = lang.split('-')[0]!;
   u.voice = voices.find((v) => v.lang === lang) ?? voices.find((v) => v.lang.startsWith(prefix)) ?? null;
-  u.rate = 0.9;
+  u.rate = rate;
   synth.speak(u);
 }

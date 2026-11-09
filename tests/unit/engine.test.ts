@@ -106,3 +106,21 @@ describe('meerkeuze', () => {
     for (const o of makeChoices(cards[0]!, mixed, seeded(5))) expect(['huis', 'hond', 'school', 'zee', 'brood']).not.toContain(o);
   });
 });
+
+describe('extra modi', () => {
+  it('koppelen: een willekeurige kaart beantwoorden, fout komt niet terug', async () => {
+    const { answerKey } = await import('@/features/practice/engine');
+    const cards = buildCards(words, lists, 'lr');
+    let s = createEngine(cards, { mode: 'koppelen', direction: 'lr', shuffle: false });
+    s = answerKey(s, 'c:lr', false);
+    expect(s.queue).toEqual(['a:lr', 'b:lr', 'd:lr', 'e:lr']);
+    expect(s.missed).toEqual(['c:lr']);
+  });
+  it('luisteren: je typt het woord in de vreemde taal, met lidwoord', async () => {
+    const { toListening } = await import('@/features/practice/engine');
+    const [lr] = buildCards(words, lists, 'lr');
+    const [rl] = buildCards(words, lists, 'rl');
+    expect(toListening(lr!)).toMatchObject({ answer: 'la maison', answerLang: 'fr', prompt: 'huis', promptLang: 'nl' });
+    expect(toListening(rl!)).toMatchObject({ answer: 'la maison', answerLang: 'fr', prompt: 'huis' });
+  });
+});

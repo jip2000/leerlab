@@ -15,8 +15,9 @@ const cheer = (p: number) =>
 
 /** Uitslag na een oefening, met beloningen. */
 export function SummaryView({
-  mode, summary, grade, xp, rewards, onRetryMistakes, onAgain,
+  mode, summary, grade, xp, rewards, extra, onRetryMistakes, onAgain,
 }: {
+  extra?: string;
   mode: Mode;
   summary: Summary;
   grade?: number;
@@ -71,6 +72,7 @@ export function SummaryView({
           </>
         )}
         <p className="mt-3 text-lg font-bold">{cheer(summary.percentage)}</p>
+        {extra && <p className="mt-1 font-semibold text-primary-ink">{extra}</p>}
       </div>
 
       {/* Beloningen */}

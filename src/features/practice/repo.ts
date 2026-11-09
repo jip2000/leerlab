@@ -4,7 +4,7 @@
 import { db, newId } from '@/db/db';
 import type { PracticeSession, WordItem, WordList } from '@/db/types';
 import { getWords } from '@/features/lists/repo';
-import { buildCards, createEngine, type EngineState, type SessionOptions, type Summary } from './engine';
+import { buildCards, createEngine, toListening, type EngineState, type SessionOptions, type Summary } from './engine';
 
 export interface SessionData {
   options: SessionOptions;
@@ -43,6 +43,7 @@ export async function startSession(o: StartOptions): Promise<string> {
     const all = [...buildCards(words, new Map(lists.map((l) => [l.id, l])), 'lr'), ...buildCards(words, new Map(lists.map((l) => [l.id, l])), 'rl')];
     cards = o.cardKeys.map((k) => all.find((c) => c.key === k)).filter((c): c is NonNullable<typeof c> => !!c);
   }
+  if (o.mode === 'luisteren') cards = cards.map(toListening);
   if (cards.length === 0) throw new Error('Geen woorden om te oefenen.');
   const id = newId();
   const now = Date.now();
