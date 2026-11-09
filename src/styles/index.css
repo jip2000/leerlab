@@ -26,6 +26,12 @@
   --marker-ink: #3d3200;
   --danger: #c2372b;
   --shadow: 0 1px 2px rgb(14 42 34 / 0.06), 0 8px 24px -12px rgb(14 42 34 / 0.18);
+  /* Grafieken (gecontroleerd met de dataviz-validator: contrast, lichtheid, één tint) */
+  --chart-1: #08805f;
+  --heat-1: #5bb892;
+  --heat-2: #2e9c72;
+  --heat-3: #0e7f59;
+  --heat-4: #075c41;
 }
 
 :root[data-theme='dark'] {
@@ -45,6 +51,11 @@
   --marker-ink: #1f1a00;
   --danger: #ff7b6e;
   --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 10px 28px -14px rgb(0 0 0 / 0.7);
+  --chart-1: #26a97a;
+  --heat-1: #1f6b53;
+  --heat-2: #24906c;
+  --heat-3: #3db98b;
+  --heat-4: #8fe3c1;
 }
 
 @theme inline {

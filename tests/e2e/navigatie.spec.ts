@@ -65,3 +65,13 @@ test('geen horizontale scroll en knoppen groot genoeg', async ({ page, isMobile 
     }
   }
 });
+
+test('statistieken: grafiek, kalender en badges', async ({ page }) => {
+  await page.goto('/#/statistieken');
+  await expect(page.getByRole('heading', { name: 'Oefentijd in minuten' })).toBeVisible();
+  await expect(page.getByRole('img', { name: /Kalender: \d+ dagen geoefend/ })).toBeVisible();
+  await page.getByRole('radio', { name: /Per week/ }).click();
+  await page.getByText('Als tabel').click();
+  await expect(page.getByRole('cell', { name: /wk / }).first()).toBeVisible();
+  await expect(page.getByText(/Badges/).first()).toBeVisible();
+});
