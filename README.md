@@ -23,6 +23,7 @@ Alles draait in je browser; je gegevens blijven op je eigen apparaat.
 | 9 | Video's (YouTube, aantekeningen met tijden) en planner (leerschema, weekagenda) | ✅ |
 | 10 | Statistieken: oefentijd, kalender, beste vakken, moeilijkste woorden, 13 badges | ✅ |
 | 11 | Offline (PWA), back-up, hulp-tutor, snellere laadtijd | ✅ |
+| 12 | Grammatica Nederlands, Latijn, Italiaans, Portugees + basis voor 10 andere talen | ✅ (deels, zie docs/keuzes.md) |
 
 De volledige planning staat in [`docs/keuzes.md`](docs/keuzes.md).
 

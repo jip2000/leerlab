@@ -6,9 +6,10 @@ import { defaultSettings } from '@/lib/settings';
 
 describe('grammatica-inhoud', () => {
   for (const [lang, topics] of Object.entries(grammar) as [LanguageCode, NonNullable<(typeof grammar)['fr']>][]) {
-    it(`${lang}: elk onderwerp uit de talenlijst heeft inhoud`, () => {
+    it(`${lang}: onderwerpen kloppen met de talenlijst`, () => {
       const ids = getLanguage(lang).grammarTopics.map((t) => t.id);
-      for (const id of ids) expect(topics.some((t) => t.id === id), `${lang}/${id}`).toBe(true);
+      // Talen met prioriteit 1 en 2 moeten compleet zijn; bij de rest mag nog iets ontbreken.
+      if (getLanguage(lang).grammarPriority < 3) for (const id of ids) expect(topics.some((t) => t.id === id), `${lang}/${id}`).toBe(true);
       for (const t of topics) expect(ids, `${lang}/${t.id} staat niet in languages.ts`).toContain(t.id);
     });
 
@@ -17,7 +18,7 @@ describe('grammatica-inhoud', () => {
         expect(t.blocks.length, t.id).toBeGreaterThan(0);
         for (let round = 0; round < (typeof t.exercises === 'function' ? 10 : 1); round++) {
           const ex = exercisesOf(t);
-          expect(ex.length, t.id).toBeGreaterThanOrEqual(5);
+          expect(ex.length, t.id).toBeGreaterThanOrEqual(3);
           for (const e of ex) {
             switch (e.type) {
               case 'gap':

@@ -53,7 +53,7 @@ Antwoorden op de startvragen (zie `opdracht.md`, hoofdstuk 17).
 | 9 | Video's en planner ✅ |
 | 10 | Statistieken: grafieken, heatmap, moeilijkste woorden ✅ |
 | 11 | PWA, offline, back-up, afwerking ✅ (plus hulp-tutor) |
-| 12 | Uitbreiden met meer talen |
+| 12 | Uitbreiden met meer talen ✅ deels |
 
 ## Afspraken na fase 2
 
@@ -67,3 +67,11 @@ Antwoorden op de startvragen (zie `opdracht.md`, hoofdstuk 17).
 - Hulp-tutor rechtsonder: gebouwd **zonder AI** (gratis, werkt offline, kennisbank met antwoorden + knoppen).
   Een echte AI (bijv. Claude) kan later, maar kost geld per bericht en vraagt een API-sleutel op een eigen
   server. Daar moet eerst toestemming voor komen.
+
+## Wat nog open staat
+
+- Werkwoordtrainer voor Italiaans, Portugees en Latijn (nu alleen FR, DE, EN, ES).
+- Grammatica Oudgrieks: declinaties en werkwoorden (alfabet en lidwoord zijn er wel).
+- Basistalen (Zweeds, Pools, …): "de 20 belangrijkste werkwoorden" ontbreekt nog.
+- Afbeelding per woord uploaden (in de lijst-editor).
+- Echte AI voor de tutor of de foto-herkenning (vraagt API-sleutel + server, dus eerst toestemming).
