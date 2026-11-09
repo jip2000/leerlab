@@ -1,0 +1,57 @@
+import { useLocation, useOutlet } from 'react-router';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { useEffect, useRef } from 'react';
+import { Sidebar } from './Sidebar';
+import { TabBar } from './TabBar';
+import { TopBar } from './TopBar';
+import { useApplyTheme } from '@/lib/theme';
+import { navItems } from './nav';
+
+/** Het "frame" om elke pagina: zijbalk, bovenbalk, tabbalk en een zachte overgang. */
+export function AppShell() {
+  useApplyTheme();
+  const location = useLocation();
+  const outlet = useOutlet();
+  const reduce = useReducedMotion();
+  const mainRef = useRef<HTMLElement>(null);
+
+  // Paginatitel bijwerken en naar boven scrollen bij wisselen van pagina.
+  useEffect(() => {
+    const item = navItems.find((i) => (i.path === '/' ? location.pathname === '/' : location.pathname.startsWith(i.path)));
+    document.title = item && item.path !== '/' ? `${item.label} – Woordwerk` : 'Woordwerk';
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
+  return (
+    <div className="flex min-h-dvh">
+      <a
+        href="#inhoud"
+        className="sr-only z-50 rounded-lg bg-primary px-4 py-2 text-on-primary focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+      >
+        Naar inhoud
+      </a>
+      <Sidebar />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <TopBar />
+        <main
+          id="inhoud"
+          ref={mainRef}
+          className="mx-auto w-full max-w-5xl flex-1 px-4 pt-5 pb-[calc(env(safe-area-inset-bottom)+96px)] sm:px-6 lg:px-8 lg:pt-2 lg:pb-12"
+        >
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={location.pathname}
+              initial={reduce ? false : { opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduce ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.16, ease: 'easeOut' }}
+            >
+              {outlet}
+            </motion.div>
+          </AnimatePresence>
+        </main>
+      </div>
+      <TabBar />
+    </div>
+  );
+}

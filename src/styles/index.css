@@ -1,0 +1,125 @@
+@import '@fontsource-variable/plus-jakarta-sans';
+@import 'tailwindcss';
+
+/* Donkere modus volgt het data-theme attribuut op <html> (gezet door het thema-script). */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/*
+ * DESIGN TOKENS
+ * Alle kleuren staan hier als CSS-variabelen. Wil je het thema aanpassen?
+ * Verander dan alleen deze waarden.
+ */
+:root {
+  color-scheme: light;
+  --bg: #f2f7f4; /* achtergrond: koel mintgrijs */
+  --surface: #ffffff; /* kaarten en panelen */
+  --surface-2: #e5efe9; /* licht vlak, bijv. hover */
+  --ink: #0e2a22; /* hoofdtekst: diep groen-zwart */
+  --ink-soft: #4a6158; /* tweede tekst */
+  --line: #d3e2da; /* randen */
+  --primary: #08805f; /* hoofdkleur: smaragd */
+  --primary-hover: #066d51;
+  --on-primary: #ffffff;
+  --primary-soft: #d2f1e4; /* lichte mint, voor actieve navigatie */
+  --primary-ink: #065a43; /* tekst in mint-vlakken */
+  --marker: #ffe066; /* markeerstift-geel: het "accent" van Woordwerk */
+  --marker-ink: #3d3200;
+  --danger: #c2372b;
+  --shadow: 0 1px 2px rgb(14 42 34 / 0.06), 0 8px 24px -12px rgb(14 42 34 / 0.18);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0c1714;
+  --surface: #13221d;
+  --surface-2: #1b2e27;
+  --ink: #e6f2ed;
+  --ink-soft: #9db4aa;
+  --line: #25392f;
+  --primary: #3dd6a0;
+  --primary-hover: #63e2b5;
+  --on-primary: #05261b;
+  --primary-soft: #143a2e;
+  --primary-ink: #7deabf;
+  --marker: #d9b93a;
+  --marker-ink: #1f1a00;
+  --danger: #ff7b6e;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 10px 28px -14px rgb(0 0 0 / 0.7);
+}
+
+@theme inline {
+  --font-sans: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', system-ui, sans-serif;
+
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-line: var(--line);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-on-primary: var(--on-primary);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-ink: var(--primary-ink);
+  --color-marker: var(--marker);
+  --color-marker-ink: var(--marker-ink);
+  --color-danger: var(--danger);
+
+  --radius-card: 20px;
+  --radius-control: 12px;
+  --shadow-soft: var(--shadow);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-feature-settings: 'ss01';
+    line-height: 1.5;
+    min-height: 100dvh;
+  }
+  :focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+}
+
+/*
+ * Markeerstift: een schuine gele streep achter een titel,
+ * zoals je woorden in je schoolboek markeert.
+ */
+.marker {
+  background-image: linear-gradient(
+    100deg,
+    transparent 0.3em,
+    var(--marker) 0.3em,
+    var(--marker) calc(100% - 0.15em),
+    transparent calc(100% - 0.15em)
+  );
+  background-size: 100% 0.5em;
+  background-position: 0 88%;
+  background-repeat: no-repeat;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  padding-inline: 0.12em;
+  margin-inline: -0.12em;
+}
+:root[data-theme='dark'] .marker {
+  background-size: 100% 0.32em;
+  background-position: 0 96%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
