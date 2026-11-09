@@ -12,6 +12,7 @@ import { bookKey, yearLevelLabel } from '@/features/lists/books';
 import { WordTable } from '@/features/lists/components/WordTable';
 import { ListPhotos } from '@/features/lists/components/ListPhotos';
 import { MasteryBar } from '@/features/lists/components/MasteryBar';
+import { TopicVideos } from '@/features/videos/TopicVideos';
 import { toCsv } from '@/lib/csv';
 import { encodeSharedList } from '@/lib/share';
 import { toast } from '@/lib/toast';
@@ -232,6 +233,7 @@ export function ListDetailPage() {
         <WordTable words={words} langLeft={list.langLeft} langRight={list.langRight} />
       )}
       <ListPhotos ids={list.photoIds} />
+      <TopicVideos link={{ kind: 'list', id: list.id }} />
     </>
   );
 }

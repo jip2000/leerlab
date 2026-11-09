@@ -20,6 +20,7 @@ Alles draait in je browser; je gegevens blijven op je eigen apparaat.
 | 6 | Werkwoordtrainer Frans, Duits, Engels, Spaans (4 oefenvormen, uitleg, statistiek) | ✅ |
 | 7 | Grammatica: 70 onderwerpen met uitleg en oefeningen (FR, DE, EN, ES) | ✅ |
 | 8 | Extra modi: leren, luisteren/dictee, koppelen, snel-ronde | ✅ |
+| 9 | Video's (YouTube, aantekeningen met tijden) en planner (leerschema, weekagenda) | ✅ |
 
 De volledige planning staat in [`docs/keuzes.md`](docs/keuzes.md).
 

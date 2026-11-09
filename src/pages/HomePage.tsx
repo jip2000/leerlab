@@ -3,6 +3,10 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { Layers, Play, Plus, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { dueToday, startReview } from '@/features/srs/repo';
+import { planFor, startTask, upcomingTests } from '@/features/planner/repo';
+import { daysBetween, describeTask } from '@/features/planner/schedule';
+import { dayKey } from '@/features/progress/streak';
+import { CalendarDays } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { ProgressRing } from '@/components/ui/ProgressRing';
 import { ButtonLink } from '@/components/ui/ButtonLink';
@@ -30,6 +34,13 @@ export function HomePage() {
   const lists = useLists();
   const paused = useLiveQuery(() => openSession(), []);
   const due = useLiveQuery(() => dueToday(), []);
+  // Eerstvolgende toets binnen 2 weken, met de taak van vandaag.
+  const nextTest = useLiveQuery(async () => {
+    const t = (await upcomingTests()).find((x) => daysBetween(dayKey(), x.date) <= 14);
+    if (!t) return null;
+    const today = (await planFor(t)).find((p) => p.date === dayKey());
+    return { test: t, today };
+  }, []);
   const navigate = useNavigate();
 
   if (!profile || !lists) return null;
@@ -77,6 +88,22 @@ export function HomePage() {
           </div>
         </Card>
       </div>
+
+      {nextTest && (
+        <Card className="flex flex-wrap items-center gap-4 border-danger/30">
+          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-danger/12 text-danger"><CalendarDays size={24} aria-hidden="true" /></span>
+          <div className="min-w-0 flex-1">
+            <h2 className="font-bold">
+              Toets {nextTest.test.subject}{' '}
+              {(() => { const n = daysBetween(dayKey(), nextTest.test.date); return n === 0 ? 'vandaag!' : n === 1 ? 'morgen' : `over ${n} dagen`; })()}
+            </h2>
+            <p className="text-sm text-ink-soft">
+              {nextTest.today ? `Vandaag ${nextTest.today.minutes} minuten oefenen: ${describeTask(nextTest.today.tasks[0]!)}` : 'Succes! Kijk nog even je fouten na.'}
+            </p>
+          </div>
+          {nextTest.today && <Button onClick={async () => navigate(await startTask(nextTest.today!.tasks[0]!))}>Start</Button>}
+        </Card>
+      )}
 
       {due && due.length > 0 && (
         <Card tone="mint" className="flex flex-wrap items-center gap-4">

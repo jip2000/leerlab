@@ -17,6 +17,7 @@ import { VerbsPage } from '@/pages/VerbsPage';
 import { VerbSessionPage } from '@/pages/VerbSessionPage';
 import { ScanPage } from '@/pages/ScanPage';
 import { VideosPage } from '@/pages/VideosPage';
+import { VideoPage } from '@/pages/VideoPage';
 import { PlannerPage } from '@/pages/PlannerPage';
 import { StatsPage } from '@/pages/StatsPage';
 import { SettingsPage } from '@/pages/SettingsPage';
@@ -50,6 +51,7 @@ export const router = createHashRouter([
       { path: 'werkwoorden/oefenen', element: <VerbSessionPage /> },
       { path: 'scannen', element: <ScanPage /> },
       { path: 'videos', element: <VideosPage /> },
+      { path: 'videos/:id', element: <VideoPage /> },
       { path: 'planner', element: <PlannerPage /> },
       { path: 'statistieken', element: <StatsPage /> },
       { path: 'instellingen', element: <SettingsPage /> },
