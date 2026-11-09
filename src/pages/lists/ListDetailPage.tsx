@@ -10,6 +10,7 @@ import { useList, useLists, useWords } from '@/features/lists/hooks';
 import { deleteList, duplicateList, mergeInto, restoreList, reverseList } from '@/features/lists/repo';
 import { bookKey, yearLevelLabel } from '@/features/lists/books';
 import { WordTable } from '@/features/lists/components/WordTable';
+import { ListPhotos } from '@/features/lists/components/ListPhotos';
 import { toCsv } from '@/lib/csv';
 import { encodeSharedList } from '@/lib/share';
 import { toast } from '@/lib/toast';
@@ -223,6 +224,7 @@ export function ListDetailPage() {
       ) : (
         <WordTable words={words} langLeft={list.langLeft} langRight={list.langRight} />
       )}
+      <ListPhotos ids={list.photoIds} />
     </>
   );
 }

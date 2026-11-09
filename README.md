@@ -15,7 +15,7 @@ Alles draait in je browser; je gegevens blijven op je eigen apparaat.
 | 1 | Basis: design, navigatie, lege pagina's | ✅ |
 | 2 | Woordenlijsten: boeken, mappen, plakken, CSV, delen, uitspraak, startlijsten | ✅ |
 | 3 | Oefenen (flashcards, typen, meerkeuze, toets) + streak, XP, levels, badges | ✅ |
-| 4 | Foto scannen | |
+| 4 | Foto scannen (Tesseract, bijsnijden, controlescherm) | ✅ |
 
 De volledige planning staat in [`docs/keuzes.md`](docs/keuzes.md).
 
