@@ -3,6 +3,8 @@
 Eigen studie-website om woordjes, grammatica en werkwoorden van Europese talen te leren.
 Alles draait in je browser; je gegevens blijven op je eigen apparaat.
 
+**De site:** https://jip2000.github.io/leerlab/
+
 - De volledige bouwopdracht: [`docs/opdracht.md`](docs/opdracht.md)
 - Gemaakte keuzes en planning: [`docs/keuzes.md`](docs/keuzes.md)
 
