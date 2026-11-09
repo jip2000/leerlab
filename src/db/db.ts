@@ -1,6 +1,6 @@
 import Dexie, { type EntityTable } from 'dexie';
 import type {
-  Badge, Folder, GrammarProgress, PlannedTest, PracticeSession, ReviewState,
+  Badge, DayActivity, Folder, MetaEntry, GrammarProgress, PlannedTest, PracticeSession, ReviewState,
   StoredFile, VerbProgress, Video, WordItem, WordList,
 } from './types';
 
@@ -20,6 +20,8 @@ export class WoordwerkDB extends Dexie {
   tests!: EntityTable<PlannedTest, 'id'>;
   badges!: EntityTable<Badge, 'id'>;
   files!: EntityTable<StoredFile, 'id'>;
+  days!: EntityTable<DayActivity, 'id'>;
+  meta!: EntityTable<MetaEntry, 'key'>;
 
   constructor(name = 'woordwerk') {
     super(name);
@@ -35,6 +37,12 @@ export class WoordwerkDB extends Dexie {
       tests: 'id, date',
       badges: 'id',
       files: 'id',
+    });
+    // Versie 2 (fase 3): dagactiviteit voor streak/XP en losse waarden.
+    this.version(2).stores({
+      days: 'id',
+      meta: 'key',
+      sessions: 'id, type, startedAt, endedAt',
     });
   }
 }

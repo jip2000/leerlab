@@ -4,6 +4,9 @@ import { Card } from '@/components/ui/Card';
 import { Switch } from '@/components/ui/Switch';
 import { useSettings, type CheckRules, type ThemeChoice } from '@/lib/settings';
 import { cn } from '@/lib/cn';
+import { appBadgeSupported, enableAppBadge, updateAppBadge } from '@/lib/appBadge';
+import { getProfile } from '@/features/progress/repo';
+import { toast } from '@/lib/toast';
 
 const themes: { value: ThemeChoice; label: string; icon: typeof Sun }[] = [
   { value: 'systeem', label: 'Systeem', icon: Monitor },
@@ -90,6 +93,31 @@ export function SettingsPage() {
             description="Woorden worden voorgelezen tijdens het oefenen."
             checked={s.voorlezen}
             onChange={(voorlezen) => s.update({ voorlezen })}
+          />
+        </Section>
+
+        <Section title="Je streak op je beginscherm">
+          <p className="py-3 text-sm text-ink-soft">
+            Zet Woordwerk op je beginscherm: op iPhone via Delen en dan Zet op beginscherm, op Android via het menu en dan
+            Toevoegen aan startscherm. Dan open je Woordwerk als een app.
+          </p>
+          <Switch
+            label="Streak als getal op het app-icoon"
+            description={
+              appBadgeSupported()
+                ? 'Op iPhone vraagt dit om toestemming voor meldingen.'
+                : 'Dit toestel of deze browser kan geen getal op het icoon zetten (Android kan dit niet bij web-apps).'
+            }
+            checked={s.streakOpIcoon}
+            onChange={async (on) => {
+              if (!on) {
+                s.update({ streakOpIcoon: false });
+                return void updateAppBadge(0);
+              }
+              const r = await enableAppBadge();
+              if (r === 'aan') void updateAppBadge((await getProfile()).streak.count);
+              else toast(r === 'geweigerd' ? 'Geen toestemming gekregen. Je kunt dit later in de instellingen van je telefoon aanzetten.' : 'Dit toestel ondersteunt geen getal op het app-icoon.');
+            }}
           />
         </Section>
 

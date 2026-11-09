@@ -1,5 +1,11 @@
 import { useLocation, useOutlet } from 'react-router';
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { AnimatePresence, MotionConfig, motion, useReducedMotion } from 'motion/react';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { db } from '@/db/db';
+import { checkQuietBadges, getProfile, reconcileStreak } from '@/features/progress/repo';
+import { updateAppBadge } from '@/lib/appBadge';
+import { celebrate } from '@/lib/confetti';
+import { toast } from '@/lib/toast';
 import { useEffect } from 'react';
 import { Sidebar } from './Sidebar';
 import { TabBar } from './TabBar';
@@ -17,6 +23,27 @@ export function AppShell() {
   const outlet = useOutlet();
   const reduce = useReducedMotion();
 
+  // Bij het openen: gemiste dag bevriezen (als dat kan) en de streak op het app-icoon zetten.
+  useEffect(() => {
+    void (async () => {
+      const frozen = await reconcileStreak();
+      if (frozen > 0) toast(`🧊 Je bevriezer heeft je streak gered!`);
+      void updateAppBadge((await getProfile()).streak.count);
+    })();
+  }, []);
+
+  // Badges die je zonder oefenen haalt, zoals "Eerste lijst".
+  const listCount = useLiveQuery(() => db.lists.count(), []);
+  useEffect(() => {
+    if (!listCount) return;
+    void checkQuietBadges().then((badges) => {
+      if (badges.length === 0) return;
+      const [b] = badges;
+      toast(badges.length === 1 ? `${b!.emoji} Nieuwe badge: ${b!.title}` : `🎉 ${badges.length} nieuwe badges! Bekijk ze bij Statistieken.`);
+      celebrate();
+    });
+  }, [listCount]);
+
   // Paginatitel bijwerken en naar boven scrollen bij wisselen van pagina.
   useEffect(() => {
     const item = navItems.find((i) => (i.path === '/' ? location.pathname === '/' : location.pathname.startsWith(i.path)));
@@ -25,6 +52,7 @@ export function AppShell() {
   }, [location.pathname]);
 
   return (
+    <MotionConfig reducedMotion="user">
     <div className="flex min-h-dvh">
       <a
         href="#inhoud"
@@ -55,5 +83,6 @@ export function AppShell() {
       <TabBar />
       <Toaster />
     </div>
+    </MotionConfig>
   );
 }

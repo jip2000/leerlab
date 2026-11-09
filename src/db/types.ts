@@ -140,3 +140,18 @@ export interface StoredFile {
   name: string;
   createdAt: number;
 }
+
+/** Wat je op één dag hebt gedaan (voor streak, dagdoel en statistieken). */
+export interface DayActivity {
+  id: string; // "2026-11-09"
+  xp: number;
+  answers: number;
+  correct: number;
+  seconds: number;
+}
+
+/** Losse waarden zoals het aantal bevriezers. */
+export interface MetaEntry {
+  key: string;
+  value: unknown;
+}

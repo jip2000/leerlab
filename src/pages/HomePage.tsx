@@ -1,8 +1,19 @@
 import { Link } from 'react-router';
-import { CalendarDays, Flame, Layers, Plus } from 'lucide-react';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { Layers, Play, Plus } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { ProgressRing } from '@/components/ui/ProgressRing';
+import { ButtonLink } from '@/components/ui/ButtonLink';
 import { useSettings } from '@/lib/settings';
+import { useLists } from '@/features/lists/hooks';
+import { sortLists } from '@/features/lists/sort';
+import { openSession } from '@/features/practice/repo';
+import { modeLabels } from '@/features/practice/labels';
+import { useProfile } from '@/features/progress/hooks';
+import { goalProgress } from '@/features/progress/repo';
+import { badgeDefs } from '@/features/progress/badges';
+import { StreakCard } from '@/features/progress/components/StreakCard';
+import { LevelBar } from '@/features/progress/components/LevelBar';
 
 function greeting(hour: number) {
   if (hour < 6) return 'Goedenacht';
@@ -11,94 +22,114 @@ function greeting(hour: number) {
   return 'Goedenavond';
 }
 
-// In fase 4 komen hier echte cijfers uit de database.
-const dueToday = 0;
-const streak = 0;
-const doneToday = 0;
-
 export function HomePage() {
   const dagdoel = useSettings((s) => s.dagdoel);
-  const unit = dagdoel.type === 'minuten' ? 'min' : 'woorden';
+  const profile = useProfile();
+  const lists = useLists();
+  const paused = useLiveQuery(() => openSession(), []);
+
+  if (!profile || !lists) return null;
+
+  const goal = goalProgress(profile.today, dagdoel);
+  const unit = dagdoel.type === 'minuten' ? 'minuten' : 'woorden goed';
+  const last = sortLists(lists, 'nieuw')[0];
+  const recentBadges = badgeDefs
+    .filter((b) => profile.badges.has(b.id))
+    .sort((a, b) => profile.badges.get(b.id)! - profile.badges.get(a.id)!)
+    .slice(0, 4);
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <header className="mb-1">
         <h1 className="text-[30px] leading-[1.15] font-extrabold tracking-[-0.025em] sm:text-[38px]">
           <span className="marker">{greeting(new Date().getHours())}!</span>
         </h1>
-        <p className="mt-2 text-ink-soft">Hier zie je wat je vandaag kunt doen.</p>
+        <p className="mt-2 text-ink-soft">
+          {profile.streak.todayDone ? 'Lekker bezig vandaag.' : 'Even oefenen? Een paar minuten is al genoeg.'}
+        </p>
       </header>
 
-      <div className="grid gap-4 md:grid-cols-[1.6fr_1fr]">
-        <Card tone="mint" className="flex flex-col justify-between gap-5">
-          <div>
-            <h2 className="font-semibold text-primary-ink">Vandaag herhalen</h2>
-            <p className="mt-1 text-[44px] leading-none font-extrabold tracking-[-0.03em] text-ink">
-              {dueToday} <span className="text-xl font-bold text-ink-soft">woorden</span>
-            </p>
-            <p className="mt-3 max-w-[40ch] text-ink-soft">
-              Je hebt nog geen lijsten. Maak er een en Woordwerk houdt bij welke woorden je wanneer moet herhalen.
-            </p>
-          </div>
-          <Link
-            to="/lijsten/nieuw"
-            className="inline-flex h-12 w-fit items-center gap-2 rounded-[var(--radius-control)] bg-primary px-5 font-semibold text-on-primary hover:bg-primary-hover"
-          >
-            <Plus size={20} aria-hidden="true" /> Maak je eerste lijst
-          </Link>
-        </Card>
+      <div className="grid gap-4 md:grid-cols-2">
+        <StreakCard profile={profile} />
 
         <Card className="flex items-center gap-5">
-          <ProgressRing value={doneToday / dagdoel.aantal} label={`Dagdoel: ${doneToday} van ${dagdoel.aantal} ${unit}`}>
+          <ProgressRing value={goal.done / goal.target} label={`Dagdoel: ${goal.done} van ${goal.target} ${unit}`}>
             <span className="text-xl font-extrabold">
-              {doneToday}
-              <span className="text-sm font-semibold text-ink-soft">/{dagdoel.aantal}</span>
+              {Math.min(goal.done, 999)}
+              <span className="text-sm font-semibold text-ink-soft">/{goal.target}</span>
             </span>
           </ProgressRing>
-          <div>
-            <h2 className="font-bold">Dagdoel</h2>
-            <p className="text-ink-soft">
-              {dagdoel.aantal} {dagdoel.type} oefenen. Aanpassen kan bij{' '}
+          <div className="min-w-0">
+            <h2 className="font-bold">{goal.reached ? 'Dagdoel gehaald!' : 'Dagdoel'}</h2>
+            <p className="text-sm text-ink-soft">
+              {goal.target} {unit} per dag.{' '}
               <Link to="/instellingen" className="font-semibold text-primary-ink underline underline-offset-2">
-                Instellingen
+                Aanpassen
               </Link>
-              .
+            </p>
+            <div className="mt-3">
+              <LevelBar profile={profile} />
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      {paused ? (
+        <Card tone="mint" className="flex flex-wrap items-center gap-4">
+          <div className="min-w-0 flex-1">
+            <h2 className="font-bold text-primary-ink">Verder waar je was</h2>
+            <p className="text-sm text-ink-soft">
+              {modeLabels[paused.state.options.mode]}, nog {new Set(paused.state.engine.queue).size} van {paused.state.engine.cards.length} kaarten
             </p>
           </div>
+          <ButtonLink to={`/oefenen/${paused.id}`}>
+            <Play size={18} aria-hidden="true" /> Verder
+          </ButtonLink>
         </Card>
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <Card className="flex items-center gap-4">
-          <div className="grid h-12 w-12 place-items-center rounded-2xl bg-marker text-marker-ink">
-            <Flame size={24} aria-hidden="true" />
+      ) : last ? (
+        <Card tone="mint" className="flex flex-wrap items-center gap-4">
+          <div className="min-w-0 flex-1">
+            <h2 className="font-bold text-primary-ink">Oefen je laatste lijst</h2>
+            <p className="truncate text-sm text-ink-soft">{last.title}</p>
           </div>
-          <div>
-            <h2 className="font-bold">{streak} dagen op rij</h2>
-            <p className="text-sm text-ink-soft">Oefen vandaag en start je reeks.</p>
+          <ButtonLink to={`/oefenen?lijsten=${last.id}`}>
+            <Layers size={18} aria-hidden="true" /> Oefenen
+          </ButtonLink>
+        </Card>
+      ) : (
+        <Card tone="mint" className="flex flex-wrap items-center gap-4">
+          <div className="min-w-0 flex-1">
+            <h2 className="font-bold text-primary-ink">Begin met een lijst</h2>
+            <p className="text-sm text-ink-soft">Maak een lijst voor je volgende toets, of probeer een startlijst.</p>
           </div>
+          <ButtonLink to="/lijsten/nieuw">
+            <Plus size={18} aria-hidden="true" /> Maak je eerste lijst
+          </ButtonLink>
         </Card>
+      )}
 
-        <Card>
-          <h2 className="mb-1 flex items-center gap-2 font-bold">
-            <Layers size={18} aria-hidden="true" className="text-ink-soft" /> Verder waar je was
-          </h2>
-          <p className="text-sm text-ink-soft">Hier verschijnt je laatste oefening, zodat je in één tik verdergaat.</p>
-        </Card>
-
-        <Card className="sm:col-span-2 lg:col-span-1">
-          <h2 className="mb-1 flex items-center gap-2 font-bold">
-            <CalendarDays size={18} aria-hidden="true" className="text-ink-soft" /> Komende toetsen
-          </h2>
-          <p className="text-sm text-ink-soft">
-            Nog geen toetsen.{' '}
-            <Link to="/planner" className="font-semibold text-primary-ink underline underline-offset-2">
-              Zet er een in de planner
-            </Link>{' '}
-            en je krijgt een leerschema.
-          </p>
-        </Card>
-      </div>
+      <Card>
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="font-bold">Badges</h2>
+          <Link to="/statistieken" className="flex h-11 items-center text-sm font-semibold text-primary-ink underline underline-offset-2">
+            Alle {badgeDefs.length} badges
+          </Link>
+        </div>
+        {recentBadges.length === 0 ? (
+          <p className="text-sm text-ink-soft">Je eerste badge krijg je al na je eerste lijst. Hoeveel verzamel jij er?</p>
+        ) : (
+          <ul className="flex flex-wrap gap-2">
+            {recentBadges.map((b) => (
+              <li key={b.id} className="flex items-center gap-2 rounded-full bg-surface-2 py-1.5 pr-3.5 pl-2 text-sm font-semibold">
+                <span className="text-xl" aria-hidden="true">
+                  {b.emoji}
+                </span>
+                {b.title}
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
     </div>
   );
 }

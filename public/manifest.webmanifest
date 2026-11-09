@@ -1,0 +1,16 @@
+{
+  "name": "Woordwerk",
+  "short_name": "Woordwerk",
+  "description": "Leer woordjes, grammatica en werkwoorden voor al je talen.",
+  "lang": "nl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F2F7F4",
+  "theme_color": "#08805F",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

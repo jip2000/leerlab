@@ -14,7 +14,7 @@ Alles draait in je browser; je gegevens blijven op je eigen apparaat.
 |---|---|---|
 | 1 | Basis: design, navigatie, lege pagina's | ✅ |
 | 2 | Woordenlijsten: boeken, mappen, plakken, CSV, delen, uitspraak, startlijsten | ✅ |
-| 3 | Oefenen | |
+| 3 | Oefenen (flashcards, typen, meerkeuze, toets) + streak, XP, levels, badges | ✅ |
 | 4 | Foto scannen | |
 
 De volledige planning staat in [`docs/keuzes.md`](docs/keuzes.md).
@@ -61,6 +61,15 @@ Eenmalig instellen op GitHub: **Settings → Pages → Source: GitHub Actions**.
 2. Voeg de code toe aan `LanguageCode` en een nieuw blok aan de lijst `languages`
    (naam, vlag, kleur, speciale tekens, stem voor voorlezen, onderwerpen).
 3. Draai `npm test`: die controleert onder andere of de kleur genoeg contrast heeft.
+
+## Streak, XP en badges
+
+- **Streak**: dagen op rij geoefend. Mis je een dag en heb je een 🧊 bevriezer, dan blijft je streak heel.
+  Een bevriezer verdien je bij elke 7 dagen streak (max. 2).
+- **XP**: 5 per flashcard, 8 per meerkeuzevraag, 10 per getypt antwoord, +20 voor afmaken, +20 voor foutloos.
+- **Badges** staan in `src/features/progress/badges.ts`. Een nieuwe badge = één regel toevoegen.
+- **Op je beginscherm**: zet Woordwerk op je beginscherm (iPhone: Delen → Zet op beginscherm).
+  Op iPhone kan je streak dan als getal op het icoon staan (Instellingen → Je streak op je beginscherm).
 
 ## Een startlijst toevoegen
 

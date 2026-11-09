@@ -44,13 +44,20 @@ Antwoorden op de startvragen (zie `opdracht.md`, hoofdstuk 17).
 |---|---|
 | 1 | Basis ✅ |
 | 2 | Woordenlijsten ✅ |
-| 3 | Oefenen (flashcards, typen, meerkeuze, toets) |
+| 3 | Oefenen (flashcards, typen, meerkeuze, toets) + streak, XP, levels, badges ✅ |
 | 4 | **Foto scannen** (was fase 7) |
-| 5 | Slim herhalen en dashboard |
+| 5 | Slim herhalen (spaced repetition) |
 | 6 | Werkwoordtrainer |
 | 7 | Grammatica |
 | 8 | Extra oefenmodi |
 | 9 | Video's en planner |
-| 10 | Statistieken, badges, XP |
+| 10 | Statistieken: grafieken, heatmap, moeilijkste woorden |
 | 11 | PWA, offline, back-up, afwerking |
 | 12 | Uitbreiden met meer talen |
+
+## Afspraken na fase 2
+
+- Streak en beloningen (zoals bij taal-apps) zijn naar voren gehaald in fase 3: streak met weekoverzicht,
+  bevriezers, XP en levels, dagdoel, 12 badges, confetti.
+- Streak op het beginscherm van je telefoon: een website kan geen echte widget maken. Wel:
+  installeren op het beginscherm (eigen icoon) en op iPhone het streak-getal op het app-icoon.

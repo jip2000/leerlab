@@ -10,6 +10,7 @@ import { ImportPage } from '@/pages/lists/ImportPage';
 import { SharedListPage } from '@/pages/lists/SharedListPage';
 import { StarterListPage } from '@/pages/lists/StarterListPage';
 import { PracticePage } from '@/pages/PracticePage';
+import { SessionPage } from '@/pages/SessionPage';
 import { GrammarPage } from '@/pages/GrammarPage';
 import { VerbsPage } from '@/pages/VerbsPage';
 import { ScanPage } from '@/pages/ScanPage';
@@ -39,6 +40,7 @@ export const router = createHashRouter([
       { path: 'lijsten/:id/bewerken', element: <ListEditorPage /> },
       { path: 'delen', element: <SharedListPage /> },
       { path: 'oefenen', element: <PracticePage /> },
+      { path: 'oefenen/:id', element: <SessionPage /> },
       { path: 'grammatica', element: <GrammarPage /> },
       { path: 'grammatica/:taal', element: <GrammarPage /> },
       { path: 'werkwoorden', element: <VerbsPage /> },

@@ -15,7 +15,7 @@ const pages = [
 test('de site start op Home', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toContainText(/Goede(morgen|middag|navond|nacht)/);
-  await expect(page.getByText('Vandaag herhalen')).toBeVisible();
+  await expect(page.getByText(/dagen op rij/).first()).toBeVisible();
 });
 
 test('je kunt naar alle pagina’s en terug naar Home', async ({ page, isMobile }) => {
@@ -31,7 +31,7 @@ test('je kunt naar alle pagina’s en terug naar Home', async ({ page, isMobile 
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(p.heading);
   }
   await nav.getByRole('link', { name: 'Home' }).click();
-  await expect(page.getByText('Vandaag herhalen')).toBeVisible();
+  await expect(page.getByText(/dagen op rij/).first()).toBeVisible();
 });
 
 test('donkere modus blijft bewaard na herladen', async ({ page }) => {

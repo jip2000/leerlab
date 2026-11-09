@@ -15,6 +15,8 @@ export interface Settings {
   thema: ThemeChoice;
   geluid: boolean;
   voorlezen: boolean;
+  /** Streak als getal op het app-icoon (als het toestel dat kan). */
+  streakOpIcoon: boolean;
   dagdoel: { type: 'minuten' | 'woorden'; aantal: number };
   nakijkregels: CheckRules;
 }
@@ -28,6 +30,7 @@ export const defaultSettings: Settings = {
   thema: 'systeem',
   geluid: true,
   voorlezen: false,
+  streakOpIcoon: false,
   dagdoel: { type: 'minuten', aantal: 10 },
   nakijkregels: {
     ignoreCase: true,
