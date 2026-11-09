@@ -1,0 +1,29 @@
+# Gemaakte keuzes
+
+Antwoorden op de startvragen (zie `opdracht.md`, hoofdstuk 17).
+
+| Vraag | Keuze |
+|---|---|
+| Naam van de site | **Woordwerk** |
+| Hoofdkleur | **Fris groen** (mint/smaragd): vrolijk en kalm |
+| Code bewaren | GitHub, repository **leerlab** |
+| Online zetten | Gratis hosting (GitHub Pages of vergelijkbaar), geen server |
+| Lettertype | **Plus Jakarta Sans** (Google Fonts) |
+
+## Techniek (aanvulling op hoofdstuk 13.1)
+- React + Vite + TypeScript (strict), Tailwind CSS v4, React Router, Zustand, Dexie (IndexedDB).
+- Iconen: Lucide.
+- Animaties: **Motion** (de nieuwe naam van Framer Motion, zelfde makers).
+- Tests: Vitest (unit) en Playwright (browser).
+
+## Plan fase 1 – Basis
+1. Project opzetten met alle pakketten en de mappenstructuur uit 13.4.
+2. Design-systeem: kleuren als CSS-variabelen (incl. kleur per vak), licht/donker (systeem + schakelaar), lettertype, basisonderdelen (Button, Card, Input, Badge, ProgressRing).
+3. `src/data/languages.ts` met alle 19 talen (vlag, speciale tekens, leesrichting, grammatica-onderdelen).
+4. Dexie-database met alle tabellen uit het datamodel (13.5).
+5. Navigatie: tabbalk onderaan op mobiel (4 hoofdpagina's + "Meer"), zijbalk op desktop, zoekbalk bovenaan.
+6. Alle 10 pagina's als nette lege pagina's.
+7. Eigen logo (SVG) en zachte paginaovergangen (met `prefers-reduced-motion`).
+8. Browsertest op mobiel (390×844) en desktop (1440×900) + screenshots.
+
+**Klaar als:** de site start, ziet er mooi uit op mobiel en desktop, en je kunt tussen pagina's wisselen.
