@@ -22,6 +22,7 @@ Alles draait in je browser; je gegevens blijven op je eigen apparaat.
 | 8 | Extra modi: leren, luisteren/dictee, koppelen, snel-ronde | ✅ |
 | 9 | Video's (YouTube, aantekeningen met tijden) en planner (leerschema, weekagenda) | ✅ |
 | 10 | Statistieken: oefentijd, kalender, beste vakken, moeilijkste woorden, 13 badges | ✅ |
+| 11 | Offline (PWA), back-up, hulp-tutor, snellere laadtijd | ✅ |
 
 De volledige planning staat in [`docs/keuzes.md`](docs/keuzes.md).
 
@@ -67,6 +68,30 @@ Eenmalig instellen op GitHub: **Settings → Pages → Source: GitHub Actions**.
 2. Voeg de code toe aan `LanguageCode` en een nieuw blok aan de lijst `languages`
    (naam, vlag, kleur, speciale tekens, stem voor voorlezen, onderwerpen).
 3. Draai `npm test`: die controleert onder andere of de kleur genoeg contrast heeft.
+
+## Back-up maken
+
+Alles staat alleen op je eigen apparaat (in de browser). Maak af en toe een back-up:
+
+1. Ga naar **Instellingen → Back-up**.
+2. Kies **Exporteer alles**. Je krijgt één bestand (`woordwerk-backup-…json`) met al je lijsten, voortgang, foto's en instellingen.
+3. Terugzetten (ook op een ander apparaat): **Importeer back-up** en kies dat bestand. Let op: wat er dan in Woordwerk staat, wordt vervangen.
+
+## Offline en installeren
+
+Woordwerk is een PWA: na de eerste keer laden werkt het ook zonder internet (behalve video's,
+en de tekstherkenning de allereerste keer per taal). Zet hem op je beginscherm via
+"Zet op beginscherm" (iPhone) of "Toevoegen aan startscherm" (Android).
+
+## Hulp-tutor
+
+Rechtsonder zit een hulpknop. De tutor beantwoordt vragen over Woordwerk en brengt je met één tik
+naar de juiste pagina. Hij werkt zonder internet en zonder AI: de antwoorden staan in
+`src/features/tutor/knowledge.ts` (een vraag toevoegen = een item toevoegen).
+
+**Later een echte AI?** Dat kan, maar het kost geld per bericht en vraagt een API-sleutel. Die sleutel
+mag nooit in de website zelf staan: je hebt dan een kleine server nodig. In `src/features/tutor/engine.ts`
+staat waar dat aangesloten kan worden (een `TutorEngine` met dezelfde vorm).
 
 ## Streak, XP en badges
 

@@ -7,6 +7,9 @@ import { cn } from '@/lib/cn';
 import { appBadgeSupported, enableAppBadge, updateAppBadge } from '@/lib/appBadge';
 import { getProfile } from '@/features/progress/repo';
 import { toast } from '@/lib/toast';
+import { exportAll, importAll } from '@/lib/backup';
+import { Button } from '@/components/ui/Button';
+import { Download, Upload } from 'lucide-react';
 
 const themes: { value: ThemeChoice; label: string; icon: typeof Sun }[] = [
   { value: 'systeem', label: 'Systeem', icon: Monitor },
@@ -134,7 +137,48 @@ export function SettingsPage() {
         </Section>
 
         <Section title="Back-up">
-          <p className="py-3 text-ink-soft">Exporteren en importeren van al je gegevens komt in fase 11.</p>
+          <div className="flex flex-col gap-3 py-3">
+            <p className="text-sm text-ink-soft">
+              Al je lijsten, voortgang, foto's en instellingen staan alleen op dit apparaat. Maak af en toe een back-up, of gebruik
+              hem om alles naar een ander apparaat te verhuizen.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                icon={<Download size={18} aria-hidden="true" />}
+                onClick={async () => {
+                  const data = await exportAll();
+                  const url = URL.createObjectURL(new Blob([JSON.stringify(data)], { type: 'application/json' }));
+                  const a = Object.assign(document.createElement('a'), { href: url, download: `woordwerk-backup-${data.exportedAt.slice(0, 10)}.json` });
+                  a.click();
+                  setTimeout(() => URL.revokeObjectURL(url), 1000);
+                  toast('Back-up gemaakt');
+                }}
+              >
+                Exporteer alles
+              </Button>
+              <label className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-[var(--radius-control)] border border-line bg-surface px-4 font-semibold hover:bg-surface-2">
+                <Upload size={18} aria-hidden="true" /> Importeer back-up
+                <input
+                  type="file"
+                  accept="application/json,.json"
+                  className="sr-only"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    e.target.value = '';
+                    if (!file) return;
+                    if (!confirm('Alles wat nu in Woordwerk staat, wordt vervangen door de back-up. Doorgaan?')) return;
+                    try {
+                      const r = await importAll(JSON.parse(await file.text()));
+                      toast(`Back-up teruggezet: ${r.lists} lijsten, ${r.words} woorden`);
+                      setTimeout(() => location.reload(), 1200);
+                    } catch (err) {
+                      toast(err instanceof Error ? err.message : 'Dit bestand kon niet gelezen worden.');
+                    }
+                  }}
+                />
+              </label>
+            </div>
+          </div>
         </Section>
       </div>
     </>

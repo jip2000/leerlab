@@ -11,15 +11,6 @@ import { SharedListPage } from '@/pages/lists/SharedListPage';
 import { StarterListPage } from '@/pages/lists/StarterListPage';
 import { PracticePage } from '@/pages/PracticePage';
 import { SessionPage } from '@/pages/SessionPage';
-import { GrammarPage } from '@/pages/GrammarPage';
-import { GrammarTopicPage } from '@/pages/GrammarTopicPage';
-import { VerbsPage } from '@/pages/VerbsPage';
-import { VerbSessionPage } from '@/pages/VerbSessionPage';
-import { ScanPage } from '@/pages/ScanPage';
-import { VideosPage } from '@/pages/VideosPage';
-import { VideoPage } from '@/pages/VideoPage';
-import { PlannerPage } from '@/pages/PlannerPage';
-import { StatsPage } from '@/pages/StatsPage';
 import { SettingsPage } from '@/pages/SettingsPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 
@@ -44,16 +35,16 @@ export const router = createHashRouter([
       { path: 'delen', element: <SharedListPage /> },
       { path: 'oefenen', element: <PracticePage /> },
       { path: 'oefenen/:id', element: <SessionPage /> },
-      { path: 'grammatica', element: <GrammarPage /> },
-      { path: 'grammatica/:taal', element: <GrammarPage /> },
-      { path: 'grammatica/:taal/:onderwerp', element: <GrammarTopicPage /> },
-      { path: 'werkwoorden', element: <VerbsPage /> },
-      { path: 'werkwoorden/oefenen', element: <VerbSessionPage /> },
-      { path: 'scannen', element: <ScanPage /> },
-      { path: 'videos', element: <VideosPage /> },
-      { path: 'videos/:id', element: <VideoPage /> },
-      { path: 'planner', element: <PlannerPage /> },
-      { path: 'statistieken', element: <StatsPage /> },
+      { path: 'grammatica', lazy: () => import('@/pages/GrammarPage').then((m) => ({ Component: m.GrammarPage })) },
+      { path: 'grammatica/:taal', lazy: () => import('@/pages/GrammarPage').then((m) => ({ Component: m.GrammarPage })) },
+      { path: 'grammatica/:taal/:onderwerp', lazy: () => import('@/pages/GrammarTopicPage').then((m) => ({ Component: m.GrammarTopicPage })) },
+      { path: 'werkwoorden', lazy: () => import('@/pages/VerbsPage').then((m) => ({ Component: m.VerbsPage })) },
+      { path: 'werkwoorden/oefenen', lazy: () => import('@/pages/VerbSessionPage').then((m) => ({ Component: m.VerbSessionPage })) },
+      { path: 'scannen', lazy: () => import('@/pages/ScanPage').then((m) => ({ Component: m.ScanPage })) },
+      { path: 'videos', lazy: () => import('@/pages/VideosPage').then((m) => ({ Component: m.VideosPage })) },
+      { path: 'videos/:id', lazy: () => import('@/pages/VideoPage').then((m) => ({ Component: m.VideoPage })) },
+      { path: 'planner', lazy: () => import('@/pages/PlannerPage').then((m) => ({ Component: m.PlannerPage })) },
+      { path: 'statistieken', lazy: () => import('@/pages/StatsPage').then((m) => ({ Component: m.StatsPage })) },
       { path: 'instellingen', element: <SettingsPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],

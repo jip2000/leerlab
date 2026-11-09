@@ -52,7 +52,7 @@ Antwoorden op de startvragen (zie `opdracht.md`, hoofdstuk 17).
 | 8 | Extra oefenmodi ✅ |
 | 9 | Video's en planner ✅ |
 | 10 | Statistieken: grafieken, heatmap, moeilijkste woorden ✅ |
-| 11 | PWA, offline, back-up, afwerking |
+| 11 | PWA, offline, back-up, afwerking ✅ (plus hulp-tutor) |
 | 12 | Uitbreiden met meer talen |
 
 ## Afspraken na fase 2
@@ -61,3 +61,9 @@ Antwoorden op de startvragen (zie `opdracht.md`, hoofdstuk 17).
   bevriezers, XP en levels, dagdoel, 12 badges, confetti.
 - Streak op het beginscherm van je telefoon: een website kan geen echte widget maken. Wel:
   installeren op het beginscherm (eigen icoon) en op iPhone het streak-getal op het app-icoon.
+
+## Afspraken bij "alle fases achter elkaar"
+
+- Hulp-tutor rechtsonder: gebouwd **zonder AI** (gratis, werkt offline, kennisbank met antwoorden + knoppen).
+  Een echte AI (bijv. Claude) kan later, maar kost geld per bericht en vraagt een API-sleutel op een eigen
+  server. Daar moet eerst toestemming voor komen.

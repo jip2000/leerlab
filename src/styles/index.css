@@ -130,7 +130,24 @@
 .above-tabbar {
   bottom: 0;
 }
+/* Hulpknop en -venster boven de tabbalk op mobiel. */
+.tutor-button {
+  bottom: calc(env(safe-area-inset-bottom) + 72px);
+}
+.tutor-panel {
+  bottom: calc(env(safe-area-inset-bottom) + 136px);
+}
+@media (min-width: 1024px) {
+  .tutor-button { bottom: 1.5rem; }
+  .tutor-panel { bottom: 6rem; }
+}
 @media (max-width: 1023.98px) {
+  :root[data-typing] .tutor-button {
+    display: none;
+  }
+  :root[data-typing] .tutor-panel {
+    bottom: calc(env(safe-area-inset-bottom) + 8px);
+  }
   .above-tabbar {
     bottom: calc(env(safe-area-inset-bottom) + 58px);
   }
