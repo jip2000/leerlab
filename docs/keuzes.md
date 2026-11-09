@@ -48,7 +48,7 @@ Antwoorden op de startvragen (zie `opdracht.md`, hoofdstuk 17).
 | 4 | **Foto scannen** (was fase 7) ✅ |
 | 5 | Slim herhalen (spaced repetition) ✅ |
 | 6 | Werkwoordtrainer ✅ |
-| 7 | Grammatica |
+| 7 | Grammatica ✅ (FR, DE, EN, ES) |
 | 8 | Extra oefenmodi |
 | 9 | Video's en planner |
 | 10 | Statistieken: grafieken, heatmap, moeilijkste woorden |

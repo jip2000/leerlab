@@ -50,7 +50,7 @@ test('zoeken vindt een grammatica-onderwerp', async ({ page, isMobile }) => {
   const box = page.getByRole('combobox', { name: 'Zoeken' }).filter({ visible: true });
   await box.fill('passe compose');
   await page.getByRole('option', { name: /Passé composé/ }).click();
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Grammatica Frans');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Passé composé (avoir/être, accord)');
 });
 
 test('geen horizontale scroll en knoppen groot genoeg', async ({ page, isMobile }) => {

@@ -12,6 +12,7 @@ import { StarterListPage } from '@/pages/lists/StarterListPage';
 import { PracticePage } from '@/pages/PracticePage';
 import { SessionPage } from '@/pages/SessionPage';
 import { GrammarPage } from '@/pages/GrammarPage';
+import { GrammarTopicPage } from '@/pages/GrammarTopicPage';
 import { VerbsPage } from '@/pages/VerbsPage';
 import { VerbSessionPage } from '@/pages/VerbSessionPage';
 import { ScanPage } from '@/pages/ScanPage';
@@ -44,6 +45,7 @@ export const router = createHashRouter([
       { path: 'oefenen/:id', element: <SessionPage /> },
       { path: 'grammatica', element: <GrammarPage /> },
       { path: 'grammatica/:taal', element: <GrammarPage /> },
+      { path: 'grammatica/:taal/:onderwerp', element: <GrammarTopicPage /> },
       { path: 'werkwoorden', element: <VerbsPage /> },
       { path: 'werkwoorden/oefenen', element: <VerbSessionPage /> },
       { path: 'scannen', element: <ScanPage /> },

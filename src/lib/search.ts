@@ -1,4 +1,5 @@
 import { languages } from '@/data/languages';
+import { getTopic } from '@/data/grammar';
 
 export interface SearchResult {
   kind: 'pagina' | 'grammatica' | 'lijst' | 'woord';
@@ -52,7 +53,7 @@ export function search(
           kind: 'grammatica',
           title: topic.title,
           subtitle: `Grammatica ${lang.name}`,
-          to: `/grammatica/${lang.code}`,
+          to: getTopic(lang.code, topic.id) ? `/grammatica/${lang.code}/${topic.id}` : `/grammatica/${lang.code}`,
         });
       }
     }

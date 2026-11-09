@@ -18,6 +18,7 @@ Alles draait in je browser; je gegevens blijven op je eigen apparaat.
 | 4 | Foto scannen (Tesseract, bijsnijden, controlescherm) | ✅ |
 | 5 | Slim herhalen (Leitner, 5 bakjes), Vandaag herhalen, gekend/bijna/nog leren | ✅ |
 | 6 | Werkwoordtrainer Frans, Duits, Engels, Spaans (4 oefenvormen, uitleg, statistiek) | ✅ |
+| 7 | Grammatica: 70 onderwerpen met uitleg en oefeningen (FR, DE, EN, ES) | ✅ |
 
 De volledige planning staat in [`docs/keuzes.md`](docs/keuzes.md).
 
@@ -72,6 +73,13 @@ Eenmalig instellen op GitHub: **Settings → Pages → Source: GitHub Actions**.
 - **Badges** staan in `src/features/progress/badges.ts`. Een nieuwe badge = één regel toevoegen.
 - **Op je beginscherm**: zet Woordwerk op je beginscherm (iPhone: Delen → Zet op beginscherm).
   Op iPhone kan je streak dan als getal op het icoon staan (Instellingen → Je streak op je beginscherm).
+
+## Een grammatica-onderwerp toevoegen
+
+1. Zet de id en titel in `src/data/languages.ts` (bij `grammarTopics` van de taal).
+2. Schrijf de uitleg en oefeningen in `src/data/grammar/<taal>.ts`. Soorten oefeningen:
+   `gap` (invullen), `choice` (kiezen), `table` (tabel), `translate` (vertalen), `fix` (fout verbeteren), `order` (volgorde).
+3. Draai `npm test`: die controleert of elk onderwerp inhoud heeft en of alle oefeningen geldig zijn.
 
 ## Een werkwoord toevoegen
 
