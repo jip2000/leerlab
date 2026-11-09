@@ -30,3 +30,20 @@ describe('zoeken', () => {
     expect(search('   ', pages)).toEqual([]);
   });
 });
+
+describe('zoeken in je eigen lijsten', () => {
+  const data = {
+    lists: [{ id: 'a', title: 'Unité 3 – vocabulaire' }],
+    words: [
+      { listId: 'a', left: "l'école", right: 'de school' },
+      { listId: 'a', left: 'la maison', right: 'het huis' },
+    ],
+  };
+  it('vindt lijsten op titel', () => {
+    expect(search('unite 3', pages, 8, data)[0]).toMatchObject({ kind: 'lijst', to: '/lijsten/a' });
+  });
+  it('vindt woorden aan beide kanten, zonder accenten', () => {
+    expect(search('ecole', pages, 8, data)[0]).toMatchObject({ kind: 'woord', subtitle: 'Woord in Unité 3 – vocabulaire' });
+    expect(search('huis', pages, 8, data)[0]).toMatchObject({ kind: 'woord', title: 'la maison – het huis' });
+  });
+});

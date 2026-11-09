@@ -1,19 +1,21 @@
 import { useLocation, useOutlet } from 'react-router';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { Sidebar } from './Sidebar';
 import { TabBar } from './TabBar';
 import { TopBar } from './TopBar';
 import { useApplyTheme } from '@/lib/theme';
+import { useTypingAttribute } from '@/lib/typing';
 import { navItems } from './nav';
+import { Toaster } from '@/components/ui/Toaster';
 
 /** Het "frame" om elke pagina: zijbalk, bovenbalk, tabbalk en een zachte overgang. */
 export function AppShell() {
   useApplyTheme();
+  useTypingAttribute();
   const location = useLocation();
   const outlet = useOutlet();
   const reduce = useReducedMotion();
-  const mainRef = useRef<HTMLElement>(null);
 
   // Paginatitel bijwerken en naar boven scrollen bij wisselen van pagina.
   useEffect(() => {
@@ -35,7 +37,6 @@ export function AppShell() {
         <TopBar />
         <main
           id="inhoud"
-          ref={mainRef}
           className="mx-auto w-full max-w-5xl flex-1 px-4 pt-5 pb-[calc(env(safe-area-inset-bottom)+96px)] sm:px-6 lg:px-8 lg:pt-2 lg:pb-12"
         >
           <AnimatePresence mode="wait" initial={false}>
@@ -52,6 +53,7 @@ export function AppShell() {
         </main>
       </div>
       <TabBar />
+      <Toaster />
     </div>
   );
 }

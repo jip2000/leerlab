@@ -27,3 +27,30 @@ Antwoorden op de startvragen (zie `opdracht.md`, hoofdstuk 17).
 8. Browsertest op mobiel (390×844) en desktop (1440×900) + screenshots.
 
 **Klaar als:** de site start, ziet er mooi uit op mobiel en desktop, en je kunt tussen pagina's wisselen.
+
+## Afspraken na fase 1
+
+- **Woordenlijsten uit schoolboeken** worden níet gekopieerd: die zijn eigendom van de uitgevers.
+  In plaats daarvan:
+  - Lijsten zijn te ordenen per **boek → leerjaar/niveau → hoofdstuk** (de boeknaam typ je zelf; bekende methodes worden voorgesteld).
+  - Woorden uit je eigen boek zet je erin via typen, plakken, CSV of (straks) een **foto**.
+  - Klasgenoten delen lijsten met een **deellink**.
+  - Voor talen die je meestal niet op school krijgt zijn er **eigen startlijsten per thema** (zelf geschreven).
+- **Foto → flitskaartjes is belangrijk**, en schuift daarom naar voren.
+
+## Nieuwe fasevolgorde
+
+| Fase | Wat |
+|---|---|
+| 1 | Basis ✅ |
+| 2 | Woordenlijsten ✅ |
+| 3 | Oefenen (flashcards, typen, meerkeuze, toets) |
+| 4 | **Foto scannen** (was fase 7) |
+| 5 | Slim herhalen en dashboard |
+| 6 | Werkwoordtrainer |
+| 7 | Grammatica |
+| 8 | Extra oefenmodi |
+| 9 | Video's en planner |
+| 10 | Statistieken, badges, XP |
+| 11 | PWA, offline, back-up, afwerking |
+| 12 | Uitbreiden met meer talen |

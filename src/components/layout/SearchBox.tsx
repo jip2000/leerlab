@@ -1,5 +1,7 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { db } from '@/db/db';
 import { Search } from 'lucide-react';
 import { search } from '@/lib/search';
 import { cn } from '@/lib/cn';
@@ -13,7 +15,9 @@ export function SearchBox({ autoFocus, onDone }: { autoFocus?: boolean; onDone?:
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const listId = useId();
-  const results = useMemo(() => search(query, navItems), [query]);
+  // Lijsten en woorden pas laden als je gaat zoeken.
+  const data = useLiveQuery(async () => (open ? { lists: await db.lists.toArray(), words: await db.words.toArray() } : undefined), [open]);
+  const results = useMemo(() => search(query, navItems, 10, data), [query, data]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {

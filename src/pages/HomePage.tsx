@@ -41,7 +41,7 @@ export function HomePage() {
             </p>
           </div>
           <Link
-            to="/lijsten"
+            to="/lijsten/nieuw"
             className="inline-flex h-12 w-fit items-center gap-2 rounded-[var(--radius-control)] bg-primary px-5 font-semibold text-on-primary hover:bg-primary-hover"
           >
             <Plus size={20} aria-hidden="true" /> Maak je eerste lijst

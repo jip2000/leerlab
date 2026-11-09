@@ -24,7 +24,7 @@ export function TabBar() {
     <>
       <nav
         aria-label="Hoofdmenu"
-        className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface/95 px-2 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
+        className="tabbar fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface/95 px-2 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
       >
         <ul className="mx-auto flex max-w-xl">
           {tabs.map(({ path, label, icon: Icon }) => (
@@ -119,3 +119,4 @@ export function TabBar() {
     </>
   );
 }
+

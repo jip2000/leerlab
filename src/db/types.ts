@@ -16,13 +16,24 @@ export interface Folder {
   createdAt: number;
 }
 
+/** Bij welk schoolboek hoort een lijst? */
+export interface BookInfo {
+  title: string; // bijv. "Grandes Lignes"
+  year?: number; // leerjaar 1 t/m 6
+  level?: string; // bijv. "vwo"
+  chapter?: string; // bijv. "3" of "Unité 3"
+}
+
 export interface WordList {
   id: Id;
   title: string;
   langLeft: LanguageCode;
   langRight: LanguageCode;
   folderId?: Id;
+  book?: BookInfo;
   tags: string[];
+  /** Als de lijst een kopie is van een ingebouwde startlijst. */
+  starterId?: string;
   createdAt: number;
   updatedAt: number;
   photoIds: Id[];

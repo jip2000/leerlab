@@ -115,6 +115,22 @@
   background-position: 0 96%;
 }
 
+/* Balk die onderaan blijft plakken, net boven de tabbalk (mobiel). */
+.above-tabbar {
+  bottom: 0;
+}
+@media (max-width: 1023.98px) {
+  .above-tabbar {
+    bottom: calc(env(safe-area-inset-bottom) + 58px);
+  }
+  :root[data-typing] .above-tabbar {
+    bottom: 0;
+  }
+  :root[data-typing] .tabbar {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

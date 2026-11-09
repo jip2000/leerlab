@@ -1,7 +1,14 @@
 import { createHashRouter } from 'react-router';
 import { AppShell } from '@/components/layout/AppShell';
 import { HomePage } from '@/pages/HomePage';
-import { ListsPage } from '@/pages/ListsPage';
+import { ListsPage } from '@/pages/lists/ListsPage';
+import { BookPage } from '@/pages/lists/BookPage';
+import { FolderPage } from '@/pages/lists/FolderPage';
+import { ListDetailPage } from '@/pages/lists/ListDetailPage';
+import { ListEditorPage } from '@/pages/lists/ListEditorPage';
+import { ImportPage } from '@/pages/lists/ImportPage';
+import { SharedListPage } from '@/pages/lists/SharedListPage';
+import { StarterListPage } from '@/pages/lists/StarterListPage';
 import { PracticePage } from '@/pages/PracticePage';
 import { GrammarPage } from '@/pages/GrammarPage';
 import { VerbsPage } from '@/pages/VerbsPage';
@@ -23,6 +30,14 @@ export const router = createHashRouter([
     children: [
       { index: true, element: <HomePage /> },
       { path: 'lijsten', element: <ListsPage /> },
+      { path: 'lijsten/nieuw', element: <ListEditorPage key="nieuw" /> },
+      { path: 'lijsten/importeren', element: <ImportPage /> },
+      { path: 'lijsten/boek/:key', element: <BookPage /> },
+      { path: 'lijsten/map/:id', element: <FolderPage /> },
+      { path: 'lijsten/start/:id', element: <StarterListPage /> },
+      { path: 'lijsten/:id', element: <ListDetailPage /> },
+      { path: 'lijsten/:id/bewerken', element: <ListEditorPage /> },
+      { path: 'delen', element: <SharedListPage /> },
       { path: 'oefenen', element: <PracticePage /> },
       { path: 'grammatica', element: <GrammarPage /> },
       { path: 'grammatica/:taal', element: <GrammarPage /> },

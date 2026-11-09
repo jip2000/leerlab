@@ -8,7 +8,7 @@ import { ThemeToggle } from './ThemeToggle';
 export function TopBar() {
   const [mobileSearch, setMobileSearch] = useState(false);
   return (
-    <div className="sticky top-0 z-20 border-b border-line bg-bg/90 backdrop-blur lg:border-0 lg:bg-transparent lg:backdrop-blur-none">
+    <div className="sticky top-0 z-20 border-b border-line bg-bg/90 backdrop-blur lg:static lg:border-0 lg:bg-transparent lg:backdrop-blur-none">
       {/* Mobiel */}
       <div className="flex h-15 items-center gap-2 px-4 lg:hidden">
         {mobileSearch ? (

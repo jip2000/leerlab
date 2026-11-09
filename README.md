@@ -13,8 +13,11 @@ Alles draait in je browser; je gegevens blijven op je eigen apparaat.
 | Fase | Wat | Klaar |
 |---|---|---|
 | 1 | Basis: design, navigatie, lege pagina's | ✅ |
-| 2 | Woordenlijsten | |
+| 2 | Woordenlijsten: boeken, mappen, plakken, CSV, delen, uitspraak, startlijsten | ✅ |
 | 3 | Oefenen | |
+| 4 | Foto scannen | |
+
+De volledige planning staat in [`docs/keuzes.md`](docs/keuzes.md).
 
 ## De site starten op je eigen computer
 
@@ -59,16 +62,23 @@ Eenmalig instellen op GitHub: **Settings → Pages → Source: GitHub Actions**.
    (naam, vlag, kleur, speciale tekens, stem voor voorlezen, onderwerpen).
 3. Draai `npm test`: die controleert onder andere of de kleur genoeg contrast heeft.
 
+## Een startlijst toevoegen
+
+Startlijsten (voor talen die je meestal niet op school krijgt) staan in `src/data/starter/index.ts`.
+Voeg een taal of thema toe en draai `npm test`: die controleert op dubbele woorden en verkeerde lidwoorden.
+
 ## Waar staat wat?
 
 ```
 src/
   components/ui/       knoppen, kaarten, logo, ring, schakelaar…
   components/layout/   zijbalk, tabbalk, zoekbalk, thema-knop
-  pages/               één bestand per pagina
+  pages/               één bestand per pagina (pages/lists/ voor alles rond lijsten)
+  features/lists/      opslaan, dupliceren, samenvoegen… van lijsten
   data/languages.ts    alle talen
   db/                  de lokale database (Dexie / IndexedDB)
-  lib/                 hulpfuncties (instellingen, thema, zoeken)
+  data/starter/        eigen startlijsten per thema
+  lib/                 hulpfuncties (plakken, CSV, delen, voorlezen, zoeken…)
   styles/index.css     kleuren (design tokens) en lettertype
 tests/unit/            snelle tests (Vitest)
 tests/e2e/             browsertests (Playwright)
