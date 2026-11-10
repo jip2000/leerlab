@@ -51,3 +51,16 @@ test('werkt offline na de eerste keer laden', async ({ page, context }) => {
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Statistieken'); // los geladen pagina komt ook uit de cache
   await context.setOffline(false);
 });
+
+test('na een update: ontbrekend stukje → nette melding en verversen', async ({ page }) => {
+  await page.goto('/#/');
+  await expect(page.getByText(/dag(en)? op rij/).first()).toBeVisible();
+  // Doe alsof de pagina "Werkwoorden" van een oude versie niet meer bestaat.
+  await page.route(/assets\/VerbsPage-.*\.js$/, (r) => r.fulfill({ status: 404, body: '' }));
+  await page.evaluate(() => sessionStorage.setItem('woordwerk-herladen', '1')); // geen automatisch herladen in de test
+  await page.goto('/#/werkwoorden');
+  await expect(page.getByRole('heading', { name: 'Er is een nieuwe versie van Woordwerk' })).toBeVisible();
+  await page.unroute(/assets\/VerbsPage-.*\.js$/);
+  await page.getByRole('button', { name: 'Opnieuw laden' }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Werkwoorden');
+});

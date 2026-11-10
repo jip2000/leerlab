@@ -14,6 +14,7 @@ import { SessionPage } from '@/pages/SessionPage';
 import { SettingsPage } from '@/pages/SettingsPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { gated } from '@/features/account/PlusGate';
+import { ErrorPage } from '@/pages/ErrorPage';
 
 /**
  * Hash-router (#/lijsten): werkt op gratis hosting zoals GitHub Pages,
@@ -23,6 +24,7 @@ export const router = createHashRouter([
   {
     path: '/',
     element: <AppShell />,
+    errorElement: <ErrorPage />,
     children: [
       { index: true, element: <HomePage /> },
       { path: 'lijsten', element: <ListsPage /> },
