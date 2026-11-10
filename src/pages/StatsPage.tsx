@@ -15,6 +15,8 @@ import { Heatmap } from '@/features/stats/Heatmap';
 import { dailyMinutes, weeklyMinutes } from '@/features/stats/data';
 import { bestSubjects, hardestWords, knownWords } from '@/features/stats/queries';
 import { cn } from '@/lib/cn';
+import { usePlusAccess } from '@/lib/plan';
+import { PlusGate } from '@/features/account/PlusGate';
 
 function Tile({ label, value, sub }: { label: string; value: string | number; sub?: string }) {
   return (
@@ -34,6 +36,7 @@ export function StatsPage() {
   const known = useLiveQuery(() => knownWords(), []);
   const sessions = useLiveQuery(() => db.sessions.filter((s) => !!s.endedAt).count(), []);
   const [range, setRange] = useState<'dag' | 'week'>('dag');
+  const statsOk = usePlusAccess('statistieken');
   if (!profile || !days) return null;
 
   const today = dayKey();
@@ -60,6 +63,8 @@ export function StatsPage() {
         </Card>
       </div>
 
+      {!statsOk && <div className="mt-4"><PlusGate feature="statistieken">{null}</PlusGate></div>}
+      {statsOk && (<>
       <Card className="mt-4">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-lg font-bold">Oefentijd in minuten</h2>
@@ -121,6 +126,8 @@ export function StatsPage() {
           )}
         </Card>
       </div>
+
+      </>)}
 
       <section className="mt-8">
         <h2 className="mb-3 text-xl font-extrabold tracking-[-0.015em]">

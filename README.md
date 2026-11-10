@@ -70,6 +70,14 @@ Eenmalig instellen op GitHub: **Settings → Pages → Source: GitHub Actions**.
    (naam, vlag, kleur, speciale tekens, stem voor voorlezen, onderwerpen).
 3. Draai `npm test`: die controleert onder andere of de kleur genoeg contrast heeft.
 
+## Account, teller en Plus
+
+- **Inloggen (optioneel)** via Supabase, met synchroniseren tussen apparaten.
+- **Bezoekersteller** via GoatCounter (anoniem, zonder cookies).
+- **Plus**: de regeling staat klaar in `src/lib/plan.ts`, maar staat uit tot `VITE_PLUS_AAN=true`.
+
+Hoe je dit aanzet, staat in [`docs/stappenplan.md`](docs/stappenplan.md).
+
 ## Back-up maken
 
 Alles staat alleen op je eigen apparaat (in de browser). Maak af en toe een back-up:

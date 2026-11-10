@@ -8,6 +8,7 @@ import { appBadgeSupported, enableAppBadge, updateAppBadge } from '@/lib/appBadg
 import { getProfile } from '@/features/progress/repo';
 import { toast } from '@/lib/toast';
 import { exportAll, importAll } from '@/lib/backup';
+import { analyticsConfigured } from '@/lib/analytics';
 import { Button } from '@/components/ui/Button';
 import { Download, Upload } from 'lucide-react';
 
@@ -135,6 +136,17 @@ export function SettingsPage() {
             />
           ))}
         </Section>
+
+        {analyticsConfigured && (
+          <Section title="Privacy">
+            <Switch
+              label="Anoniem meetellen"
+              description="Telt alleen welke pagina's bekeken worden, zonder cookies en zonder wie je bent. Zo weet de maker hoeveel mensen Woordwerk gebruiken."
+              checked={s.meetellen}
+              onChange={(meetellen) => s.update({ meetellen })}
+            />
+          </Section>
+        )}
 
         <Section title="Back-up">
           <div className="flex flex-col gap-3 py-3">

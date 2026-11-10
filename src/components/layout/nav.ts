@@ -1,5 +1,5 @@
 import {
-  BookOpen, Camera, CalendarDays, ChartColumn, House, Layers, Library, PenLine, Settings, SquarePlay,
+  BookOpen, Camera, CalendarDays, ChartColumn, CircleUserRound, House, Layers, Library, PenLine, Settings, SquarePlay,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -23,6 +23,7 @@ export const navItems: NavItem[] = [
   { path: '/planner', label: 'Planner', icon: CalendarDays, group: 'hulp' },
   { path: '/statistieken', label: 'Statistieken', icon: ChartColumn, group: 'jij' },
   { path: '/instellingen', label: 'Instellingen', icon: Settings, group: 'jij' },
+  { path: '/account', label: 'Account', icon: CircleUserRound, group: 'jij' },
 ];
 
 export const navGroups: { id: NavItem['group']; label: string }[] = [

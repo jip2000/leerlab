@@ -17,6 +17,8 @@ export interface Settings {
   voorlezen: boolean;
   /** Streak als getal op het app-icoon (als het toestel dat kan). */
   streakOpIcoon: boolean;
+  /** Anoniem meetellen in de bezoekersteller. */
+  meetellen: boolean;
   dagdoel: { type: 'minuten' | 'woorden'; aantal: number };
   nakijkregels: CheckRules;
 }
@@ -31,6 +33,7 @@ export const defaultSettings: Settings = {
   geluid: true,
   voorlezen: false,
   streakOpIcoon: false,
+  meetellen: true,
   dagdoel: { type: 'minuten', aantal: 10 },
   nakijkregels: {
     ignoreCase: true,

@@ -13,6 +13,7 @@ import { PracticePage } from '@/pages/PracticePage';
 import { SessionPage } from '@/pages/SessionPage';
 import { SettingsPage } from '@/pages/SettingsPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
+import { gated } from '@/features/account/PlusGate';
 
 /**
  * Hash-router (#/lijsten): werkt op gratis hosting zoals GitHub Pages,
@@ -38,14 +39,17 @@ export const router = createHashRouter([
       { path: 'grammatica', lazy: () => import('@/pages/GrammarPage').then((m) => ({ Component: m.GrammarPage })) },
       { path: 'grammatica/:taal', lazy: () => import('@/pages/GrammarPage').then((m) => ({ Component: m.GrammarPage })) },
       { path: 'grammatica/:taal/:onderwerp', lazy: () => import('@/pages/GrammarTopicPage').then((m) => ({ Component: m.GrammarTopicPage })) },
-      { path: 'werkwoorden', lazy: () => import('@/pages/VerbsPage').then((m) => ({ Component: m.VerbsPage })) },
-      { path: 'werkwoorden/oefenen', lazy: () => import('@/pages/VerbSessionPage').then((m) => ({ Component: m.VerbSessionPage })) },
-      { path: 'scannen', lazy: () => import('@/pages/ScanPage').then((m) => ({ Component: m.ScanPage })) },
+      { path: 'werkwoorden', lazy: () => import('@/pages/VerbsPage').then((m) => ({ Component: () => gated('werkwoorden', <m.VerbsPage />) })) },
+      { path: 'werkwoorden/oefenen', lazy: () => import('@/pages/VerbSessionPage').then((m) => ({ Component: () => gated('werkwoorden', <m.VerbSessionPage />) })) },
+      { path: 'scannen', lazy: () => import('@/pages/ScanPage').then((m) => ({ Component: () => gated('scannen', <m.ScanPage />) })) },
       { path: 'videos', lazy: () => import('@/pages/VideosPage').then((m) => ({ Component: m.VideosPage })) },
       { path: 'videos/:id', lazy: () => import('@/pages/VideoPage').then((m) => ({ Component: m.VideoPage })) },
-      { path: 'planner', lazy: () => import('@/pages/PlannerPage').then((m) => ({ Component: m.PlannerPage })) },
+      { path: 'planner', lazy: () => import('@/pages/PlannerPage').then((m) => ({ Component: () => gated('planner', <m.PlannerPage />) })) },
       { path: 'statistieken', lazy: () => import('@/pages/StatsPage').then((m) => ({ Component: m.StatsPage })) },
       { path: 'instellingen', element: <SettingsPage /> },
+      { path: 'account', lazy: () => import('@/pages/AccountPage').then((m) => ({ Component: m.AccountPage })) },
+      { path: 'plus', lazy: () => import('@/pages/PlusPage').then((m) => ({ Component: m.PlusPage })) },
+      { path: 'privacy', lazy: () => import('@/pages/PrivacyPage').then((m) => ({ Component: m.PrivacyPage })) },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

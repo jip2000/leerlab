@@ -13,6 +13,8 @@ describe('hulp-tutor', () => {
     expect(top('hoe plan ik mijn toets')).toBe('planner');
     expect(top('waarom wordt ecole fout gerekend, het accent')).toBe('nakijken');
     expect(top('hoe zet ik dit op mijn nieuwe telefoon')).toBe('backup');
+    expect(top('hoe maak ik een account')).toBe('account');
+    expect(top('wat kost plus')).toBe('plus');
     expect(top('hoe vervoeg ik werkwoorden')).toBe('werkwoorden');
     expect(top('Kan ik een lijst naar een klasgenoot sturen?')).toBe('delen');
     expect(top('hoe leer ik woordjes het snelst')).toBe('tips');
@@ -31,7 +33,7 @@ describe('hulp-tutor', () => {
   });
   it('kennisbank: unieke ids en alleen bestaande pagina’s', () => {
     expect(new Set(knowledge.map((k) => k.id)).size).toBe(knowledge.length);
-    const pages = ['/', '/lijsten', '/lijsten/nieuw', '/lijsten/importeren', '/oefenen', '/werkwoorden', '/grammatica', '/scannen', '/videos', '/planner', '/statistieken', '/instellingen'];
+    const pages = ['/', '/lijsten', '/lijsten/nieuw', '/lijsten/importeren', '/oefenen', '/werkwoorden', '/grammatica', '/scannen', '/videos', '/planner', '/statistieken', '/instellingen', '/account', '/plus', '/privacy'];
     for (const k of knowledge) for (const a of k.actions ?? []) expect(pages, k.id).toContain(a.to);
   });
 });

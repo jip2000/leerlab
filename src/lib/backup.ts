@@ -52,7 +52,7 @@ export function validateBackup(data: unknown): Backup {
 }
 
 /** Zet een back-up terug. Alles wat er nu staat, wordt vervangen. */
-export async function importAll(data: unknown): Promise<{ lists: number; words: number }> {
+export async function importAll(data: unknown, opts: { keepFiles?: boolean } = {}): Promise<{ lists: number; words: number }> {
   const b = validateBackup(data);
   await db.transaction('rw', [...TABLES.map((t) => db.table(t)), db.files], async () => {
     for (const t of TABLES) {
@@ -60,11 +60,11 @@ export async function importAll(data: unknown): Promise<{ lists: number; words: 
       const rows = b.tables[t];
       if (Array.isArray(rows) && rows.length) await db.table(t).bulkAdd(rows);
     }
-    await db.files.clear();
+    if (!opts.keepFiles) await db.files.clear();
     for (const f of b.files ?? []) {
       const bin = atob(f.data);
       const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0));
-      await db.files.add({ id: f.id, name: f.name, createdAt: f.createdAt, blob: new Blob([bytes], { type: f.type }) });
+      await db.files.put({ id: f.id, name: f.name, createdAt: f.createdAt, blob: new Blob([bytes], { type: f.type }) });
     }
   });
   for (const [k, v] of Object.entries(b.local ?? {})) {

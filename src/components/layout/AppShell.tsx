@@ -6,6 +6,8 @@ import { checkQuietBadges, getProfile, reconcileStreak } from '@/features/progre
 import { updateAppBadge } from '@/lib/appBadge';
 import { celebrate } from '@/lib/confetti';
 import { toast } from '@/lib/toast';
+import { trackPage } from '@/lib/analytics';
+import { useSync } from '@/features/account/useSync';
 import { useEffect } from 'react';
 import { Sidebar } from './Sidebar';
 import { TabBar } from './TabBar';
@@ -20,6 +22,7 @@ import { TutorChat } from '@/features/tutor/TutorChat';
 export function AppShell() {
   useApplyTheme();
   useTypingAttribute();
+  useSync();
   const location = useLocation();
   const outlet = useOutlet();
   const reduce = useReducedMotion();
@@ -50,6 +53,7 @@ export function AppShell() {
     const item = navItems.find((i) => (i.path === '/' ? location.pathname === '/' : location.pathname.startsWith(i.path)));
     document.title = item && item.path !== '/' ? `${item.label} – Woordwerk` : 'Woordwerk';
     window.scrollTo(0, 0);
+    trackPage(location.pathname);
   }, [location.pathname]);
 
   return (

@@ -3,6 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { Layers, Play, Plus, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { dueToday, startReview } from '@/features/srs/repo';
+import { usePlusAccess } from '@/lib/plan';
 import { planFor, startTask, upcomingTests } from '@/features/planner/repo';
 import { daysBetween, describeTask } from '@/features/planner/schedule';
 import { dayKey } from '@/features/progress/streak';
@@ -34,6 +35,7 @@ export function HomePage() {
   const lists = useLists();
   const paused = useLiveQuery(() => openSession(), []);
   const due = useLiveQuery(() => dueToday(), []);
+  const reviewOk = usePlusAccess('slim-herhalen');
   // Eerstvolgende toets binnen 2 weken, met de taak van vandaag.
   const nextTest = useLiveQuery(async () => {
     const t = (await upcomingTests()).find((x) => daysBetween(dayKey(), x.date) <= 14);
@@ -105,7 +107,7 @@ export function HomePage() {
         </Card>
       )}
 
-      {due && due.length > 0 && (
+      {reviewOk && due && due.length > 0 && (
         <Card tone="mint" className="flex flex-wrap items-center gap-4">
           <div className="min-w-0 flex-1">
             <h2 className="font-bold text-primary-ink">Vandaag herhalen</h2>

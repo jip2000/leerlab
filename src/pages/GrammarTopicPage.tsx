@@ -18,6 +18,8 @@ import { cn } from '@/lib/cn';
 import { toast } from '@/lib/toast';
 import { NotFoundPage } from './NotFoundPage';
 import { TopicVideos } from '@/features/videos/TopicVideos';
+import { FREE_GRAMMAR_TOPICS, usePlusAccess } from '@/lib/plan';
+import { PlusGate } from '@/features/account/PlusGate';
 
 const ROUND = 8;
 
@@ -27,6 +29,7 @@ export function GrammarTopicPage() {
   const topic = getTopic(lang, onderwerp ?? '');
   const info = getLanguage(lang)?.grammarTopics.find((t) => t.id === onderwerp);
   const dagdoel = useSettings((s) => s.dagdoel);
+  const plusOk = usePlusAccess('grammatica-oefenen');
   const [tab, setTab] = useState<'uitleg' | 'oefenen'>('uitleg');
   const [round, setRound] = useState(0);
   const exercises = useMemo(() => (topic ? shuffled(exercisesOf(topic)).slice(0, ROUND) : []), [topic, round]);
@@ -97,7 +100,10 @@ export function GrammarTopicPage() {
         </>
       )}
 
-      {tab === 'oefenen' && (
+      {tab === 'oefenen' && !plusOk && (getLanguage(lang).grammarTopics.findIndex((t) => t.id === topic.id) >= FREE_GRAMMAR_TOPICS) && (
+        <PlusGate feature="grammatica-oefenen">{null}</PlusGate>
+      )}
+      {tab === 'oefenen' && (plusOk || getLanguage(lang).grammarTopics.findIndex((t) => t.id === topic.id) < FREE_GRAMMAR_TOPICS) && (
         <div className="mx-auto max-w-lg">
           {!done ? (
             <>

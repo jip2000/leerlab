@@ -15,7 +15,8 @@ export default defineConfig({
     launchOptions,
   },
   webServer: {
-    command: 'npm run build && npm run preview -- --port 4173 --strictPort',
+    // Met een nep-Supabase-adres, zodat de inlogschermen getest kunnen worden (de test vangt alle verzoeken af).
+    command: 'VITE_SUPABASE_URL=https://test.supabase.invalid VITE_SUPABASE_ANON_KEY=test-anon npm run build && npm run preview -- --port 4173 --strictPort',
     port: 4173,
     reuseExistingServer: true,
     timeout: 180_000,

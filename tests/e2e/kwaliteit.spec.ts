@@ -4,6 +4,7 @@ import AxeBuilder from '@axe-core/playwright';
 const pages = [
   '/', '/lijsten', '/lijsten/nieuw', '/lijsten/importeren', '/oefenen', '/grammatica', '/grammatica/fr', '/grammatica/fr/subjonctif',
   '/grammatica/la/declinaties', '/werkwoorden', '/scannen', '/videos', '/planner', '/statistieken', '/instellingen', '/lijsten/start/start-sv-eten',
+  '/account', '/plus', '/privacy',
 ];
 
 for (const theme of ['light', 'dark'] as const) {
