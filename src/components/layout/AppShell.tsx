@@ -51,7 +51,7 @@ export function AppShell() {
   // Paginatitel bijwerken en naar boven scrollen bij wisselen van pagina.
   useEffect(() => {
     const item = navItems.find((i) => (i.path === '/' ? location.pathname === '/' : location.pathname.startsWith(i.path)));
-    document.title = item && item.path !== '/' ? `${item.label} – Woordwerk` : 'Woordwerk';
+    document.title = item && item.path !== '/' ? `${item.label} – Woordwerk` : 'Woordwerk: woordjes, grammatica en werkwoorden leren';
     window.scrollTo(0, 0);
     trackPage(location.pathname);
   }, [location.pathname]);

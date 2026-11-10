@@ -3,7 +3,34 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
-    <meta name="description" content="Woordwerk: leer woordjes, grammatica en werkwoorden voor al je talen." />
+    <meta name="description" content="Gratis woordjes leren, grammatica oefenen en werkwoorden vervoegen voor 19 talen. Maak flitskaartjes van een foto van je boek, oefen met een streak en haal een hoger cijfer." />
+    <link rel="canonical" href="%VITE_SITE_URL%" />
+    <!-- Voorbeeld bij delen (WhatsApp, Instagram, Facebook, LinkedIn) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Woordwerk" />
+    <meta property="og:locale" content="nl_NL" />
+    <meta property="og:title" content="Woordwerk: woordjes, grammatica en werkwoorden leren" />
+    <meta property="og:description" content="Flitskaartjes van een foto van je boek, werkwoorden vervoegen, grammatica oefenen en een streak bijhouden. Gratis, voor 19 talen." />
+    <meta property="og:url" content="%VITE_SITE_URL%" />
+    <meta property="og:image" content="%VITE_SITE_URL%og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Woordwerk: woordjes, grammatica en werkwoorden leren voor al je talen" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <!-- Voor Google: wat voor site dit is -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Woordwerk",
+        "url": "%VITE_SITE_URL%",
+        "description": "Woordjes leren, grammatica oefenen en werkwoorden vervoegen voor 19 talen, met flitskaartjes van een foto van je boek.",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Alle (in de browser)",
+        "inLanguage": "nl",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" }
+      }
+    </script>
     <meta name="theme-color" content="#F2F7F4" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0C1714" media="(prefers-color-scheme: dark)" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
@@ -13,7 +40,7 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="Woordwerk" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <title>Woordwerk</title>
+    <title>Woordwerk: woordjes, grammatica en werkwoorden leren</title>
     <script>
       // Zet het thema meteen, zodat de pagina niet eerst wit flitst.
       (function () {
@@ -27,6 +54,10 @@
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <h1>Woordwerk</h1>
+      <p>Woordjes leren, grammatica oefenen en werkwoorden vervoegen voor 19 talen. Zet JavaScript aan om Woordwerk te gebruiken.</p>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
