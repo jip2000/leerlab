@@ -8,8 +8,7 @@ describe('grammatica-inhoud', () => {
   for (const [lang, topics] of Object.entries(grammar) as [LanguageCode, NonNullable<(typeof grammar)['fr']>][]) {
     it(`${lang}: onderwerpen kloppen met de talenlijst`, () => {
       const ids = getLanguage(lang).grammarTopics.map((t) => t.id);
-      // Talen met prioriteit 1 en 2 moeten compleet zijn; bij de rest mag nog iets ontbreken.
-      if (getLanguage(lang).grammarPriority < 3) for (const id of ids) expect(topics.some((t) => t.id === id), `${lang}/${id}`).toBe(true);
+      for (const id of ids) expect(topics.some((t) => t.id === id), `${lang}/${id}`).toBe(true);
       for (const t of topics) expect(ids, `${lang}/${t.id} staat niet in languages.ts`).toContain(t.id);
     });
 
@@ -47,6 +46,10 @@ describe('grammatica-inhoud', () => {
       }
     });
   }
+
+  it('alle 19 talen hebben grammatica', () => {
+    expect(Object.keys(grammar).sort()).toHaveLength(19);
+  });
 
   it('fout-zoek-opgaven: de foute zin is echt anders dan de goede', () => {
     for (const topics of Object.values(grammar))

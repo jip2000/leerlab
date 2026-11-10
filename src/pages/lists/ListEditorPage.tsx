@@ -17,6 +17,9 @@ import { bookSuggestions, levels, years } from '@/features/lists/books';
 import { insertAtCursor } from '@/lib/insert';
 import { toast } from '@/lib/toast';
 import { cn } from '@/lib/cn';
+import { saveImage } from '@/lib/fileUrl';
+import { WordImage } from '@/components/ui/WordImage';
+import { ImagePlus } from 'lucide-react';
 
 interface Row extends WordInput {
   key: number;
@@ -305,6 +308,27 @@ export function ListEditorPage() {
                     <Field label="Notitie of ezelsbruggetje">
                       <Input value={r.note ?? ''} onChange={(e) => update(r.key, { note: e.target.value })} {...track('nl')} />
                     </Field>
+                    <div className="flex items-center gap-3 sm:col-span-2">
+                      {r.imageId && <WordImage id={r.imageId} className="h-16 w-16" alt={`Plaatje bij ${r.left}`} />}
+                      <label className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-[var(--radius-control)] border border-line px-3 text-sm font-semibold hover:bg-surface-2">
+                        <ImagePlus size={18} aria-hidden="true" /> {r.imageId ? 'Ander plaatje' : 'Plaatje toevoegen'}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="sr-only"
+                          aria-label={`Plaatje bij woord ${i + 1}`}
+                          onChange={async (e) => {
+                            const f = e.target.files?.[0];
+                            if (f) update(r.key, { imageId: await saveImage(f) });
+                          }}
+                        />
+                      </label>
+                      {r.imageId && (
+                        <Button variant="ghost" onClick={() => update(r.key, { imageId: undefined })}>
+                          Weghalen
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 )}
               </li>

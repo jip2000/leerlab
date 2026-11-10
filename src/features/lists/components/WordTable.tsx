@@ -1,6 +1,7 @@
 import type { LanguageCode } from '@/data/languages';
 import { SpeakButton } from '@/components/ui/SpeakButton';
 import { withArticle } from '@/data/starter';
+import { WordImage } from '@/components/ui/WordImage';
 
 export interface WordRow {
   left: string;
@@ -9,6 +10,7 @@ export interface WordRow {
   extraForms?: string;
   example?: string;
   note?: string;
+  imageId?: string;
 }
 
 /** Woorden netjes onder elkaar, met luisterknoppen. */
@@ -19,7 +21,8 @@ export function WordTable({ words, langLeft, langRight }: { words: WordRow[]; la
         const left = withArticle(w.left, w.article);
         return (
           <li key={i} className="grid grid-cols-[1fr_1fr] gap-x-3 px-3 py-2 sm:px-4">
-            <div className="flex min-w-0 items-center gap-1">
+            <div className="flex min-w-0 items-center gap-2">
+              {w.imageId && <WordImage id={w.imageId} className="h-10 w-10 shrink-0" alt="" />}
               <span className="min-w-0 font-semibold break-words" lang={langLeft}>
                 {left}
               </span>

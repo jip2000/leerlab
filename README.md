@@ -17,13 +17,13 @@ Alles draait in je browser; je gegevens blijven op je eigen apparaat.
 | 3 | Oefenen (flashcards, typen, meerkeuze, toets) + streak, XP, levels, badges | ✅ |
 | 4 | Foto scannen (Tesseract, bijsnijden, controlescherm) | ✅ |
 | 5 | Slim herhalen (Leitner, 5 bakjes), Vandaag herhalen, gekend/bijna/nog leren | ✅ |
-| 6 | Werkwoordtrainer Frans, Duits, Engels, Spaans (4 oefenvormen, uitleg, statistiek) | ✅ |
+| 6 | Werkwoordtrainer Frans, Duits, Engels, Spaans, Italiaans, Portugees, Latijn | ✅ |
 | 7 | Grammatica: 70 onderwerpen met uitleg en oefeningen (FR, DE, EN, ES) | ✅ |
 | 8 | Extra modi: leren, luisteren/dictee, koppelen, snel-ronde | ✅ |
 | 9 | Video's (YouTube, aantekeningen met tijden) en planner (leerschema, weekagenda) | ✅ |
 | 10 | Statistieken: oefentijd, kalender, beste vakken, moeilijkste woorden, 13 badges | ✅ |
 | 11 | Offline (PWA), back-up, hulp-tutor, snellere laadtijd | ✅ |
-| 12 | Grammatica Nederlands, Latijn, Italiaans, Portugees + basis voor 10 andere talen | ✅ (deels, zie docs/keuzes.md) |
+| 12 | Grammatica voor alle 19 talen, plaatje per woord | ✅ |
 
 De volledige planning staat in [`docs/keuzes.md`](docs/keuzes.md).
 

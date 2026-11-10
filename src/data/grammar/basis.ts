@@ -21,8 +21,30 @@ const kies = (question: string, options: string[], answer: number, explain?: str
 
 const geslacht = (blocks: Block[], exercises: Exercise[]): TopicContent => ({ id: 'lidwoorden-geslacht', blocks, exercises });
 
+/** Belangrijkste werkwoorden in de tegenwoordige tijd: tabel + rijtjes invullen. */
+function werkwoorden(persons: string[], verbs: { inf: string; nl: string; forms: string[] }[], extra: Block[] = []): TopicContent {
+  return {
+    id: 'werkwoorden-presens',
+    blocks: [
+      ...extra,
+      { type: 'table', head: ['', ...verbs.map((v) => `${v.inf} (${v.nl})`)], rows: persons.map((p, i) => [p, ...verbs.map((v) => v.forms[i]!)]) },
+      { type: 'tip', text: 'Dit zijn de allerbelangrijkste werkwoorden om mee te beginnen. Er komen er later meer bij.' },
+    ],
+    exercises: verbs.flatMap((v): Exercise[] => [
+      { type: 'table', title: `${v.inf} (${v.nl})`, rows: persons.map((p, i) => ({ label: p, answer: v.forms[i]! })) },
+      ...persons.slice(0, 3).map((p, i): Exercise => ({ type: 'gap', sentence: `${p} ___ (${v.inf})`, answer: v.forms[i]! })),
+    ]),
+  };
+}
+
+
 export const basisGrammar: Partial<Record<LanguageCode, TopicContent[]>> = {
   sv: [
+    werkwoorden(['jag', 'du', 'han/hon', 'vi', 'ni', 'de'], [
+      { inf: 'vara', nl: 'zijn', forms: ['är', 'är', 'är', 'är', 'är', 'är'] },
+      { inf: 'ha', nl: 'hebben', forms: ['har', 'har', 'har', 'har', 'har', 'har'] },
+      { inf: 'tala', nl: 'spreken', forms: ['talar', 'talar', 'talar', 'talar', 'talar', 'talar'] },
+    ], [{ type: 'text', text: 'Goed nieuws: Zweedse werkwoorden veranderen **niet** per persoon. Jag är, du är, vi är…' }]),
     geslacht(
       [
         { type: 'text', text: 'Zweeds heeft twee geslachten: **en**-woorden en **ett**-woorden. Ongeveer drie op de vier woorden is een en-woord: en bil (een auto), ett hus (een huis).' },
@@ -34,6 +56,11 @@ export const basisGrammar: Partial<Record<LanguageCode, TopicContent[]>> = {
     telwoorden('sv'),
   ],
   da: [
+    werkwoorden(['jeg', 'du', 'han/hun', 'vi', 'I', 'de'], [
+      { inf: 'være', nl: 'zijn', forms: ['er', 'er', 'er', 'er', 'er', 'er'] },
+      { inf: 'have', nl: 'hebben', forms: ['har', 'har', 'har', 'har', 'har', 'har'] },
+      { inf: 'tale', nl: 'spreken', forms: ['taler', 'taler', 'taler', 'taler', 'taler', 'taler'] },
+    ], [{ type: 'text', text: 'Deense werkwoorden veranderen **niet** per persoon: jeg er, du er, vi er…' }]),
     geslacht(
       [
         { type: 'text', text: 'Deens heeft twee geslachten: **en**-woorden en **et**-woorden: en bil, et hus. Het bepaald lidwoord komt achter het woord: bil**en**, hus**et**.' },
@@ -44,6 +71,11 @@ export const basisGrammar: Partial<Record<LanguageCode, TopicContent[]>> = {
     telwoorden('da'),
   ],
   no: [
+    werkwoorden(['jeg', 'du', 'han/hun', 'vi', 'dere', 'de'], [
+      { inf: 'være', nl: 'zijn', forms: ['er', 'er', 'er', 'er', 'er', 'er'] },
+      { inf: 'ha', nl: 'hebben', forms: ['har', 'har', 'har', 'har', 'har', 'har'] },
+      { inf: 'snakke', nl: 'praten', forms: ['snakker', 'snakker', 'snakker', 'snakker', 'snakker', 'snakker'] },
+    ], [{ type: 'text', text: 'Noorse werkwoorden veranderen **niet** per persoon: jeg er, du er, vi er…' }]),
     geslacht(
       [
         { type: 'text', text: 'Noors (bokmål) heeft drie geslachten: **en** (mannelijk), **ei** (vrouwelijk; je mag ook en gebruiken) en **et** (onzijdig): en bil, ei/en bok, et hus.' },
@@ -54,6 +86,10 @@ export const basisGrammar: Partial<Record<LanguageCode, TopicContent[]>> = {
     telwoorden('no'),
   ],
   pl: [
+    werkwoorden(['ja', 'ty', 'on/ona', 'my', 'wy', 'oni/one'], [
+      { inf: 'być', nl: 'zijn', forms: ['jestem', 'jesteś', 'jest', 'jesteśmy', 'jesteście', 'są'] },
+      { inf: 'mieć', nl: 'hebben', forms: ['mam', 'masz', 'ma', 'mamy', 'macie', 'mają'] },
+    ]),
     geslacht(
       [
         { type: 'text', text: 'Pools heeft **geen lidwoorden**: dom = huis, een huis of het huis. Wel zijn er drie geslachten, die je vaak aan het eind van het woord ziet.' },
@@ -64,6 +100,10 @@ export const basisGrammar: Partial<Record<LanguageCode, TopicContent[]>> = {
     telwoorden('pl'),
   ],
   cs: [
+    werkwoorden(['já', 'ty', 'on/ona', 'my', 'vy', 'oni'], [
+      { inf: 'být', nl: 'zijn', forms: ['jsem', 'jsi', 'je', 'jsme', 'jste', 'jsou'] },
+      { inf: 'mít', nl: 'hebben', forms: ['mám', 'máš', 'má', 'máme', 'máte', 'mají'] },
+    ]),
     geslacht(
       [
         { type: 'text', text: 'Tsjechisch heeft **geen lidwoorden**. Er zijn drie geslachten (bij mannelijk ook nog bezield/onbezield).' },
@@ -74,6 +114,10 @@ export const basisGrammar: Partial<Record<LanguageCode, TopicContent[]>> = {
     telwoorden('cs'),
   ],
   ru: [
+    werkwoorden(['я', 'ты', 'он/она', 'мы', 'вы', 'они'], [
+      { inf: 'говорить', nl: 'spreken', forms: ['говорю', 'говоришь', 'говорит', 'говорим', 'говорите', 'говорят'] },
+      { inf: 'читать', nl: 'lezen', forms: ['читаю', 'читаешь', 'читает', 'читаем', 'читаете', 'читают'] },
+    ], [{ type: 'text', text: '"Zijn" (быть) laat je in de tegenwoordige tijd meestal weg: Я студент = ik ben student.' }]),
     geslacht(
       [
         { type: 'text', text: 'Russisch heeft **geen lidwoorden**. Er zijn drie geslachten; je ziet ze meestal aan de laatste letter.' },
@@ -85,6 +129,10 @@ export const basisGrammar: Partial<Record<LanguageCode, TopicContent[]>> = {
     telwoorden('ru'),
   ],
   fi: [
+    werkwoorden(['minä', 'sinä', 'hän', 'me', 'te', 'he'], [
+      { inf: 'olla', nl: 'zijn', forms: ['olen', 'olet', 'on', 'olemme', 'olette', 'ovat'] },
+      { inf: 'puhua', nl: 'spreken', forms: ['puhun', 'puhut', 'puhuu', 'puhumme', 'puhutte', 'puhuvat'] },
+    ]),
     geslacht(
       [
         { type: 'text', text: 'Fins heeft **geen lidwoorden en geen geslacht**. Er is zelfs maar één woord voor hij en zij: **hän**.' },
@@ -95,6 +143,10 @@ export const basisGrammar: Partial<Record<LanguageCode, TopicContent[]>> = {
     telwoorden('fi'),
   ],
   tr: [
+    werkwoorden(['ben', 'sen', 'o', 'biz', 'siz', 'onlar'], [
+      { inf: 'gelmek', nl: 'komen (nu)', forms: ['geliyorum', 'geliyorsun', 'geliyor', 'geliyoruz', 'geliyorsunuz', 'geliyorlar'] },
+      { inf: 'yapmak', nl: 'doen (nu)', forms: ['yapıyorum', 'yapıyorsun', 'yapıyor', 'yapıyoruz', 'yapıyorsunuz', 'yapıyorlar'] },
+    ], [{ type: 'text', text: 'De tegenwoordige tijd (-iyor-) gebruik je voor wat nu gebeurt. De uitgang zegt wie het doet: -um (ik), -sun (jij), - (hij/zij), -uz (wij), -sunuz (jullie), -lar (zij).' }]),
     geslacht(
       [
         { type: 'text', text: 'Turks heeft **geen geslacht** en **geen bepaald lidwoord**. Voor “een” gebruik je soms **bir**: bir elma (een appel). O betekent hij, zij én het.' },
@@ -105,6 +157,10 @@ export const basisGrammar: Partial<Record<LanguageCode, TopicContent[]>> = {
     telwoorden('tr'),
   ],
   el: [
+    werkwoorden(['εγώ', 'εσύ', 'αυτός/αυτή', 'εμείς', 'εσείς', 'αυτοί'], [
+      { inf: 'είμαι', nl: 'zijn', forms: ['είμαι', 'είσαι', 'είναι', 'είμαστε', 'είστε', 'είναι'] },
+      { inf: 'έχω', nl: 'hebben', forms: ['έχω', 'έχεις', 'έχει', 'έχουμε', 'έχετε', 'έχουν'] },
+    ]),
     geslacht(
       [
         { type: 'table', head: ['', 'mannelijk', 'vrouwelijk', 'onzijdig'], rows: [['de (ev)', 'ο', 'η', 'το'], ['de (mv)', 'οι', 'οι', 'τα'], ['een', 'ένας', 'μία / μια', 'ένα']] },
@@ -115,6 +171,10 @@ export const basisGrammar: Partial<Record<LanguageCode, TopicContent[]>> = {
     telwoorden('el'),
   ],
   fy: [
+    werkwoorden(['ik', 'do', 'hy/sy', 'wy', 'jimme', 'sy'], [
+      { inf: 'wêze', nl: 'zijn', forms: ['bin', 'bist', 'is', 'binne', 'binne', 'binne'] },
+      { inf: 'hawwe', nl: 'hebben', forms: ['haw', 'hast', 'hat', 'hawwe', 'hawwe', 'hawwe'] },
+    ]),
     geslacht(
       [
         { type: 'text', text: 'Fries heeft twee bepaalde lidwoorden, net als Nederlands: **de** en **it** (het): de man, it hûs. In het meervoud is het altijd **de**: de huzen.' },
@@ -129,6 +189,39 @@ export const basisGrammar: Partial<Record<LanguageCode, TopicContent[]>> = {
     },
   ],
   grc: [
+    {
+      id: 'declinaties',
+      blocks: [
+        { type: 'table', caption: '1e declinatie: ἡ χώρα (land)', head: ['', 'enkelvoud', 'meervoud'], rows: [['nominativus', 'ἡ χώρα', 'αἱ χῶραι'], ['genitivus', 'τῆς χώρας', 'τῶν χωρῶν'], ['dativus', 'τῇ χώρᾳ', 'ταῖς χώραις'], ['accusativus', 'τὴν χώραν', 'τὰς χώρας']] },
+        { type: 'table', caption: '2e declinatie: ὁ λόγος (woord)', head: ['', 'enkelvoud', 'meervoud'], rows: [['nominativus', 'ὁ λόγος', 'οἱ λόγοι'], ['genitivus', 'τοῦ λόγου', 'τῶν λόγων'], ['dativus', 'τῷ λόγῳ', 'τοῖς λόγοις'], ['accusativus', 'τὸν λόγον', 'τοὺς λόγους']] },
+        { type: 'table', caption: '2e declinatie onzijdig: τὸ δῶρον (geschenk)', head: ['', 'enkelvoud', 'meervoud'], rows: [['nominativus', 'τὸ δῶρον', 'τὰ δῶρα'], ['genitivus', 'τοῦ δώρου', 'τῶν δώρων'], ['dativus', 'τῷ δώρῳ', 'τοῖς δώροις'], ['accusativus', 'τὸ δῶρον', 'τὰ δῶρα']] },
+        { type: 'tip', text: 'Het lidwoord helpt je de naamval te herkennen. Onzijdig: nominativus = accusativus, meervoud op -α.' },
+      ],
+      exercises: [
+        { type: 'choice', question: 'λόγον', options: ['accusativus ev', 'genitivus ev', 'nominativus mv', 'dativus ev'], answer: 0 },
+        { type: 'choice', question: 'λόγων', options: ['genitivus mv', 'accusativus mv', 'dativus mv', 'genitivus ev'], answer: 0 },
+        { type: 'choice', question: 'χώρᾳ', options: ['dativus ev', 'nominativus ev', 'accusativus ev', 'genitivus ev'], answer: 0 },
+        { type: 'choice', question: 'δῶρα', options: ['nominativus/accusativus mv', 'genitivus ev', 'dativus mv', 'nominativus ev'], answer: 0 },
+        { type: 'choice', question: 'λόγους', options: ['accusativus mv', 'nominativus mv', 'genitivus ev', 'dativus mv'], answer: 0 },
+        { type: 'choice', question: 'χωρῶν', options: ['genitivus mv', 'dativus mv', 'accusativus mv', 'nominativus mv'], answer: 0 },
+      ],
+    },
+    {
+      id: 'werkwoorden',
+      blocks: [
+        { type: 'table', caption: 'λύω (losmaken): indicativus activum', head: ['', 'praesens', 'imperfectum', 'aoristus'], rows: [['1 ev', 'λύω', 'ἔλυον', 'ἔλυσα'], ['2 ev', 'λύεις', 'ἔλυες', 'ἔλυσας'], ['3 ev', 'λύει', 'ἔλυε(ν)', 'ἔλυσε(ν)'], ['1 mv', 'λύομεν', 'ἐλύομεν', 'ἐλύσαμεν'], ['2 mv', 'λύετε', 'ἐλύετε', 'ἐλύσατε'], ['3 mv', 'λύουσι(ν)', 'ἔλυον', 'ἔλυσαν']] },
+        { type: 'text', text: 'Imperfectum en aoristus krijgen vooraan een **augment** (ἐ-). De aoristus heeft vaak het kenmerk **-σα-**.' },
+        { type: 'tip', text: 'Let op: 1 ev en 3 mv van het imperfectum zijn gelijk (ἔλυον). De context laat zien welke het is.' },
+      ],
+      exercises: [
+        { type: 'choice', question: 'λύομεν', options: ['1 mv praesens', '1 mv imperfectum', '1 mv aoristus', '3 mv praesens'], answer: 0 },
+        { type: 'choice', question: 'ἐλύσατε', options: ['2 mv aoristus', '2 mv imperfectum', '2 mv praesens', '3 ev aoristus'], answer: 0 },
+        { type: 'choice', question: 'ἔλυε', options: ['3 ev imperfectum', '3 ev aoristus', '3 ev praesens', '2 ev imperfectum'], answer: 0 },
+        { type: 'choice', question: 'λύουσι', options: ['3 mv praesens', '3 mv imperfectum', '1 ev praesens', '3 mv aoristus'], answer: 0 },
+        { type: 'choice', question: 'ἔλυσα', options: ['1 ev aoristus', '1 ev imperfectum', '3 mv aoristus', '1 ev praesens'], answer: 0 },
+        { type: 'choice', question: 'Wat is het augment?', options: ['de ἐ- vooraan bij verleden tijden', 'de -σα- in de aoristus', 'de uitgang -ομεν'], answer: 0 },
+      ],
+    },
     {
       id: 'alfabet-accenten',
       blocks: [

@@ -70,8 +70,10 @@ Antwoorden op de startvragen (zie `opdracht.md`, hoofdstuk 17).
 
 ## Wat nog open staat
 
-- Werkwoordtrainer voor Italiaans, Portugees en Latijn (nu alleen FR, DE, EN, ES).
-- Grammatica Oudgrieks: declinaties en werkwoorden (alfabet en lidwoord zijn er wel).
-- Basistalen (Zweeds, Pools, …): "de 20 belangrijkste werkwoorden" ontbreekt nog.
-- Afbeelding per woord uploaden (in de lijst-editor).
+- ~~Werkwoordtrainer Italiaans, Portugees, Latijn~~ ✅ (10 november)
+- ~~Oudgrieks: declinaties en werkwoorden~~ ✅ (basis: 1e/2e declinatie, praesens/imperfectum/aoristus van λύω)
+- ~~Basistalen: belangrijkste werkwoorden~~ ✅ (2–3 werkwoorden per taal; meer kan later)
+- ~~Plaatje per woord~~ ✅
+- ~~Knop "Alles aanvinken"~~ ✅ bij werkwoorden, tijden, personen en lijsten
 - Echte AI voor de tutor of de foto-herkenning (vraagt API-sleutel + server, dus eerst toestemming).
+- Plaatje uit een foto knippen (nu: los plaatje uploaden).

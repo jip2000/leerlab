@@ -122,3 +122,20 @@ test('een map maken', async ({ page }) => {
   await page.getByRole('link', { name: /Aardrijkskunde/ }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Aardrijkskunde');
 });
+
+test('plaatje bij een woord: zichtbaar in de lijst en op de flitskaart', async ({ page }) => {
+  await page.goto('/#/lijsten/nieuw');
+  await page.getByLabel('Titel', { exact: true }).fill('Dieren');
+  await page.getByLabel('Woord 1, Frans').fill('le chat');
+  await page.getByLabel('Woord 1, Nederlands').fill('de kat');
+  await page.getByRole('button', { name: /Meer velden/ }).first().click();
+  await page.getByLabel('Plaatje bij woord 1').setInputFiles('public/icons/icon-192.png');
+  await expect(page.getByAltText('Plaatje bij le chat')).toBeVisible();
+  await page.getByRole('button', { name: 'Lijst opslaan' }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Dieren');
+  await expect(page.locator('main ul img').first()).toBeVisible();
+
+  await page.getByRole('link', { name: 'Oefenen' }).filter({ visible: true }).first().click();
+  await page.getByRole('button', { name: /Start met 1 woord/ }).click();
+  await expect(page.locator('main button img').first()).toBeVisible();
+});

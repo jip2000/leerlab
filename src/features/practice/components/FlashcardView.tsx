@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { SpeakButton } from '@/components/ui/SpeakButton';
 import type { Card } from '../engine';
 import { shownAnswer } from '../choices';
+import { WordImage } from '@/components/ui/WordImage';
 
 /**
  * Flashcard: tik (of spatie) om om te draaien. Daarna "Wist ik" / "Wist ik niet",
@@ -66,6 +67,7 @@ export function FlashcardView({ card, onAnswer }: { card: Card; onAnswer: (knew:
             transition={{ type: 'spring', stiffness: 260, damping: 26 }}
           >
             <div className={face}>
+              {card.imageId && <WordImage id={card.imageId} className="max-h-[40%] w-auto" alt="" />}
               <span className="text-[clamp(28px,8vw,44px)] leading-tight font-extrabold tracking-[-0.02em] break-words" lang={card.promptLang}>
                 {card.prompt}
               </span>

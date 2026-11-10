@@ -26,6 +26,7 @@ export interface Card {
   answerArticle?: string;
   answerLang: LanguageCode;
   extra?: string; // voorbeeldzin, notitie… als hint na afloop
+  imageId?: string;
 }
 
 export interface SessionOptions {
@@ -64,9 +65,10 @@ export function buildCards(
     if (!list) return [];
     const dir: Direction = direction === 'mix' ? (random() < 0.5 ? 'lr' : 'rl') : direction;
     const extra = [w.extraForms, w.example, w.note].filter(Boolean).join(' · ') || undefined;
+    const imageId = w.imageId;
     return dir === 'lr'
-      ? [{ key: `${w.id}:lr`, wordId: w.id, listId: w.listId, dir, prompt: withArticle(w.left, w.article), promptLang: list.langLeft, answer: w.right, answerLang: list.langRight, extra }]
-      : [{ key: `${w.id}:rl`, wordId: w.id, listId: w.listId, dir, prompt: w.right, promptLang: list.langRight, answer: w.left, answerArticle: w.article, answerLang: list.langLeft, extra }];
+      ? [{ key: `${w.id}:lr`, wordId: w.id, listId: w.listId, dir, prompt: withArticle(w.left, w.article), promptLang: list.langLeft, answer: w.right, answerLang: list.langRight, extra, imageId }]
+      : [{ key: `${w.id}:rl`, wordId: w.id, listId: w.listId, dir, prompt: w.right, promptLang: list.langRight, answer: w.left, answerArticle: w.article, answerLang: list.langLeft, extra, imageId }];
   });
 }
 
