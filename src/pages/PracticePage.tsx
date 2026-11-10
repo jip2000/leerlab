@@ -15,6 +15,7 @@ import type { Mode } from '@/features/practice/engine';
 import { discardOpenSessions, hardWordIds, openSession, startSession, type StoredSession } from '@/features/practice/repo';
 import { modeLabels } from '@/features/practice/labels';
 import { cn } from '@/lib/cn';
+import { SelectAll } from '@/components/ui/SelectAll';
 import { toast } from '@/lib/toast';
 
 const modes: { id: Mode; icon: LucideIcon; text: string }[] = [
@@ -122,7 +123,11 @@ export function PracticePage() {
 
       <div className="grid gap-6 lg:grid-cols-[1fr_1fr]">
         <section>
-          <h2 className="mb-2 text-lg font-bold">Lijsten</h2>
+          <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+            <h2 className="text-lg font-bold">Lijsten</h2>
+            <SelectAll label="lijsten" allOn={selected.length === sorted.length} noneOn={selected.length === 0}
+              onAll={() => setSelected(sorted.map((l) => l.id))} onNone={() => setSelected([])} />
+          </div>
           <ul className="flex max-h-[420px] flex-col gap-1.5 overflow-y-auto rounded-[var(--radius-card)] border border-line bg-surface p-2">
             {sorted.map((l) => (
               <li key={l.id}>

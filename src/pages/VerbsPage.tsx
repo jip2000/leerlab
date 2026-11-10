@@ -11,6 +11,7 @@ import { verbEngines, verbLanguages } from '@/features/verbs/registry';
 import { useVerbStore } from '@/features/verbs/store';
 import { candidates, loadStats, pickQuestions, type VerbMode } from '@/features/verbs/trainer';
 import { cn } from '@/lib/cn';
+import { SelectAll } from '@/components/ui/SelectAll';
 
 const modes: { id: VerbMode; label: string; text: string }[] = [
   { id: 'los', label: 'Los', text: 'aller · passé composé · nous → typ de vorm' },
@@ -94,7 +95,16 @@ export function VerbsPage() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <section className="flex flex-col gap-3">
-          <h2 className="text-lg font-bold">Werkwoorden ({choice.verbs.length})</h2>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="text-lg font-bold">Werkwoorden ({choice.verbs.length})</h2>
+            <SelectAll
+              label={search ? 'gevonden werkwoorden' : 'werkwoorden'}
+              allOn={filtered.every((v) => choice.verbs.includes(v.inf))}
+              noneOn={choice.verbs.length === 0}
+              onAll={() => s.setChoice(s.lang, { verbs: [...new Set([...choice.verbs, ...filtered.map((v) => v.inf)])] })}
+              onNone={() => s.setChoice(s.lang, { verbs: [] })}
+            />
+          </div>
           <div className="flex flex-wrap gap-2">
             {engine.presets.map((p) => {
               const set = engine.verbs.filter(p.filter).map((v) => v.inf);
@@ -105,12 +115,6 @@ export function VerbsPage() {
                 </Chip>
               );
             })}
-            <Chip on={choice.verbs.length === engine.verbs.length} onClick={() => s.setChoice(s.lang, { verbs: engine.verbs.map((v) => v.inf) })}>
-              Alles
-            </Chip>
-            <Chip on={false} onClick={() => s.setChoice(s.lang, { verbs: [] })}>
-              Geen
-            </Chip>
           </div>
           <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Zoek een werkwoord" aria-label="Zoek een werkwoord" />
           <ul className="grid max-h-80 grid-cols-1 gap-1 overflow-y-auto rounded-[var(--radius-card)] border border-line bg-surface p-2 sm:grid-cols-2">
@@ -128,7 +132,11 @@ export function VerbsPage() {
 
         <section className="flex flex-col gap-5">
           <div>
-            <h2 className="mb-2 text-lg font-bold">Tijden</h2>
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+              <h2 className="text-lg font-bold">Tijden</h2>
+              <SelectAll label="tijden" allOn={choice.tenses.length === engine.tenses.length} noneOn={choice.tenses.length === 0}
+                onAll={() => s.setChoice(s.lang, { tenses: engine.tenses.map((t) => t.id) })} onNone={() => s.setChoice(s.lang, { tenses: [] })} />
+            </div>
             <div className="flex flex-wrap gap-2">
               {engine.tenses.map((t) => {
                 const st = perTense.get(t.id);
@@ -142,7 +150,11 @@ export function VerbsPage() {
             </div>
           </div>
           <div>
-            <h2 className="mb-2 text-lg font-bold">Personen</h2>
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+              <h2 className="text-lg font-bold">Personen</h2>
+              <SelectAll label="personen" allOn={choice.persons.length === 6} noneOn={choice.persons.length === 0}
+                onAll={() => s.setChoice(s.lang, { persons: [0, 1, 2, 3, 4, 5] })} onNone={() => s.setChoice(s.lang, { persons: [] })} />
+            </div>
             <div className="flex flex-wrap gap-2">
               {engine.persons.map((p, i) => (
                 <Chip key={p} on={choice.persons.includes(i)} onClick={() => s.setChoice(s.lang, { persons: toggle(choice.persons, i) })}>
@@ -180,7 +192,7 @@ export function VerbsPage() {
           <Button size="lg" disabled={pool.length === 0} onClick={() => void start()} icon={<Play size={20} aria-hidden="true" />}>
             Start
           </Button>
-          {pool.length === 0 && <p className="text-sm text-danger">Kies minstens één werkwoord, tijd en persoon.</p>}
+          {pool.length === 0 && <p role="alert" className="text-sm font-semibold text-danger">Kies minstens één werkwoord, tijd en persoon.</p>}
 
           {hardest.length > 0 && (
             <div className="rounded-[var(--radius-card)] bg-surface-2 p-4">
