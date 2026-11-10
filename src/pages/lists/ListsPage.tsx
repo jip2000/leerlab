@@ -223,7 +223,8 @@ function StarterSection() {
           </button>
         ))}
       </div>
-      <ul className="grid gap-2 sm:grid-cols-3" role="tabpanel">
+      <div role="tabpanel">
+      <ul className="grid gap-2 sm:grid-cols-3">
         {starterLists
           .filter((s) => s.lang === lang)
           .map((s) => (
@@ -241,6 +242,7 @@ function StarterSection() {
             </li>
           ))}
       </ul>
+      </div>
     </Section>
   );
 }

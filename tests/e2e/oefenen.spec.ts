@@ -159,3 +159,16 @@ test('slim herhalen: foute woorden staan vandaag op Home', async ({ page }) => {
   await page.getByRole('button', { name: 'Start herhalen' }).click();
   await expect(page.getByText('0/2')).toBeVisible();
 });
+
+test('spatie op de flitskaart draait hem één keer om', async ({ page }) => {
+  await page.goto('/#/lijsten/importeren');
+  await page.getByLabel(/Plak hier je woorden/).fill('la mer = de zee\nle chat = de kat');
+  await page.getByLabel('Titel van de nieuwe lijst').fill('X');
+  await page.getByRole('button', { name: /Lijst opslaan/ }).click();
+  await page.getByRole('link', { name: 'Oefenen' }).filter({ visible: true }).first().click();
+  await page.getByRole('button', { name: /Start met/ }).click();
+  // Focus op de kaart zelf (zoals na een tik), dan spatie.
+  await page.getByRole('button', { name: /Vraag:/ }).focus();
+  await page.keyboard.press('Space');
+  await expect(page.getByRole('button', { name: 'Wist ik', exact: true })).toBeVisible();
+});
