@@ -62,5 +62,6 @@ test('na een update: ontbrekend stukje → nette melding en verversen', async ({
   await expect(page.getByRole('heading', { name: 'Er is een nieuwe versie van Woordwerk' })).toBeVisible();
   await page.unroute(/assets\/VerbsPage-.*\.js$/);
   await page.getByRole('button', { name: 'Opnieuw laden' }).click();
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Werkwoorden');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Grammatica');
+  await expect(page.getByRole('heading', { name: /^Werkwoorden \(\d+\)$/ })).toBeVisible();
 });

@@ -6,6 +6,7 @@ import { BackLink } from '@/components/ui/BackLink';
 import { LanguageBadge } from '@/components/ui/LanguageBadge';
 import { languages, type LanguageCode } from '@/data/languages';
 import { getTopic, grammar } from '@/data/grammar';
+import { GrammarHeader } from '@/features/grammar/components/GrammarHeader';
 import { db } from '@/db/db';
 
 const sorted = [...languages].sort((a, b) => a.grammarPriority - b.grammarPriority);
@@ -58,7 +59,7 @@ export function GrammarPage() {
 
   return (
     <>
-      <PageHeader title="Grammatica" intro="Kies een taal en daarna een onderwerp." />
+      <GrammarHeader intro="Kies een taal en daarna een onderwerp." />
       <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
         {sorted.map((l) => {
           const n = grammar[l.code]?.length ?? 0;

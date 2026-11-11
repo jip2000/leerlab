@@ -59,7 +59,7 @@ export const knowledge: KnowledgeItem[] = [
     answer: 'Woordwerk onthoudt per woord hoe goed je het kent (5 bakjes). Goed = het woord komt pas later terug; fout = snel weer. Op Home staat "Vandaag herhalen" met één knop. Zo onthoud je woorden veel langer.',
     actions: [{ label: 'Naar Home', to: '/' }] },
   { id: 'werkwoorden', keywords: ['werkwoord', 'vervoegen', 'vervoeging', 'rijtje', 'conjugeren', 'tijden', 'passé composé', 'perfekt', 'onregelmatig'],
-    answer: 'Bij Werkwoorden kies je een taal (Frans, Duits, Engels of Spaans), werkwoorden, tijden en personen. Oefen los, als heel rijtje, in een zin of omgekeerd. Bij een fout zie je waarom. Combinaties die je fout had komen vaker terug.',
+    answer: 'De werkwoordtrainer staat bij Grammatica, op het tabblad Werkwoorden. Daar kies je een taal (Frans, Duits, Engels of Spaans), werkwoorden, tijden en personen. Oefen los, als heel rijtje, in een zin of omgekeerd. Bij een fout zie je waarom. Combinaties die je fout had komen vaker terug.',
     actions: [{ label: 'Werkwoorden', to: '/werkwoorden' }] },
   { id: 'grammatica', keywords: ['grammatica', 'uitleg', 'regel', 'naamval', 'lidwoorden', 'subjonctif', 'conditionals', 'ser estar'],
     answer: 'Bij Grammatica kies je een taal en een onderwerp. Eerst lees je de uitleg met tabellen en voorbeelden, dan oefen je met invullen, kiezen, vertalen, fouten verbeteren en zinnen bouwen.',

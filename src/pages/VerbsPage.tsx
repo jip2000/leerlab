@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Play } from 'lucide-react';
-import { PageHeader } from '@/components/ui/PageHeader';
+import { GrammarHeader } from '@/features/grammar/components/GrammarHeader';
+import { PlusGate } from '@/features/account/PlusGate';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { getLanguage } from '@/data/languages';
@@ -33,7 +34,19 @@ function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; chi
   );
 }
 
+/** Tabblad "Werkwoorden" van Grammatica. De tabbladen blijven staan, ook als de trainer bij Plus hoort. */
 export function VerbsPage() {
+  return (
+    <>
+      <GrammarHeader intro="Kies een taal, werkwoorden, tijden en hoe je wilt oefenen." />
+      <PlusGate feature="werkwoorden">
+        <VerbSetup />
+      </PlusGate>
+    </>
+  );
+}
+
+function VerbSetup() {
   const navigate = useNavigate();
   const s = useVerbStore();
   const engine = verbEngines[s.lang]!;
@@ -77,7 +90,6 @@ export function VerbsPage() {
 
   return (
     <>
-      <PageHeader title="Werkwoorden" intro="Kies een taal, werkwoorden, tijden en hoe je wilt oefenen." />
       <div role="tablist" aria-label="Taal" className="mb-5 flex flex-wrap gap-2">
         {verbLanguages.map((code) => (
           <button

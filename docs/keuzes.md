@@ -68,6 +68,15 @@ Antwoorden op de startvragen (zie `opdracht.md`, hoofdstuk 17).
   Een echte AI (bijv. Claude) kan later, maar kost geld per bericht en vraagt een API-sleutel op een eigen
   server. Daar moet eerst toestemming voor komen.
 
+## Grammatica en Werkwoorden onder één knop (11 november)
+
+- Op de telefoon stond Werkwoorden in de balk onderaan en zat Grammatica verstopt onder "Meer", terwijl
+  het bij elkaar hoort. Nu is er één knop **Grammatica** met twee tabbladen: **Onderwerpen** (uitleg en
+  oefeningen per taal) en **Werkwoorden** (de werkwoordtrainer).
+- De adressen zijn niet veranderd (`/grammatica` en `/werkwoorden`), dus oude links en bladwijzers
+  blijven werken. Zoeken op "werkwoorden" brengt je nog steeds naar de trainer.
+- Welke pagina's bij een menu-item horen, staat op één plek: `sub` in `src/components/layout/nav.ts`.
+
 ## Wat nog open staat
 
 - ~~Werkwoordtrainer Italiaans, Portugees, Latijn~~ ✅ (10 november)

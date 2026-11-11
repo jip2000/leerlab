@@ -41,7 +41,8 @@ export const router = createHashRouter([
       { path: 'grammatica', lazy: () => import('@/pages/GrammarPage').then((m) => ({ Component: m.GrammarPage })) },
       { path: 'grammatica/:taal', lazy: () => import('@/pages/GrammarPage').then((m) => ({ Component: m.GrammarPage })) },
       { path: 'grammatica/:taal/:onderwerp', lazy: () => import('@/pages/GrammarTopicPage').then((m) => ({ Component: m.GrammarTopicPage })) },
-      { path: 'werkwoorden', lazy: () => import('@/pages/VerbsPage').then((m) => ({ Component: () => gated('werkwoorden', <m.VerbsPage />) })) },
+      // De werkwoordtrainer is een tabblad van Grammatica; de pagina regelt zelf wat bij Plus hoort.
+      { path: 'werkwoorden', lazy: () => import('@/pages/VerbsPage').then((m) => ({ Component: m.VerbsPage })) },
       { path: 'werkwoorden/oefenen', lazy: () => import('@/pages/VerbSessionPage').then((m) => ({ Component: () => gated('werkwoorden', <m.VerbSessionPage />) })) },
       { path: 'scannen', lazy: () => import('@/pages/ScanPage').then((m) => ({ Component: () => gated('scannen', <m.ScanPage />) })) },
       { path: 'videos', lazy: () => import('@/pages/VideosPage').then((m) => ({ Component: m.VideosPage })) },

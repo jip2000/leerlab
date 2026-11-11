@@ -5,7 +5,7 @@ import { db } from '@/db/db';
 import { Search } from 'lucide-react';
 import { search } from '@/lib/search';
 import { cn } from '@/lib/cn';
-import { navItems } from './nav';
+import { searchPages } from './nav';
 
 /** Zoekbalk bovenaan. Sneltoets op desktop: "/". */
 export function SearchBox({ autoFocus, onDone }: { autoFocus?: boolean; onDone?: () => void }) {
@@ -17,7 +17,7 @@ export function SearchBox({ autoFocus, onDone }: { autoFocus?: boolean; onDone?:
   const listId = useId();
   // Lijsten en woorden pas laden als je gaat zoeken.
   const data = useLiveQuery(async () => (open ? { lists: await db.lists.toArray(), words: await db.words.toArray() } : undefined), [open]);
-  const results = useMemo(() => search(query, navItems, 10, data), [query, data]);
+  const results = useMemo(() => search(query, searchPages, 10, data), [query, data]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {

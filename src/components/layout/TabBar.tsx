@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { NavLink, useLocation } from 'react-router';
+import { Link, NavLink, useLocation } from 'react-router';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { Ellipsis, X } from 'lucide-react';
 import { cn } from '@/lib/cn';
-import { navItems } from './nav';
+import { isNavActive, navItems } from './nav';
 
 const tabClass = (active: boolean) =>
   cn(
@@ -27,20 +27,20 @@ export function TabBar() {
         className="tabbar fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface/95 px-2 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
       >
         <ul className="mx-auto flex max-w-xl">
-          {tabs.map(({ path, label, icon: Icon }) => (
-            <li key={path} className="flex flex-1">
-              <NavLink to={path} end={path === '/'} className={({ isActive }) => tabClass(isActive)}>
-                {({ isActive }) => (
-                  <>
-                    <span className={cn('grid h-7 w-12 place-items-center rounded-full transition-colors', isActive && 'bg-primary-soft')}>
-                      <Icon size={21} strokeWidth={2.2} aria-hidden="true" />
-                    </span>
-                    {label === 'Mijn lijsten' ? 'Lijsten' : label}
-                  </>
-                )}
-              </NavLink>
-            </li>
-          ))}
+          {tabs.map((item) => {
+            const { path, label, icon: Icon } = item;
+            const active = isNavActive(item, pathname);
+            return (
+              <li key={path} className="flex flex-1">
+                <Link to={path} aria-current={active ? 'page' : undefined} className={tabClass(active)}>
+                  <span className={cn('grid h-7 w-12 place-items-center rounded-full transition-colors', active && 'bg-primary-soft')}>
+                    <Icon size={21} strokeWidth={2.2} aria-hidden="true" />
+                  </span>
+                  {label === 'Mijn lijsten' ? 'Lijsten' : label}
+                </Link>
+              </li>
+            );
+          })}
           <li className="flex flex-1">
             <button
               type="button"

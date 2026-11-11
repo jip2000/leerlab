@@ -14,7 +14,7 @@ import { TabBar } from './TabBar';
 import { TopBar } from './TopBar';
 import { useApplyTheme } from '@/lib/theme';
 import { useTypingAttribute } from '@/lib/typing';
-import { navItems } from './nav';
+import { pageLabel } from './nav';
 import { Toaster } from '@/components/ui/Toaster';
 import { TutorChat } from '@/features/tutor/TutorChat';
 
@@ -50,8 +50,8 @@ export function AppShell() {
 
   // Paginatitel bijwerken en naar boven scrollen bij wisselen van pagina.
   useEffect(() => {
-    const item = navItems.find((i) => (i.path === '/' ? location.pathname === '/' : location.pathname.startsWith(i.path)));
-    document.title = item && item.path !== '/' ? `${item.label} – Woordwerk` : 'Woordwerk: woordjes, grammatica en werkwoorden leren';
+    const label = pageLabel(location.pathname);
+    document.title = label ? `${label} – Woordwerk` : 'Woordwerk: woordjes, grammatica en werkwoorden leren';
     window.scrollTo(0, 0);
     trackPage(location.pathname);
   }, [location.pathname]);
