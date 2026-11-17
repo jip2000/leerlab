@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { SelectAll } from '@/components/ui/SelectAll';
 import { useNavigate, useParams } from 'react-router';
 import { ArrowLeftRight, ClipboardPaste, Copy, Download, Layers, Merge, MoreHorizontal, Pencil, Share2, Trash2 } from 'lucide-react';
 import { PageHeader } from '@/components/ui/PageHeader';
@@ -190,6 +191,12 @@ export function ListDetailPage() {
         <div className="mb-5 rounded-[var(--radius-card)] border border-line bg-surface p-4">
           <h2 className="mb-1 font-bold">Samenvoegen</h2>
           <p className="mb-3 text-sm text-ink-soft">De woorden van de gekozen lijsten komen erbij in deze lijst. De andere lijsten blijven bestaan.</p>
+          {others.length > 1 && (
+            <div className="mb-2">
+              <SelectAll label="lijsten" allOn={merging.length === others.length} noneOn={merging.length === 0}
+                onAll={() => setMerging(others.map((l) => l.id))} onNone={() => setMerging([])} />
+            </div>
+          )}
           {others.length === 0 ? (
             <p className="text-ink-soft">Je hebt nog geen andere lijsten.</p>
           ) : (

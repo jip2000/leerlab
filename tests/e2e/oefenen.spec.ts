@@ -49,7 +49,7 @@ test('flashcards: omdraaien, wist ik / wist ik niet, en de streak start', async 
   await expect(page.getByText(/1 dag op rij/)).toBeVisible();
   await expect(page.getByText('Van start')).toBeVisible(); // badge
 
-  await page.getByRole('link', { name: 'Klaar' }).click();
+  await page.getByRole('link', { name: 'Naar het hoofdmenu' }).click();
   await expect(page.getByText(/1\s*dag op rij/).first()).toBeVisible();
 });
 
@@ -153,7 +153,7 @@ test('slim herhalen: foute woorden staan vandaag op Home', async ({ page }) => {
     await input.press('Enter');
     if (i < 4) await expect(page.getByText(`${i + 1}/5`)).toBeVisible();
   }
-  await page.getByRole('link', { name: 'Klaar' }).click();
+  await page.getByRole('link', { name: 'Naar het hoofdmenu' }).click();
   await expect(page.getByText('Vandaag herhalen')).toBeVisible();
   await expect(page.getByText('2 woorden', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Start herhalen' }).click();

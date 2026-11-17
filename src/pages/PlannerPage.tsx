@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { SelectAll } from '@/components/ui/SelectAll';
 import { useNavigate } from 'react-router';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { CalendarDays, ChevronLeft, ChevronRight, Plus, Trash2 } from 'lucide-react';
@@ -87,7 +88,13 @@ export function PlannerPage() {
             <Input type="date" min={addDays(today, 1)} value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
           </Field>
           <fieldset className="sm:col-span-2">
-            <legend className="mb-1.5 text-sm font-semibold">Woordenlijsten</legend>
+            <div className="mb-1.5 flex flex-wrap items-center justify-between gap-2">
+              <legend className="text-sm font-semibold">Woordenlijsten</legend>
+              {lists.length > 0 && (
+                <SelectAll label="woordenlijsten" allOn={form.listIds.length === lists.length} noneOn={form.listIds.length === 0}
+                  onAll={() => setForm({ ...form, listIds: lists.map((l) => l.id) })} onNone={() => setForm({ ...form, listIds: [] })} />
+              )}
+            </div>
             <ul className="grid max-h-56 gap-1 overflow-y-auto rounded-2xl border border-line p-2 sm:grid-cols-2">
               {lists.map((l) => (
                 <li key={l.id}>
@@ -103,9 +110,18 @@ export function PlannerPage() {
           </fieldset>
           <fieldset className="sm:col-span-2">
             <legend className="mb-1.5 text-sm font-semibold">Grammatica (optioneel)</legend>
-            <Select value={form.lang} onChange={(e) => setForm({ ...form, lang: e.target.value as LanguageCode })} aria-label="Taal voor grammatica" className="mb-2 w-auto">
-              {Object.keys(grammar).map((code) => <option key={code} value={code}>{languages.find((l) => l.code === code)!.name}</option>)}
-            </Select>
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+              <Select value={form.lang} onChange={(e) => setForm({ ...form, lang: e.target.value as LanguageCode })} aria-label="Taal voor grammatica" className="w-auto">
+                {Object.keys(grammar).map((code) => <option key={code} value={code}>{languages.find((l) => l.code === code)!.name}</option>)}
+              </Select>
+              <SelectAll
+                label="grammatica-onderwerpen"
+                allOn={grammar[form.lang]!.every((t) => form.topicIds.includes(`${form.lang}:${t.id}`))}
+                noneOn={!form.topicIds.some((id) => id.startsWith(`${form.lang}:`))}
+                onAll={() => setForm({ ...form, topicIds: [...new Set([...form.topicIds, ...grammar[form.lang]!.map((t) => `${form.lang}:${t.id}`)])] })}
+                onNone={() => setForm({ ...form, topicIds: form.topicIds.filter((id) => !id.startsWith(`${form.lang}:`)) })}
+              />
+            </div>
             <div className="flex flex-wrap gap-2">
               {grammar[form.lang]!.map((t) => {
                 const id = `${form.lang}:${t.id}`;

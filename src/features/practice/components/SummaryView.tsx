@@ -2,9 +2,9 @@ import { useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Flame, RotateCcw, Snowflake, Target } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { ButtonLink } from '@/components/ui/ButtonLink';
 import type { Rewards } from '@/features/progress/repo';
-import { celebrate, stopConfetti } from '@/lib/confetti';
+import { celebrate, fireworks, stopConfetti } from '@/lib/confetti';
+import { HomeButton, WellDone } from '@/components/ui/WellDone';
 import { formatGrade } from '@/lib/grade';
 import { play } from '@/lib/sounds';
 import type { Card, Mode, Summary } from '../engine';
@@ -35,11 +35,13 @@ export function SummaryView({
     if (!rewards) return;
     const special = summary.percentage === 100 || rewards.badges.length > 0 || levelUp;
     play(special ? 'beloning' : 'klaar');
+    fireworks();
     if (special) celebrate(summary.percentage === 100 || !!levelUp);
   }, [rewards]); // alleen als de beloningen binnen zijn
 
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-5">
+      <WellDone />
       <div className="flex flex-col items-center gap-1 rounded-[28px] border border-line bg-surface px-6 py-8 text-center shadow-soft">
         {mode === 'toets' && grade !== undefined ? (
           <>
@@ -159,9 +161,7 @@ export function SummaryView({
         <Button size="lg" variant="secondary" className="justify-center" icon={<RotateCcw size={18} aria-hidden="true" />} onClick={onAgain}>
           Nog een keer
         </Button>
-        <ButtonLink to="/" variant="secondary" className="h-13 justify-center">
-          Klaar
-        </ButtonLink>
+        <HomeButton />
       </div>
     </div>
   );

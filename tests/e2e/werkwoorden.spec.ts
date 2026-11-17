@@ -10,6 +10,7 @@ test('werkwoordtrainer: aller · passé composé · nous', async ({ page }) => {
   await page.getByRole('button', { name: 'Alle personen uitvinken' }).click();
   await page.getByRole('button', { name: 'nous', exact: true }).click();
   await page.getByLabel('Aantal vragen').selectOption('10');
+  await expect(page.getByText('Met deze keuze zijn er 1 verschillende vragen.', { exact: false })).toBeVisible();
   await page.getByRole('button', { name: 'Start' }).click();
 
   // Eerste keer fout: uitleg over être.
@@ -20,15 +21,16 @@ test('werkwoordtrainer: aller · passé composé · nous', async ({ page }) => {
   await expect(page.getByText(/vervoeg je met être/)).toBeVisible();
   await page.getByRole('button', { name: 'Volgende' }).click();
 
-  // Daarna steeds goed (de foute komt nog één keer terug).
-  for (let i = 0; i < 10; i++) {
-    await page.getByLabel('Jouw antwoord').fill(i % 2 ? 'nous sommes allées' : 'sommes allés');
-    await page.getByRole('button', { name: 'Controleren' }).click();
-    await expect(page.getByText('Goed!')).toBeVisible();
-    await page.getByRole('button', { name: 'Volgende' }).click();
-  }
-  await expect(page.getByText('9/10')).toBeVisible();
+  // Er is maar één vraag mogelijk: die komt niet 10 keer, alleen nog één keer omdat hij fout was.
+  await page.getByLabel('Jouw antwoord').fill('sommes allés');
+  await page.getByRole('button', { name: 'Controleren' }).click();
+  await expect(page.getByText('Goed!')).toBeVisible();
+  await page.getByRole('button', { name: 'Volgende' }).click();
+  await expect(page.getByRole('heading', { name: /Goed gedaan!/ })).toBeVisible();
+  await expect(page.getByText('0/1')).toBeVisible();
   await expect(page.getByText('Deze had je fout')).toBeVisible();
+  await page.getByRole('link', { name: 'Naar het hoofdmenu' }).click();
+  await expect(page.getByText(/dag(en)? op rij/).first()).toBeVisible();
 });
 
 test('werkwoordtrainer: rijtje Duits', async ({ page }) => {
@@ -77,4 +79,26 @@ test('werkwoorden en grammatica zijn één plek', async ({ page }) => {
   await page.getByRole('button', { name: 'Start' }).click();
   await page.getByRole('button', { name: 'Stoppen' }).click();
   await expect(page).toHaveURL(/#\/grammatica\/fr\?deel=werkwoorden/);
+});
+
+test('in een zin: nooit dezelfde vraag, en moeilijke zinnen', async ({ page }) => {
+  await page.goto('/#/grammatica/de?deel=werkwoorden');
+  await page.getByRole('button', { name: /^Alle werkwoorden \(/ }).click();
+  await expect(page.getByRole('button', { name: /^Alle werkwoorden \(/ })).toHaveAttribute('aria-pressed', 'true');
+  await page.getByRole('radio', { name: /^In een zin/ }).click();
+  await page.getByRole('radio', { name: /Moeilijk/ }).click();
+  await page.getByLabel('Aantal vragen').selectOption('10');
+  await page.getByRole('button', { name: 'Start' }).click();
+  const seen = new Set<string>();
+  for (let i = 0; i < 10; i++) {
+    const zin = (await page.locator('main p.text-xl').first().innerText()).trim();
+    expect(zin.length).toBeGreaterThan(60); // lange zin
+    expect(seen.has(zin)).toBe(false);
+    seen.add(zin);
+    await page.getByLabel('Jouw antwoord').fill('xxx');
+    await page.getByRole('button', { name: 'Controleren' }).click();
+    await page.getByRole('button', { name: 'Volgende' }).click();
+    if (i === 9) break;
+    // Foute vragen komen pas aan het eind terug; die tellen we hier niet.
+  }
 });

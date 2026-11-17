@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { LanguageCode } from '@/data/languages';
 import type { VerbMode, VerbQuestion } from './trainer';
+import type { Level } from './levels';
 
 interface Choice {
   verbs: string[];
@@ -13,6 +14,8 @@ interface VerbStore {
   lang: LanguageCode;
   mode: VerbMode;
   count: number;
+  /** Moeilijkheid van de zinnen bij "In een zin". */
+  level: Level;
   /** Laatste keuze per taal. */
   choices: Partial<Record<LanguageCode, Choice>>;
   /** De lopende oefening (niet bewaard bij herladen). */
@@ -27,6 +30,7 @@ export const useVerbStore = create<VerbStore>()(
       lang: 'fr',
       mode: 'los',
       count: 15,
+      level: 1,
       choices: {},
       questions: [],
       set: (patch) => set(patch),
@@ -35,6 +39,6 @@ export const useVerbStore = create<VerbStore>()(
         set({ choices: { ...get().choices, [lang]: { ...cur, ...c } } });
       },
     }),
-    { name: 'woordwerk-werkwoorden', partialize: (s) => ({ lang: s.lang, mode: s.mode, count: s.count, choices: s.choices }) },
+    { name: 'woordwerk-werkwoorden', partialize: (s) => ({ lang: s.lang, mode: s.mode, count: s.count, level: s.level, choices: s.choices }) },
   ),
 );

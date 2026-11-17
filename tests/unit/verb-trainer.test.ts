@@ -14,13 +14,24 @@ describe('werkwoordtrainer', () => {
     expect(weight({ correctCount: 10, wrongCount: 0 })).toBe(0.3);
   });
   it('kiest vaker de combinaties die je fout had', () => {
-    const pool = candidates(frEngine, ['aller'], ['present'], [0, 1]);
+    const pool = candidates(frEngine, ['aller', 'être'], ['present'], [0, 1, 2, 3, 4, 5]);
     const stats = new Map([['fr:aller:present:0', { correctCount: 0, wrongCount: 3 }]]);
     let seed = 1;
     const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
-    const qs = pickQuestions(pool, 400, stats, 'fr', rnd);
-    // Nooit twee keer dezelfde achter elkaar, dus hooguit de helft; wel meer dan "tu".
-    expect(qs.filter((q) => q.person === 0).length).toBeGreaterThanOrEqual(qs.filter((q) => q.person === 1).length);
-    for (let i = 1; i < qs.length; i++) expect(qs[i]).not.toEqual(qs[i - 1]);
+    let hard = 0;
+    let other = 0;
+    for (let k = 0; k < 300; k++) {
+      const qs = pickQuestions(pool, 3, stats, 'fr', rnd);
+      if (qs.some((q) => q.verb === 'aller' && q.person === 0)) hard++;
+      if (qs.some((q) => q.verb === 'aller' && q.person === 1)) other++;
+    }
+    expect(hard).toBeGreaterThan(other * 2);
+  });
+  it('nooit twee keer dezelfde vraag in een ronde', () => {
+    const pool = candidates(frEngine, ['aller', 'être'], ['present'], [0, 1, 2, 3, 4, 5]);
+    const qs = pickQuestions(pool, 15, new Map(), 'fr');
+    expect(qs).toHaveLength(12); // er zijn maar 12 combinaties
+    expect(new Set(qs.map((q) => `${q.verb}:${q.person}`)).size).toBe(12);
+    expect(pickQuestions(pool, 5, new Map(), 'fr')).toHaveLength(5);
   });
 });

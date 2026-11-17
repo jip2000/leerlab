@@ -2,18 +2,19 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { ButtonLink } from '@/components/ui/ButtonLink';
 import { CharBar } from '@/components/ui/CharBar';
 import { Select } from '@/components/ui/Field';
 import { db, newId } from '@/db/db';
 import { verbEngines } from '@/features/verbs/registry';
 import { useVerbStore } from '@/features/verbs/store';
+import { levelSentence } from '@/features/verbs/levels';
 import { recordVerb, type VerbQuestion } from '@/features/verbs/trainer';
 import { AnswerDiff, Verdict } from '@/features/practice/components/Feedback';
 import { finishRewards, getProfile, recordAnswer, type Profile, type Rewards } from '@/features/progress/repo';
 import { XP_FINISH } from '@/features/progress/xp';
 import { checkAnswer } from '@/lib/check';
-import { celebrate } from '@/lib/confetti';
+import { celebrate, fireworks } from '@/lib/confetti';
+import { HomeButton, WellDone } from '@/components/ui/WellDone';
 import { insertAtCursor } from '@/lib/insert';
 import { useSettings, type CheckRules } from '@/lib/settings';
 import type { VerbEngine } from '@/features/verbs/types';
@@ -71,6 +72,7 @@ export function VerbSessionPage() {
       setRewards(r);
       void updateAppBadge(r.streakAfter);
       play(pct === 100 || r.badges.length ? 'beloning' : 'klaar');
+      fireworks();
       if (pct === 100 || r.badges.length) celebrate(pct === 100);
     })();
   }, [finished]);
@@ -80,6 +82,7 @@ export function VerbSessionPage() {
     const wrong = results.filter((r) => !r.correct);
     return (
       <div className="mx-auto flex max-w-lg flex-col gap-5">
+        <WellDone />
         <div className="rounded-[28px] border border-line bg-surface p-8 text-center shadow-soft">
           <p className="text-[56px] leading-none font-extrabold"><span className="marker">{ok}/{total}</span></p>
           <p className="mt-2 text-lg font-bold">{ok === total ? 'Foutloos!' : ok / total >= 0.7 ? 'Lekker bezig!' : 'Goed geoefend. Nog een rondje?'}</p>
@@ -101,7 +104,7 @@ export function VerbSessionPage() {
           </section>
         )}
         <Button size="lg" className="justify-center" onClick={() => navigate(back)}>Nog een keer</Button>
-        <ButtonLink to="/" variant="secondary" className="h-13 justify-center">Klaar</ButtonLink>
+        <HomeButton />
       </div>
     );
   }
@@ -144,7 +147,8 @@ function SingleExercise({ ctx, q, sentence, onDone }: { ctx: Ctx; q: VerbQuestio
   const input = useRef<HTMLInputElement>(null);
   const next = useRef<HTMLButtonElement>(null);
   const tense = engine.tenses.find((t) => t.id === q.tense)!;
-  const s = sentence ? engine.sentence(q.verb, q.tense, q.person) : undefined;
+  const level = useVerbStore((st) => st.level);
+  const s = sentence ? levelSentence(lang, engine.sentence(q.verb, q.tense, q.person), q, level) : undefined;
   useEffect(() => (result ? next.current?.focus() : input.current?.focus()), [result]);
   const check = () => {
     const r = checkAnswer(value, engine.answer(q.verb, q.tense, q.person), rules);

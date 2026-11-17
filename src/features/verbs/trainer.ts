@@ -38,24 +38,21 @@ export function candidates(engine: VerbEngine, verbs: string[], tenses: string[]
   return out;
 }
 
-/** Kiest n vragen, gewogen naar je fouten, zonder dezelfde vraag twee keer achter elkaar. */
+/**
+ * Kiest n vragen, gewogen naar je fouten. Elke combinatie (werkwoord + tijd + persoon)
+ * komt hooguit één keer voor: zijn er minder combinaties dan n, dan worden het er minder.
+ * (Een fout antwoord komt tijdens het oefenen nog één keer terug; dat regelt de oefenpagina.)
+ */
 export function pickQuestions(pool: VerbQuestion[], n: number, stats: Map<string, Stat>, lang: string, random = Math.random): VerbQuestion[] {
-  if (pool.length === 0) return [];
+  const left = pool.map((q) => ({ q, w: weight(stats.get(statKey(lang, q))) }));
   const out: VerbQuestion[] = [];
-  const weights = pool.map((q) => weight(stats.get(statKey(lang, q))));
-  for (let k = 0; k < n; k++) {
-    let total = 0;
-    const allowed = pool.map((q, i) => {
-      const prev = out[out.length - 1];
-      const same = prev && prev.verb === q.verb && prev.tense === q.tense && prev.person === q.person && pool.length > 1;
-      const w = same ? 0 : weights[i]!;
-      total += w;
-      return w;
-    });
+  while (out.length < n && left.length > 0) {
+    const total = left.reduce((t, x) => t + x.w, 0);
     let r = random() * total;
     let idx = 0;
-    while (idx < pool.length - 1 && r >= allowed[idx]!) r -= allowed[idx++]!;
-    out.push({ ...pool[idx]! }); // eigen kopie: dezelfde vraag later telt als nieuwe vraag
+    while (idx < left.length - 1 && r >= left[idx]!.w) r -= left[idx++]!.w;
+    out.push({ ...left[idx]!.q });
+    left.splice(idx, 1);
   }
   return out;
 }

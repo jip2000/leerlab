@@ -11,6 +11,7 @@ import { useVerbStore } from '@/features/verbs/store';
 import { candidates, loadStats, pickQuestions, type VerbMode } from '@/features/verbs/trainer';
 import { cn } from '@/lib/cn';
 import { SelectAll } from '@/components/ui/SelectAll';
+import { hasLevels, levels } from '@/features/verbs/levels';
 
 const modes: { id: VerbMode; label: string; text: string }[] = [
   { id: 'los', label: 'Los', text: 'aller · passé composé · nous → typ de vorm' },
@@ -98,6 +99,9 @@ export function VerbsPage({ lang }: { lang: LanguageCode }) {
             />
           </div>
           <div className="flex flex-wrap gap-2">
+            <Chip on={choice.verbs.length === engine.verbs.length} onClick={() => s.setChoice(lang, { verbs: engine.verbs.map((v) => v.inf) })}>
+              Alle werkwoorden ({engine.verbs.length})
+            </Chip>
             {engine.presets.map((p) => {
               const set = engine.verbs.filter(p.filter).map((v) => v.inf);
               const on = set.length > 0 && set.every((v) => choice.verbs.includes(v)) && choice.verbs.length === set.length;
@@ -173,6 +177,26 @@ export function VerbsPage({ lang }: { lang: LanguageCode }) {
               ))}
             </div>
           </div>
+          {s.mode === 'zin' && hasLevels(lang) && (
+            <div>
+              <h2 className="mb-2 text-lg font-bold">Moeilijkheid van de zinnen</h2>
+              <div role="radiogroup" aria-label="Moeilijkheid" className="grid grid-cols-3 gap-2">
+                {levels.map((l) => (
+                  <button
+                    key={l.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={s.level === l.id}
+                    onClick={() => s.set({ level: l.id })}
+                    className={cn('rounded-2xl border-2 p-3 text-left', s.level === l.id ? 'border-primary bg-primary-soft' : 'border-line bg-surface')}
+                  >
+                    <span className="block font-bold">{'●'.repeat(l.id)}{'○'.repeat(3 - l.id)} {l.label}</span>
+                    <span className="block text-sm text-ink-soft">{l.text}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           <label className="flex items-center gap-3 font-semibold">
             Aantal vragen
             <select value={s.count} onChange={(e) => s.set({ count: Number(e.target.value) })} className="h-11 rounded-[var(--radius-control)] border border-line bg-surface px-3">
@@ -184,6 +208,9 @@ export function VerbsPage({ lang }: { lang: LanguageCode }) {
           <Button size="lg" disabled={pool.length === 0} onClick={() => void start()} icon={<Play size={20} aria-hidden="true" />}>
             Start
           </Button>
+          {pool.length > 0 && pool.length < (s.mode === 'rijtje' ? Math.max(3, Math.round(s.count / 3)) : s.count) && s.mode !== 'rijtje' && (
+            <p className="text-sm text-ink-soft">Met deze keuze zijn er {pool.length} verschillende vragen. Je krijgt ze allemaal één keer.</p>
+          )}
           {pool.length === 0 && <p role="alert" className="text-sm font-semibold text-danger">Kies minstens één werkwoord, tijd en persoon.</p>}
 
           {hardest.length > 0 && (

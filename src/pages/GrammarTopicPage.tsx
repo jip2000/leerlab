@@ -13,7 +13,8 @@ import { shuffled } from '@/features/practice/engine';
 import { finishRewards, getProfile, recordAnswer, type Profile } from '@/features/progress/repo';
 import { XP_FINISH } from '@/features/progress/xp';
 import { useSettings } from '@/lib/settings';
-import { celebrate } from '@/lib/confetti';
+import { celebrate, fireworks } from '@/lib/confetti';
+import { HomeButton, WellDone } from '@/components/ui/WellDone';
 import { cn } from '@/lib/cn';
 import { toast } from '@/lib/toast';
 import { NotFoundPage } from './NotFoundPage';
@@ -68,6 +69,7 @@ export function GrammarTopicPage() {
       await db.grammarProgress.put({ id, lang, topicId: topic.id, score: Math.max(pct, prev?.score ?? 0), lastAt: now });
       await db.sessions.add({ id: newId(), type: `grammatica-${lang}`, listIds: [], startedAt: now, endedAt: now, score: pct, answers: [] });
       const r = await finishRewards(before.current ?? (await getProfile()), { mode: 'grammatica', total: exercises.length, percentage: pct }, XP_FINISH, dagdoel);
+      fireworks();
       if (pct === 100 || r.badges.length) celebrate(pct === 100);
       for (const b of r.badges) toast(`${b.emoji} Nieuwe badge: ${b.title}`);
     }
@@ -126,11 +128,15 @@ export function GrammarTopicPage() {
               </button>
             </>
           ) : (
+            <div className="flex flex-col gap-4">
+            <WellDone />
             <div className="flex flex-col gap-4 rounded-[28px] border border-line bg-surface p-8 text-center shadow-soft">
               <p className="text-[56px] leading-none font-extrabold"><span className="marker">{score}%</span></p>
               <p className="text-lg font-bold">{score === 100 ? 'Alles goed!' : score >= 70 ? 'Lekker bezig!' : 'Lees de uitleg nog eens en probeer het opnieuw.'}</p>
               <Button size="lg" className="justify-center" onClick={() => void start()}>Nieuwe ronde</Button>
               <Button size="lg" variant="secondary" className="justify-center" onClick={() => setTab('uitleg')}>Naar de uitleg</Button>
+            </div>
+            <HomeButton />
             </div>
           )}
         </div>
