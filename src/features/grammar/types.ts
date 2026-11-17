@@ -10,7 +10,7 @@ export type Block =
   | { type: 'examples'; items: [string, string][] } // [vreemde taal, vertaling]
   | { type: 'tip'; text: string };
 
-export type Exercise =
+export type Exercise = (
   /** Gat in een zin: "Je ___ au cinéma." */
   | { type: 'gap'; sentence: string; answer: string; hint?: string; explain?: string }
   /** Kiezen uit opties (answer = index van de goede). */
@@ -22,7 +22,11 @@ export type Exercise =
   /** Fout zoeken en verbeteren: typ de goede zin. */
   | { type: 'fix'; sentence: string; answer: string; explain?: string }
   /** Woorden in de goede volgorde zetten. */
-  | { type: 'order'; words: string[]; nl?: string; explain?: string };
+  | { type: 'order'; words: string[]; nl?: string; explain?: string }
+) & {
+  /** Over welke naamval(len) de oefening gaat (zie cases.ts). Leeg laten = we zoeken het zelf uit de tekst. */
+  cases?: string[];
+};
 
 export interface TopicContent {
   id: string;

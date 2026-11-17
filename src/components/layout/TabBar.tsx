@@ -27,7 +27,7 @@ export function TabBar() {
         className="tabbar fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface/95 px-2 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
       >
         <ul className="mx-auto flex max-w-xl">
-          {tabs.map(({ path, label, icon: Icon }) => (
+          {tabs.map(({ path, label, short, icon: Icon }) => (
             <li key={path} className="flex flex-1">
               <NavLink to={path} end={path === '/'} className={({ isActive }) => tabClass(isActive)}>
                 {({ isActive }) => (
@@ -35,7 +35,7 @@ export function TabBar() {
                     <span className={cn('grid h-7 w-12 place-items-center rounded-full transition-colors', isActive && 'bg-primary-soft')}>
                       <Icon size={21} strokeWidth={2.2} aria-hidden="true" />
                     </span>
-                    {label === 'Mijn lijsten' ? 'Lijsten' : label}
+                    {short ?? label}
                   </>
                 )}
               </NavLink>

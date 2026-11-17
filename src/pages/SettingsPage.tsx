@@ -148,6 +148,12 @@ export function SettingsPage() {
           </Section>
         )}
 
+        <Section title="Rondleiding">
+          <div className="flex flex-wrap items-center justify-between gap-3 py-3">
+            <p className="text-ink-soft">Bekijk de korte uitleg over Woordwerk nog een keer.</p>
+            <Button variant="secondary" onClick={() => s.update({ rondleidingGezien: false })}>Rondleiding bekijken</Button>
+          </div>
+        </Section>
         <Section title="Back-up">
           <div className="flex flex-col gap-3 py-3">
             <p className="text-sm text-ink-soft">

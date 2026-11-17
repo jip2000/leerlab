@@ -17,6 +17,7 @@ import { useTypingAttribute } from '@/lib/typing';
 import { navItems } from './nav';
 import { Toaster } from '@/components/ui/Toaster';
 import { TutorChat } from '@/features/tutor/TutorChat';
+import { Rondleiding } from '@/features/onboarding/Rondleiding';
 
 /** Het "frame" om elke pagina: zijbalk, bovenbalk, tabbalk en een zachte overgang. */
 export function AppShell() {
@@ -88,6 +89,7 @@ export function AppShell() {
       <TabBar />
       <TutorChat />
       <Toaster />
+      <Rondleiding />
     </div>
     </MotionConfig>
   );

@@ -15,6 +15,13 @@ import { SettingsPage } from '@/pages/SettingsPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { gated } from '@/features/account/PlusGate';
 import { ErrorPage } from '@/pages/ErrorPage';
+import { Navigate } from 'react-router';
+import { useVerbStore } from '@/features/verbs/store';
+
+function VerbsRedirect() {
+  const lang = useVerbStore((s) => s.lang);
+  return <Navigate replace to={`/grammatica/${lang}?deel=werkwoorden`} />;
+}
 
 /**
  * Hash-router (#/lijsten): werkt op gratis hosting zoals GitHub Pages,
@@ -41,7 +48,8 @@ export const router = createHashRouter([
       { path: 'grammatica', lazy: () => import('@/pages/GrammarPage').then((m) => ({ Component: m.GrammarPage })) },
       { path: 'grammatica/:taal', lazy: () => import('@/pages/GrammarPage').then((m) => ({ Component: m.GrammarPage })) },
       { path: 'grammatica/:taal/:onderwerp', lazy: () => import('@/pages/GrammarTopicPage').then((m) => ({ Component: m.GrammarTopicPage })) },
-      { path: 'werkwoorden', lazy: () => import('@/pages/VerbsPage').then((m) => ({ Component: () => gated('werkwoorden', <m.VerbsPage />) })) },
+      // Werkwoorden zit nu bij Grammatica (tabblad per taal); oude links sturen we door.
+      { path: 'werkwoorden', element: <VerbsRedirect /> },
       { path: 'werkwoorden/oefenen', lazy: () => import('@/pages/VerbSessionPage').then((m) => ({ Component: () => gated('werkwoorden', <m.VerbSessionPage />) })) },
       { path: 'scannen', lazy: () => import('@/pages/ScanPage').then((m) => ({ Component: () => gated('scannen', <m.ScanPage />) })) },
       { path: 'videos', lazy: () => import('@/pages/VideosPage').then((m) => ({ Component: m.VideosPage })) },

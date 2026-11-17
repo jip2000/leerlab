@@ -1,8 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 test('werkwoordtrainer: aller · passé composé · nous', async ({ page }) => {
-  await page.goto('/#/werkwoorden');
-  await page.getByRole('tab', { name: /Frans/ }).click();
+  await page.goto('/#/grammatica/fr?deel=werkwoorden');
   await page.getByRole('button', { name: 'Alle werkwoorden uitvinken' }).click();
   await page.getByLabel('Zoek een werkwoord').fill('aller');
   await page.getByRole('checkbox').first().check();
@@ -33,8 +32,7 @@ test('werkwoordtrainer: aller · passé composé · nous', async ({ page }) => {
 });
 
 test('werkwoordtrainer: rijtje Duits', async ({ page }) => {
-  await page.goto('/#/werkwoorden');
-  await page.getByRole('tab', { name: /Duits/ }).click();
+  await page.goto('/#/grammatica/de?deel=werkwoorden');
   await page.getByRole('button', { name: 'Alle werkwoorden uitvinken' }).click();
   await page.getByLabel('Zoek een werkwoord').fill('fahren');
   await page.getByRole('checkbox').first().check();
@@ -49,8 +47,7 @@ test('werkwoordtrainer: rijtje Duits', async ({ page }) => {
 });
 
 test('werkwoordtrainer: alles in één keer aanvinken', async ({ page }) => {
-  await page.goto('/#/werkwoorden');
-  await page.getByRole('tab', { name: /Frans/ }).click();
+  await page.goto('/#/grammatica/fr?deel=werkwoorden');
   await page.getByRole('button', { name: 'Alle werkwoorden uitvinken' }).click();
   await expect(page.getByRole('heading', { name: 'Werkwoorden (0)' })).toBeVisible();
   await expect(page.getByRole('alert')).toHaveText(/Kies minstens/);
@@ -64,4 +61,20 @@ test('werkwoordtrainer: alles in één keer aanvinken', async ({ page }) => {
   await page.getByLabel('Zoek een werkwoord').fill('venir');
   await page.getByRole('button', { name: 'Alle gevonden werkwoorden aanvinken' }).click();
   await expect(page.getByRole('heading', { name: 'Werkwoorden (3)' })).toBeVisible(); // venir, devenir, revenir
+});
+
+test('werkwoorden en grammatica zijn één plek', async ({ page }) => {
+  // Oude link stuurt door naar het tabblad van de laatst gebruikte taal.
+  await page.goto('/#/werkwoorden');
+  await expect(page).toHaveURL(/#\/grammatica\/fr\?deel=werkwoorden/);
+  await expect(page.getByRole('tab', { name: 'Werkwoorden trainen' })).toHaveAttribute('aria-selected', 'true');
+  await expect(page.getByRole('heading', { name: /Werkwoorden \(\d+\)/ })).toBeVisible();
+  // Wisselen naar de uitleg op dezelfde pagina.
+  await page.getByRole('tab', { name: 'Uitleg & oefeningen' }).click();
+  await expect(page.getByRole('link', { name: /Passé composé/i }).first()).toBeVisible();
+  // Na een oefening terug naar het tabblad werkwoorden.
+  await page.getByRole('tab', { name: 'Werkwoorden trainen' }).click();
+  await page.getByRole('button', { name: 'Start' }).click();
+  await page.getByRole('button', { name: 'Stoppen' }).click();
+  await expect(page).toHaveURL(/#\/grammatica\/fr\?deel=werkwoorden/);
 });

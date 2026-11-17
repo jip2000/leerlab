@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import type { LanguageCode } from '@/data/languages';
 
 export type ThemeChoice = 'systeem' | 'licht' | 'donker';
 
@@ -20,6 +21,10 @@ export interface Settings {
   /** Anoniem meetellen in de bezoekersteller. */
   meetellen: boolean;
   dagdoel: { type: 'minuten' | 'woorden'; aantal: number };
+  /** De korte rondleiding voor nieuwe bezoekers is al bekeken (of overgeslagen). */
+  rondleidingGezien: boolean;
+  /** Welke naamvallen je per taal wilt leren (id's uit grammar/cases.ts). Niets = alles. */
+  naamvallen: Partial<Record<LanguageCode, string[]>>;
   nakijkregels: CheckRules;
 }
 
@@ -35,6 +40,8 @@ export const defaultSettings: Settings = {
   streakOpIcoon: false,
   meetellen: true,
   dagdoel: { type: 'minuten', aantal: 10 },
+  rondleidingGezien: false,
+  naamvallen: {},
   nakijkregels: {
     ignoreCase: true,
     ignoreAccents: false,

@@ -2,12 +2,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Play } from 'lucide-react';
-import { PageHeader } from '@/components/ui/PageHeader';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { getLanguage } from '@/data/languages';
+import type { LanguageCode } from '@/data/languages';
 import { db } from '@/db/db';
-import { verbEngines, verbLanguages } from '@/features/verbs/registry';
+import { verbEngines } from '@/features/verbs/registry';
 import { useVerbStore } from '@/features/verbs/store';
 import { candidates, loadStats, pickQuestions, type VerbMode } from '@/features/verbs/trainer';
 import { cn } from '@/lib/cn';
@@ -33,19 +32,27 @@ function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; chi
   );
 }
 
-export function VerbsPage() {
+/**
+ * De werkwoordtrainer. Staat als tabblad "Werkwoorden" op de taalpagina bij Grammatica
+ * (#/grammatica/fr?deel=werkwoorden); de taal komt uit de link.
+ */
+export function VerbsPage({ lang }: { lang: LanguageCode }) {
   const navigate = useNavigate();
   const s = useVerbStore();
-  const engine = verbEngines[s.lang]!;
-  const choice = s.choices[s.lang] ?? { verbs: [], tenses: [], persons: [0, 1, 2, 3, 4, 5] };
+  // Onthouden welke taal je het laatst trainde (voor #/werkwoorden en de oefenpagina).
+  useEffect(() => {
+    if (s.lang !== lang) s.set({ lang });
+  }, [lang]);
+  const engine = verbEngines[lang]!;
+  const choice = s.choices[lang] ?? { verbs: [], tenses: [], persons: [0, 1, 2, 3, 4, 5] };
   const [search, setSearch] = useState('');
-  const progress = useLiveQuery(() => db.verbProgress.where('lang').equals(s.lang).toArray(), [s.lang]);
+  const progress = useLiveQuery(() => db.verbProgress.where('lang').equals(lang).toArray(), [lang]);
 
   // Standaardkeuze als er nog niets gekozen is: de eerste set en de eerste tijd.
   useEffect(() => {
-    if (choice.verbs.length === 0) s.setChoice(s.lang, { verbs: engine.verbs.filter(engine.presets[0]!.filter).slice(0, 10).map((v) => v.inf) });
-    if (choice.tenses.length === 0) s.setChoice(s.lang, { tenses: [engine.tenses[0]!.id] });
-  }, [s.lang]);
+    if (choice.verbs.length === 0) s.setChoice(lang, { verbs: engine.verbs.filter(engine.presets[0]!.filter).slice(0, 10).map((v) => v.inf) });
+    if (choice.tenses.length === 0) s.setChoice(lang, { tenses: [engine.tenses[0]!.id] });
+  }, [lang]);
 
   const toggle = <T,>(list: T[], x: T) => (list.includes(x) ? list.filter((y) => y !== x) : [...list, x]);
   const pool = useMemo(() => candidates(engine, choice.verbs, choice.tenses, choice.persons), [engine, choice]);
@@ -65,11 +72,11 @@ export function VerbsPage() {
   }, [progress]);
 
   const start = async () => {
-    const stats = await loadStats(s.lang);
+    const stats = await loadStats(lang);
     const questions = s.mode === 'rijtje'
-      ? pickQuestions([...new Map(pool.map((q) => [`${q.verb}:${q.tense}`, { ...q, person: 0 }])).values()], Math.max(3, Math.round(s.count / 3)), stats, s.lang)
-      : pickQuestions(pool, s.count, stats, s.lang);
-    s.set({ questions });
+      ? pickQuestions([...new Map(pool.map((q) => [`${q.verb}:${q.tense}`, { ...q, person: 0 }])).values()], Math.max(3, Math.round(s.count / 3)), stats, lang)
+      : pickQuestions(pool, s.count, stats, lang);
+    s.set({ questions, lang });
     navigate('/werkwoorden/oefenen');
   };
 
@@ -77,21 +84,6 @@ export function VerbsPage() {
 
   return (
     <>
-      <PageHeader title="Werkwoorden" intro="Kies een taal, werkwoorden, tijden en hoe je wilt oefenen." />
-      <div role="tablist" aria-label="Taal" className="mb-5 flex flex-wrap gap-2">
-        {verbLanguages.map((code) => (
-          <button
-            key={code}
-            role="tab"
-            type="button"
-            aria-selected={s.lang === code}
-            onClick={() => s.set({ lang: code })}
-            className={cn('h-11 rounded-full border px-4 font-semibold', s.lang === code ? 'border-primary bg-primary-soft text-primary-ink' : 'border-line bg-surface text-ink-soft')}
-          >
-            {getLanguage(code).flag} {getLanguage(code).name}
-          </button>
-        ))}
-      </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <section className="flex flex-col gap-3">
@@ -101,8 +93,8 @@ export function VerbsPage() {
               label={search ? 'gevonden werkwoorden' : 'werkwoorden'}
               allOn={filtered.every((v) => choice.verbs.includes(v.inf))}
               noneOn={choice.verbs.length === 0}
-              onAll={() => s.setChoice(s.lang, { verbs: [...new Set([...choice.verbs, ...filtered.map((v) => v.inf)])] })}
-              onNone={() => s.setChoice(s.lang, { verbs: [] })}
+              onAll={() => s.setChoice(lang, { verbs: [...new Set([...choice.verbs, ...filtered.map((v) => v.inf)])] })}
+              onNone={() => s.setChoice(lang, { verbs: [] })}
             />
           </div>
           <div className="flex flex-wrap gap-2">
@@ -110,7 +102,7 @@ export function VerbsPage() {
               const set = engine.verbs.filter(p.filter).map((v) => v.inf);
               const on = set.length > 0 && set.every((v) => choice.verbs.includes(v)) && choice.verbs.length === set.length;
               return (
-                <Chip key={p.id} on={on} onClick={() => s.setChoice(s.lang, { verbs: set })}>
+                <Chip key={p.id} on={on} onClick={() => s.setChoice(lang, { verbs: set })}>
                   {p.label}
                 </Chip>
               );
@@ -121,8 +113,8 @@ export function VerbsPage() {
             {filtered.map((v) => (
               <li key={v.inf}>
                 <label className="flex min-h-11 cursor-pointer items-center gap-2 rounded-lg px-2 hover:bg-surface-2">
-                  <input type="checkbox" className="h-5 w-5 accent-[var(--primary)]" checked={choice.verbs.includes(v.inf)} onChange={() => s.setChoice(s.lang, { verbs: toggle(choice.verbs, v.inf) })} />
-                  <span lang={s.lang} className="font-semibold">{v.inf}</span>
+                  <input type="checkbox" className="h-5 w-5 accent-[var(--primary)]" checked={choice.verbs.includes(v.inf)} onChange={() => s.setChoice(lang, { verbs: toggle(choice.verbs, v.inf) })} />
+                  <span lang={lang} className="font-semibold">{v.inf}</span>
                   <span className="truncate text-sm text-ink-soft">{v.nl}</span>
                 </label>
               </li>
@@ -135,13 +127,13 @@ export function VerbsPage() {
             <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
               <h2 className="text-lg font-bold">Tijden</h2>
               <SelectAll label="tijden" allOn={choice.tenses.length === engine.tenses.length} noneOn={choice.tenses.length === 0}
-                onAll={() => s.setChoice(s.lang, { tenses: engine.tenses.map((t) => t.id) })} onNone={() => s.setChoice(s.lang, { tenses: [] })} />
+                onAll={() => s.setChoice(lang, { tenses: engine.tenses.map((t) => t.id) })} onNone={() => s.setChoice(lang, { tenses: [] })} />
             </div>
             <div className="flex flex-wrap gap-2">
               {engine.tenses.map((t) => {
                 const st = perTense.get(t.id);
                 return (
-                  <Chip key={t.id} on={choice.tenses.includes(t.id)} onClick={() => s.setChoice(s.lang, { tenses: toggle(choice.tenses, t.id) })}>
+                  <Chip key={t.id} on={choice.tenses.includes(t.id)} onClick={() => s.setChoice(lang, { tenses: toggle(choice.tenses, t.id) })}>
                     {t.label}
                     {st && st.total > 0 && <span className="ml-1.5 text-xs opacity-80">{Math.round((st.ok / st.total) * 100)}%</span>}
                   </Chip>
@@ -153,11 +145,11 @@ export function VerbsPage() {
             <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
               <h2 className="text-lg font-bold">Personen</h2>
               <SelectAll label="personen" allOn={choice.persons.length === 6} noneOn={choice.persons.length === 0}
-                onAll={() => s.setChoice(s.lang, { persons: [0, 1, 2, 3, 4, 5] })} onNone={() => s.setChoice(s.lang, { persons: [] })} />
+                onAll={() => s.setChoice(lang, { persons: [0, 1, 2, 3, 4, 5] })} onNone={() => s.setChoice(lang, { persons: [] })} />
             </div>
             <div className="flex flex-wrap gap-2">
               {engine.persons.map((p, i) => (
-                <Chip key={p} on={choice.persons.includes(i)} onClick={() => s.setChoice(s.lang, { persons: toggle(choice.persons, i) })}>
+                <Chip key={p} on={choice.persons.includes(i)} onClick={() => s.setChoice(lang, { persons: toggle(choice.persons, i) })}>
                   {p}
                 </Chip>
               ))}
@@ -200,7 +192,7 @@ export function VerbsPage() {
               <ul className="text-sm">
                 {hardest.map(([verb, n]) => (
                   <li key={verb}>
-                    <span lang={s.lang} className="font-semibold">{verb}</span>: {n}× fout
+                    <span lang={lang} className="font-semibold">{verb}</span>: {n}× fout
                   </li>
                 ))}
               </ul>

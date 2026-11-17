@@ -37,10 +37,11 @@ export function VerbSessionPage() {
   const before = useRef<Profile | null>(null);
   const last = useRef(Date.now());
   const total = initial.length;
+  const back = `/grammatica/${lang}?deel=werkwoorden`;
   const ctx: Ctx = { engine, lang, rules, initial };
 
   useEffect(() => {
-    if (initial.length === 0) navigate('/werkwoorden', { replace: true });
+    if (initial.length === 0) navigate(back, { replace: true });
     void getProfile().then((p) => (before.current = p));
   }, []);
 
@@ -99,7 +100,7 @@ export function VerbSessionPage() {
             </ul>
           </section>
         )}
-        <Button size="lg" className="justify-center" onClick={() => navigate('/werkwoorden')}>Nog een keer</Button>
+        <Button size="lg" className="justify-center" onClick={() => navigate(back)}>Nog een keer</Button>
         <ButtonLink to="/" variant="secondary" className="h-13 justify-center">Klaar</ButtonLink>
       </div>
     );
@@ -109,7 +110,7 @@ export function VerbSessionPage() {
   return (
     <div className="mx-auto flex max-w-lg flex-col gap-5">
       <div className="flex items-center gap-3">
-        <button type="button" onClick={() => navigate('/werkwoorden')} aria-label="Stoppen" className="grid h-11 w-11 place-items-center rounded-full text-ink-soft hover:bg-surface-2">
+        <button type="button" onClick={() => navigate(back)} aria-label="Stoppen" className="grid h-11 w-11 place-items-center rounded-full text-ink-soft hover:bg-surface-2">
           <X size={22} />
         </button>
         <div className="h-3 flex-1 overflow-hidden rounded-full bg-surface-2" role="progressbar" aria-label="Voortgang" aria-valuemin={0} aria-valuemax={total} aria-valuenow={done}>

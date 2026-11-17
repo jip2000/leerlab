@@ -12,6 +12,11 @@ export default defineConfig({
   use: {
     baseURL: 'http://localhost:4173',
     trace: 'off',
+    // Rondleiding staat in de meeste tests al op "gezien"; rondleiding.spec.ts zet hem weer aan.
+    storageState: {
+      cookies: [],
+      origins: [{ origin: 'http://localhost:4173', localStorage: [{ name: 'woordwerk-instellingen', value: JSON.stringify({ state: { rondleidingGezien: true }, version: 1 }) }] }],
+    },
     launchOptions,
   },
   webServer: {

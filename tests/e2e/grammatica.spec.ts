@@ -25,6 +25,28 @@ test('grammatica: uitleg lezen en een ronde oefenen', async ({ page }) => {
     await page.getByRole('button', { name: 'Volgende' }).click();
   }
   await expect(page.getByRole('button', { name: 'Nieuwe ronde' })).toBeVisible();
-  await page.getByRole('link', { name: /Grammatica Frans/ }).click();
+  await page.getByRole('main').getByRole('link', { name: 'Frans', exact: true }).click();
   await expect(page.getByText(/\d+%/).first()).toBeVisible();
+});
+
+test('naamvallen kiezen: Duits zonder Genitiv', async ({ page }) => {
+  await page.goto('/#/grammatica/de');
+  const chooser = page.getByRole('group', { name: 'Naamvallen' });
+  for (const n of ['Nominativ', 'Akkusativ', 'Dativ', 'Genitiv']) await expect(chooser.getByRole('button', { name: new RegExp(n) })).toHaveAttribute('aria-pressed', 'true');
+  await chooser.getByRole('button', { name: /Genitiv/ }).click();
+  await expect(chooser.getByRole('button', { name: /Genitiv/ })).toHaveAttribute('aria-pressed', 'false');
+
+  await page.getByRole('link', { name: /^Naamvallen/ }).click();
+  await expect(page.getByRole('rowheader', { name: 'Dativ', exact: true }).first()).toBeVisible();
+  await expect(page.getByRole('rowheader', { name: 'Genitiv', exact: true })).toHaveCount(0);
+  // Keuze is ook hier te zien en blijft bewaard.
+  await expect(page.getByRole('group', { name: 'Naamvallen' }).getByRole('button', { name: /Genitiv/ })).toHaveAttribute('aria-pressed', 'false');
+  await page.reload();
+  await expect(page.getByRole('rowheader', { name: 'Genitiv', exact: true })).toHaveCount(0);
+
+  // Minstens één naamval blijft aan.
+  const g = page.getByRole('group', { name: 'Naamvallen' });
+  for (const n of ['Nominativ', 'Akkusativ', 'Dativ']) await g.getByRole('button', { name: new RegExp(n) }).click();
+  await expect(g.getByRole('button', { name: /Dativ/ })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByRole('rowheader', { name: 'Dativ', exact: true }).first()).toBeVisible();
 });

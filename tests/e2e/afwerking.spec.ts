@@ -55,12 +55,12 @@ test('werkt offline na de eerste keer laden', async ({ page, context }) => {
 test('na een update: ontbrekend stukje → nette melding en verversen', async ({ page }) => {
   await page.goto('/#/');
   await expect(page.getByText(/dag(en)? op rij/).first()).toBeVisible();
-  // Doe alsof de pagina "Werkwoorden" van een oude versie niet meer bestaat.
-  await page.route(/assets\/VerbsPage-.*\.js$/, (r) => r.fulfill({ status: 404, body: '' }));
+  // Doe alsof de pagina "Grammatica & werkwoorden" van een oude versie niet meer bestaat.
+  await page.route(/assets\/GrammarPage-.*\.js$/, (r) => r.fulfill({ status: 404, body: '' }));
   await page.evaluate(() => sessionStorage.setItem('woordwerk-herladen', '1')); // geen automatisch herladen in de test
-  await page.goto('/#/werkwoorden');
+  await page.goto('/#/grammatica');
   await expect(page.getByRole('heading', { name: 'Er is een nieuwe versie van Woordwerk' })).toBeVisible();
-  await page.unroute(/assets\/VerbsPage-.*\.js$/);
+  await page.unroute(/assets\/GrammarPage-.*\.js$/);
   await page.getByRole('button', { name: 'Opnieuw laden' }).click();
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Werkwoorden');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Grammatica & werkwoorden');
 });

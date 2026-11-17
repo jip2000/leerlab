@@ -20,6 +20,8 @@ import { NotFoundPage } from './NotFoundPage';
 import { TopicVideos } from '@/features/videos/TopicVideos';
 import { FREE_GRAMMAR_TOPICS, usePlusAccess } from '@/lib/plan';
 import { PlusGate } from '@/features/account/PlusGate';
+import { filterBlocks, filterExercises, selectedCases, topicUsesCases } from '@/features/grammar/cases';
+import { CaseChooser } from '@/features/grammar/components/CaseChooser';
 
 const ROUND = 8;
 
@@ -32,7 +34,9 @@ export function GrammarTopicPage() {
   const plusOk = usePlusAccess('grammatica-oefenen');
   const [tab, setTab] = useState<'uitleg' | 'oefenen'>('uitleg');
   const [round, setRound] = useState(0);
-  const exercises = useMemo(() => (topic ? shuffled(exercisesOf(topic)).slice(0, ROUND) : []), [topic, round]);
+  const savedCases = useSettings((s) => s.naamvallen);
+  const on = useMemo(() => selectedCases(lang, savedCases), [lang, savedCases]);
+  const exercises = useMemo(() => (topic ? shuffled(filterExercises(lang, exercisesOf(topic), on)).slice(0, ROUND) : []), [topic, round, on]);
   const [index, setIndex] = useState(0);
   const [good, setGood] = useState(0);
   const before = useRef<Profile | null>(null);
@@ -72,7 +76,7 @@ export function GrammarTopicPage() {
 
   return (
     <>
-      <BackLink to={`/grammatica/${lang}`}>Grammatica {getLanguage(lang).name}</BackLink>
+      <BackLink to={`/grammatica/${lang}`}>{getLanguage(lang).name}</BackLink>
       <PageHeader title={info.title} />
       <div role="tablist" aria-label="Onderdeel" className="mb-5 inline-flex rounded-2xl bg-surface-2 p-1">
         {(['uitleg', 'oefenen'] as const).map((t) => (
@@ -92,7 +96,8 @@ export function GrammarTopicPage() {
 
       {tab === 'uitleg' && (
         <>
-          <Blocks blocks={topic.blocks} lang={lang} />
+          {topicUsesCases(lang, topic) && <CaseChooser lang={lang} className="mb-5" />}
+          <Blocks blocks={filterBlocks(lang, topic.blocks, on)} lang={lang} />
           <Button size="lg" className="mt-6" icon={<Dumbbell size={20} aria-hidden="true" />} onClick={() => void start()}>
             Oefenen
           </Button>
@@ -105,7 +110,9 @@ export function GrammarTopicPage() {
       )}
       {tab === 'oefenen' && (plusOk || getLanguage(lang).grammarTopics.findIndex((t) => t.id === topic.id) < FREE_GRAMMAR_TOPICS) && (
         <div className="mx-auto max-w-lg">
-          {!done ? (
+          {exercises.length === 0 ? (
+            <p className="rounded-2xl bg-surface-2 p-5 text-center font-semibold">Met de naamvallen die je gekozen hebt, zijn er hier geen oefeningen. Zet er bij de uitleg één bij.</p>
+          ) : !done ? (
             <>
               <div className="mb-4 flex items-center gap-3">
                 <div className="h-3 flex-1 overflow-hidden rounded-full bg-surface-2" role="progressbar" aria-label="Voortgang" aria-valuemin={0} aria-valuemax={exercises.length} aria-valuenow={index}>
