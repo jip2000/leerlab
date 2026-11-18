@@ -39,6 +39,12 @@ export const useVerbStore = create<VerbStore>()(
         set({ choices: { ...get().choices, [lang]: { ...cur, ...c } } });
       },
     }),
-    { name: 'woordwerk-werkwoorden', partialize: (s) => ({ lang: s.lang, mode: s.mode, count: s.count, level: s.level, choices: s.choices }) },
+    {
+      name: 'woordwerk-werkwoorden',
+      // Versie 2: standaard staat alles aan; oude keuzes (10 werkwoorden, 1 tijd) vergeten we één keer.
+      version: 2,
+      migrate: (old) => ({ ...(old as object), choices: {} }) as unknown as VerbStore,
+      partialize: (s) => ({ lang: s.lang, mode: s.mode, count: s.count, level: s.level, choices: s.choices }),
+    },
   ),
 );

@@ -6,7 +6,7 @@ test('grammatica: uitleg lezen en een ronde oefenen', async ({ page }) => {
   await page.getByRole('link', { name: /Lidwoorden/ }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Lidwoorden (ook partitif)');
   await expect(page.getByRole('cell', { name: 'de la', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Oefenen', exact: true }).click();
+  await page.getByRole('button', { name: 'Ga oefenen' }).click();
 
   for (let i = 0; i < 8; i++) {
     await expect(page.getByText(`${i}/8`)).toBeVisible();
@@ -54,4 +54,15 @@ test('naamvallen kiezen: Duits zonder Genitiv', async ({ page }) => {
   for (const n of ['Nominativ', 'Akkusativ', 'Dativ']) await g.getByRole('button', { name: new RegExp(n) }).click();
   await expect(g.getByRole('button', { name: /Dativ/ })).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByRole('rowheader', { name: 'Dativ', exact: true }).first()).toBeVisible();
+});
+
+test('leerpad: begin hier, daarna ga verder', async ({ page }) => {
+  await page.goto('/#/grammatica/fr');
+  await expect(page.getByRole('tab', { name: /Grammatica/ })).toHaveAttribute('aria-selected', 'true');
+  const begin = page.getByRole('link', { name: /Begin hier/ });
+  await expect(begin).toBeVisible();
+  await expect(page.getByText(/0 van \d+ onderwerpen gehaald/)).toBeVisible();
+  await begin.click();
+  await expect(page.getByRole('tab', { name: /Uitleg lezen/ })).toHaveAttribute('aria-selected', 'true');
+  await expect(page.getByRole('button', { name: 'Ga oefenen' })).toBeVisible();
 });

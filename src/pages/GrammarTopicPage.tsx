@@ -91,7 +91,8 @@ export function GrammarTopicPage() {
             className={cn('flex h-11 items-center gap-2 rounded-xl px-5 font-semibold', tab === t ? 'bg-surface shadow-soft' : 'text-ink-soft')}
           >
             {t === 'uitleg' ? <BookOpen size={18} aria-hidden="true" /> : <Dumbbell size={18} aria-hidden="true" />}
-            {t === 'uitleg' ? 'Uitleg' : 'Oefenen'}
+            <span className="grid h-6 w-6 place-items-center rounded-full bg-primary text-xs text-on-primary" aria-hidden="true">{t === 'uitleg' ? 1 : 2}</span>
+            {t === 'uitleg' ? 'Uitleg lezen' : 'Oefenen'}
           </button>
         ))}
       </div>
@@ -100,9 +101,12 @@ export function GrammarTopicPage() {
         <>
           {topicUsesCases(lang, topic) && <CaseChooser lang={lang} className="mb-5" />}
           <Blocks blocks={filterBlocks(lang, topic.blocks, on)} lang={lang} />
-          <Button size="lg" className="mt-6" icon={<Dumbbell size={20} aria-hidden="true" />} onClick={() => void start()}>
-            Oefenen
-          </Button>
+          <div className="mt-6 flex flex-wrap items-center gap-3 rounded-[var(--radius-card)] border-2 border-primary bg-primary-soft p-4">
+            <p className="flex-1 font-semibold">Klaar met lezen? Oefen nu {ROUND} vragen over dit onderwerp.</p>
+            <Button size="lg" icon={<Dumbbell size={20} aria-hidden="true" />} onClick={() => void start()}>
+              Ga oefenen
+            </Button>
+          </div>
           <TopicVideos link={{ kind: 'grammar', id: `${lang}:${topic.id}` }} />
         </>
       )}

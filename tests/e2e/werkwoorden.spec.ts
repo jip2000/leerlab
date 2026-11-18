@@ -2,13 +2,11 @@ import { expect, test } from '@playwright/test';
 
 test('werkwoordtrainer: aller · passé composé · nous', async ({ page }) => {
   await page.goto('/#/grammatica/fr?deel=werkwoorden');
-  await page.getByRole('button', { name: 'Zelf werkwoorden aanvinken' }).click();
   await page.getByRole('button', { name: 'Alle werkwoorden uitvinken' }).click();
   await page.getByLabel('Zoek een werkwoord').fill('aller');
   await page.getByRole('checkbox').first().check();
+  await page.getByRole('button', { name: 'Alle tijden uitvinken' }).click();
   await page.getByRole('button', { name: /^passé composé/ }).click();
-  await page.getByRole('button', { name: /^présent/ }).click();
-  await page.getByText('Meer opties: personen en aantal vragen').click();
   await page.getByRole('button', { name: 'Alle personen uitvinken' }).click();
   await page.getByRole('button', { name: 'nous', exact: true }).click();
   await page.getByLabel('Aantal vragen').selectOption('10');
@@ -37,12 +35,12 @@ test('werkwoordtrainer: aller · passé composé · nous', async ({ page }) => {
 
 test('werkwoordtrainer: rijtje Duits', async ({ page }) => {
   await page.goto('/#/grammatica/de?deel=werkwoorden');
-  await page.getByRole('button', { name: 'Zelf werkwoorden aanvinken' }).click();
   await page.getByRole('button', { name: 'Alle werkwoorden uitvinken' }).click();
   await page.getByLabel('Zoek een werkwoord').fill('fahren');
   await page.getByRole('checkbox').first().check();
+  await page.getByRole('button', { name: 'Alle tijden uitvinken' }).click();
+  await page.getByRole('button', { name: /^Präsens/ }).click();
   await page.getByRole('radio', { name: /^Hele rijtje/ }).click();
-  await page.getByText('Meer opties: personen en aantal vragen').click();
   await page.getByLabel('Aantal vragen').selectOption('10');
   await page.getByRole('button', { name: 'Start' }).click();
   const forms = ['ich fahre', 'du fährst', 'er fährt', 'wir fahren', 'ihr fahrt', 'sie fahren'];
@@ -54,20 +52,20 @@ test('werkwoordtrainer: rijtje Duits', async ({ page }) => {
 
 test('werkwoordtrainer: alles in één keer aanvinken', async ({ page }) => {
   await page.goto('/#/grammatica/fr?deel=werkwoorden');
-  await page.getByRole('button', { name: 'Zelf werkwoorden aanvinken' }).click();
   await page.getByRole('button', { name: 'Alle werkwoorden uitvinken' }).click();
-  await expect(page.getByRole('heading', { name: 'Werkwoorden (0)' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Welke werkwoorden\? \(0 van/ })).toBeVisible();
   await expect(page.getByRole('alert')).toHaveText(/Kies minstens/);
   await page.getByRole('button', { name: 'Alle werkwoorden aanvinken' }).click();
-  await expect(page.getByRole('heading', { name: /Werkwoorden \((\d{2,})\)/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Welke werkwoorden\? \(alle\)/ })).toBeVisible();
   for (const cb of await page.getByRole('checkbox').all()) await expect(cb).toBeChecked();
+  await page.getByRole('button', { name: 'Alle tijden uitvinken' }).click();
   await page.getByRole('button', { name: 'Alle tijden aanvinken' }).click();
   for (const t of ['présent', 'subjonctif présent', 'impératif']) await expect(page.getByRole('button', { name: new RegExp(`^${t}`) })).toHaveAttribute('aria-pressed', 'true');
   // Zoeken + aanvinken: alleen wat je ziet.
   await page.getByRole('button', { name: 'Alle werkwoorden uitvinken' }).click();
   await page.getByLabel('Zoek een werkwoord').fill('venir');
   await page.getByRole('button', { name: 'Alle gevonden werkwoorden aanvinken' }).click();
-  await expect(page.getByRole('heading', { name: 'Werkwoorden (3)' })).toBeVisible(); // venir, devenir, revenir
+  await expect(page.getByRole('heading', { name: /Welke werkwoorden\? \(3 van/ })).toBeVisible(); // venir, devenir, revenir
 });
 
 test('werkwoorden en grammatica zijn één plek', async ({ page }) => {
@@ -88,11 +86,12 @@ test('werkwoorden en grammatica zijn één plek', async ({ page }) => {
 
 test('in een zin: nooit dezelfde vraag, en moeilijke zinnen', async ({ page }) => {
   await page.goto('/#/grammatica/de?deel=werkwoorden');
-  await page.getByRole('button', { name: /^Alle werkwoorden \(/ }).click();
-  await expect(page.getByRole('button', { name: /^Alle werkwoorden \(/ })).toHaveAttribute('aria-pressed', 'true');
+  // Standaard staat alles aan.
+  await expect(page.getByRole('heading', { name: /Welke werkwoorden\? \(alle\)/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Welke tijden\? \(alle\)/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Wie\? \(alle\)/ })).toBeVisible();
   await page.getByRole('radio', { name: /^In een zin/ }).click();
   await page.getByRole('radio', { name: /Moeilijk/ }).click();
-  await page.getByText('Meer opties: personen en aantal vragen').click();
   await page.getByLabel('Aantal vragen').selectOption('10');
   await page.getByRole('button', { name: 'Start' }).click();
   const seen = new Set<string>();

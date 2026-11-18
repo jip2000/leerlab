@@ -32,20 +32,22 @@ export function GrammarPage() {
   if (lang) {
     const hasVerbs = !!verbEngines[lang.code];
     const deel: Deel = hasVerbs && params.get('deel') === 'werkwoorden' ? 'werkwoorden' : 'uitleg';
-    const tabs: { id: Deel; label: string; icon: typeof BookOpen }[] = [
-      { id: 'uitleg', label: 'Grammatica', icon: BookOpen },
-      ...(hasVerbs ? [{ id: 'werkwoorden' as const, label: 'Werkwoorden', icon: PenLine }] : []),
+    const engine = verbEngines[lang.code];
+    const nTopics = lang.grammarTopics.filter((t) => getTopic(lang.code, t.id)).length;
+    const tabs: { id: Deel; label: string; sub: string; icon: typeof BookOpen }[] = [
+      { id: 'uitleg', label: 'Grammatica', sub: `Leerpad met ${nTopics} onderwerpen`, icon: BookOpen },
+      ...(engine ? [{ id: 'werkwoorden' as const, label: 'Werkwoorden', sub: `${engine.verbs.length} werkwoorden · ${engine.tenses.length} tijden`, icon: PenLine }] : []),
     ];
     return (
       <>
         <BackLink to="/grammatica">Alle talen</BackLink>
         <PageHeader
           title={`${lang.flag} ${lang.name}`}
-          intro={deel === 'werkwoorden' ? 'Kies in 3 stappen wat je wilt oefenen en druk op Start.' : 'Kies een onderwerp. Je leest eerst de uitleg en daarna oefen je.'}
+          intro={hasVerbs ? 'Wat wil je doen?' : 'Volg het leerpad: eerst de uitleg, dan oefenen.'}
         />
         {tabs.length > 1 && (
-          <div role="tablist" aria-label="Onderdeel" className="mb-6 grid grid-cols-2 gap-1 rounded-2xl bg-surface-2 p-1 sm:inline-grid sm:min-w-[440px]">
-            {tabs.map(({ id, label, icon: Icon }) => (
+          <div role="tablist" aria-label="Onderdeel" className="mb-6 grid grid-cols-2 gap-3">
+            {tabs.map(({ id, label, sub, icon: Icon }) => (
               <button
                 key={id}
                 type="button"
@@ -55,12 +57,17 @@ export function GrammarPage() {
                 aria-controls="deel-paneel"
                 onClick={() => setParams(id === 'werkwoorden' ? { deel: id } : {}, { replace: true })}
                 className={cn(
-                  'flex min-h-12 items-center justify-center gap-2 rounded-xl px-3 text-sm font-bold transition-colors sm:text-base',
-                  deel === id ? 'bg-surface text-primary-ink shadow-soft' : 'text-ink-soft hover:text-ink',
+                  'flex flex-col items-start gap-1 rounded-[var(--radius-card)] border-2 p-4 text-left transition-colors sm:flex-row sm:items-center sm:gap-3',
+                  deel === id ? 'border-primary bg-primary-soft' : 'border-line bg-surface hover:border-primary',
                 )}
               >
-                <Icon size={18} aria-hidden="true" />
-                {label}
+                <span className={cn('grid h-11 w-11 shrink-0 place-items-center rounded-xl', deel === id ? 'bg-primary text-on-primary' : 'bg-surface-2 text-ink-soft')}>
+                  <Icon size={22} aria-hidden="true" />
+                </span>
+                <span>
+                  <span className="block text-lg font-extrabold">{label}</span>
+                  <span className="block text-sm text-ink-soft">{sub}</span>
+                </span>
               </button>
             ))}
           </div>
@@ -121,38 +128,54 @@ function TopicList({ code }: { code: LanguageCode }) {
   const lang = languages.find((l) => l.code === code)!;
   const progress = useLiveQuery(() => db.grammarProgress.where('lang').equals(code).toArray(), [code]);
   const score = new Map((progress ?? []).map((p) => [p.topicId, p.score]));
-  // Onderwerpen zonder uitleg laten we weg; tijden (gemaakt met de werkwoordmotor) apart.
-  const ready = lang.grammarTopics.map((t) => ({ ...t, content: getTopic(code, t.id) })).filter((t) => t.content);
-  const groups = [
-    { title: 'Regels', items: ready.filter((t) => typeof t.content!.exercises !== 'function') },
-    { title: 'Werkwoordstijden', items: ready.filter((t) => typeof t.content!.exercises === 'function') },
-  ].filter((g) => g.items.length > 0);
-  const later = lang.grammarTopics.length - ready.length;
+  // Leerpad: de onderwerpen in volgorde (makkelijk → moeilijk); zonder uitleg laten we ze weg.
+  const path = lang.grammarTopics.filter((t) => getTopic(code, t.id));
+  const later = lang.grammarTopics.length - path.length;
+  const done = path.filter((t) => (score.get(t.id) ?? 0) >= 80).length;
+  const next = path.find((t) => (score.get(t.id) ?? 0) < 80);
+  const status = (id: string) => {
+    const s = score.get(id);
+    if (s === undefined) return { text: 'nieuw', cls: 'text-ink-soft' };
+    if (s >= 80) return { text: `✓ ${s}%`, cls: 'bg-primary-soft text-primary-ink' };
+    return { text: `bezig ${s}%`, cls: 'bg-marker/50' };
+  };
+  if (path.length === 0) return <p className="text-ink-soft">De uitleg voor deze taal komt eraan.</p>;
   return (
-    <div className="flex flex-col gap-6">
-      {groups.map((g) => (
-        <section key={g.title}>
-          {groups.length > 1 && <h2 className="mb-2 text-lg font-bold">{g.title}</h2>}
-          <ul className="grid gap-2 sm:grid-cols-2">
-            {g.items.map((t) => {
-              const s = score.get(t.id);
-              return (
-                <li key={t.id}>
-                  <Link to={`/grammatica/${code}/${t.id}`} className="flex min-h-14 items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-3 transition-colors hover:border-primary">
-                    <span className="min-w-0 flex-1 font-semibold">{t.title}</span>
-                    <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-sm font-bold ${s === undefined ? 'text-ink-soft' : s >= 80 ? 'bg-primary-soft text-primary-ink' : 'bg-marker/50'}`}>
-                      {s === undefined ? 'nieuw' : `${s}%`}
-                    </span>
-                    <ChevronRight size={18} className="text-ink-soft" aria-hidden="true" />
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-      ))}
-      {ready.length === 0 && <p className="text-ink-soft">De uitleg voor deze taal komt eraan.</p>}
-      {later > 0 && ready.length > 0 && <p className="text-sm text-ink-soft">Er komen nog {later} onderwerpen bij.</p>}
+    <div className="flex flex-col gap-4">
+      {next ? (
+        <Link
+          to={`/grammatica/${code}/${next.id}`}
+          className="flex items-center gap-3 rounded-[var(--radius-card)] bg-primary p-4 text-on-primary shadow-soft hover:bg-primary-hover"
+        >
+          <span className="flex-1">
+            <span className="block text-sm">{done === 0 ? 'Begin hier' : 'Ga verder'}</span>
+            <span className="block text-lg font-extrabold">{path.indexOf(next) + 1}. {next.title}</span>
+          </span>
+          <ChevronRight size={24} aria-hidden="true" />
+        </Link>
+      ) : (
+        <p className="rounded-[var(--radius-card)] bg-primary-soft p-4 font-bold text-primary-ink">🎉 Je hebt alle onderwerpen gehaald!</p>
+      )}
+      <p className="text-sm text-ink-soft">{done} van {path.length} onderwerpen gehaald (80% of meer).</p>
+      <ol className="grid gap-2 sm:grid-cols-2">
+        {path.map((t, i) => {
+          const st = status(t.id);
+          const isNext = t.id === next?.id;
+          return (
+            <li key={t.id}>
+              <Link
+                to={`/grammatica/${code}/${t.id}`}
+                className={cn('flex min-h-14 items-center gap-3 rounded-2xl border bg-surface px-4 py-3 transition-colors hover:border-primary', isNext ? 'border-2 border-primary' : 'border-line')}
+              >
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-surface-2 text-sm font-bold" aria-hidden="true">{i + 1}</span>
+                <span className="min-w-0 flex-1 font-semibold">{t.title}</span>
+                <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-sm font-bold ${st.cls}`}>{st.text}</span>
+              </Link>
+            </li>
+          );
+        })}
+      </ol>
+      {later > 0 && <p className="text-sm text-ink-soft">Er komen nog {later} onderwerpen bij.</p>}
     </div>
   );
 }

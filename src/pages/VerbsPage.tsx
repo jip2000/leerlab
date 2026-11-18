@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { ChevronDown, Play } from 'lucide-react';
+import { Play } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import type { LanguageCode } from '@/data/languages';
@@ -64,13 +64,12 @@ export function VerbsPage({ lang }: { lang: LanguageCode }) {
   const engine = verbEngines[lang]!;
   const choice = s.choices[lang] ?? { verbs: [], tenses: [], persons: [0, 1, 2, 3, 4, 5] };
   const [search, setSearch] = useState('');
-  const [ownVerbs, setOwnVerbs] = useState(false);
   const progress = useLiveQuery(() => db.verbProgress.where('lang').equals(lang).toArray(), [lang]);
 
-  // Standaardkeuze als er nog niets gekozen is: de eerste set en de eerste tijd.
+  // Standaard staat alles aan: alle werkwoorden, alle tijden. Je vinkt zelf uit wat je niet wilt.
   useEffect(() => {
-    if (choice.verbs.length === 0) s.setChoice(lang, { verbs: engine.verbs.filter(engine.presets[0]!.filter).slice(0, 10).map((v) => v.inf) });
-    if (choice.tenses.length === 0) s.setChoice(lang, { tenses: [engine.tenses[0]!.id] });
+    if (choice.verbs.length === 0) s.setChoice(lang, { verbs: engine.verbs.map((v) => v.inf) });
+    if (choice.tenses.length === 0) s.setChoice(lang, { tenses: engine.tenses.map((t) => t.id) });
   }, [lang]);
 
   const toggle = <T,>(list: T[], x: T) => (list.includes(x) ? list.filter((y) => y !== x) : [...list, x]);
@@ -104,82 +103,90 @@ export function VerbsPage({ lang }: { lang: LanguageCode }) {
   const tenseNames = engine.tenses.filter((t) => choice.tenses.includes(t.id)).map((t) => t.label);
   const nQuestions = Math.min(pool.length, s.count);
 
+  const verbStatus = choice.verbs.length === engine.verbs.length ? 'alle' : `${choice.verbs.length} van ${engine.verbs.length}`;
+  const tenseStatus = choice.tenses.length === engine.tenses.length ? 'alle' : `${choice.tenses.length} van ${engine.tenses.length}`;
+  const personStatus = choice.persons.length === 6 ? 'alle' : `${choice.persons.length} van 6`;
+
   return (
-    <div className="mx-auto flex max-w-2xl flex-col gap-4">
-      <Step n={1} title="Welke werkwoorden?" status={`${choice.verbs.length} gekozen`}>
-        <div className="flex flex-wrap gap-2">
-          <Chip on={choice.verbs.length === engine.verbs.length} onClick={() => s.setChoice(lang, { verbs: engine.verbs.map((v) => v.inf) })}>
-            Alle werkwoorden ({engine.verbs.length})
-          </Chip>
-          {engine.presets.map((p) => {
-            const set = engine.verbs.filter(p.filter).map((v) => v.inf);
-            const on = set.length > 0 && set.every((v) => choice.verbs.includes(v)) && choice.verbs.length === set.length;
-            return (
-              <Chip key={p.id} on={on} onClick={() => s.setChoice(lang, { verbs: set })}>
-                {p.label}
-              </Chip>
-            );
-          })}
-        </div>
-        <button
-          type="button"
-          aria-expanded={ownVerbs}
-          onClick={() => setOwnVerbs(!ownVerbs)}
-          className="mt-3 flex min-h-11 items-center gap-1 text-sm font-semibold text-primary-ink"
+    <div className="flex flex-col gap-4">
+      <p className="text-ink-soft">Alles staat aan. Vink uit wat je <strong>niet</strong> wilt oefenen en druk op Start.</p>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Step
+          n={1}
+          title="Welke werkwoorden?"
+          status={verbStatus}
+          right={<SelectAll label={search ? 'gevonden werkwoorden' : 'werkwoorden'}
+            allOn={filtered.every((v) => choice.verbs.includes(v.inf))}
+            noneOn={choice.verbs.length === 0}
+            onAll={() => s.setChoice(lang, { verbs: [...new Set([...choice.verbs, ...filtered.map((v) => v.inf)])] })}
+            onNone={() => s.setChoice(lang, { verbs: [] })} />}
         >
-          <ChevronDown size={18} aria-hidden="true" className={cn('transition-transform', ownVerbs && 'rotate-180')} />
-          Zelf werkwoorden aanvinken
-        </button>
-        {ownVerbs && (
-          <div className="mt-2 flex flex-col gap-3">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <h3 className="font-bold">Werkwoorden ({choice.verbs.length})</h3>
-              <SelectAll
-                label={search ? 'gevonden werkwoorden' : 'werkwoorden'}
-                allOn={filtered.every((v) => choice.verbs.includes(v.inf))}
-                noneOn={choice.verbs.length === 0}
-                onAll={() => s.setChoice(lang, { verbs: [...new Set([...choice.verbs, ...filtered.map((v) => v.inf)])] })}
-                onNone={() => s.setChoice(lang, { verbs: [] })}
-              />
-            </div>
-            <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Zoek een werkwoord" aria-label="Zoek een werkwoord" />
-            <ul className="grid max-h-80 grid-cols-1 gap-1 overflow-y-auto rounded-[var(--radius-card)] border border-line bg-bg p-2 sm:grid-cols-2">
-              {filtered.map((v) => (
-                <li key={v.inf}>
-                  <label className="flex min-h-11 cursor-pointer items-center gap-2 rounded-lg px-2 hover:bg-surface-2">
-                    <input type="checkbox" className="h-5 w-5 accent-[var(--primary)]" checked={choice.verbs.includes(v.inf)} onChange={() => s.setChoice(lang, { verbs: toggle(choice.verbs, v.inf) })} />
-                    <span lang={lang} className="font-semibold">{v.inf}</span>
-                    <span className="truncate text-sm text-ink-soft">{v.nl}</span>
-                  </label>
-                </li>
-              ))}
-            </ul>
+          <div className="mb-3 flex flex-wrap gap-2">
+            {engine.presets.map((p) => {
+              const set = engine.verbs.filter(p.filter).map((v) => v.inf);
+              const on = set.length > 0 && set.every((v) => choice.verbs.includes(v)) && choice.verbs.length === set.length;
+              return (
+                <Chip key={p.id} on={on} onClick={() => s.setChoice(lang, { verbs: set })}>
+                  Alleen: {p.label.charAt(0).toLowerCase() + p.label.slice(1)}
+                </Chip>
+              );
+            })}
           </div>
-        )}
-      </Step>
+          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Zoek een werkwoord" aria-label="Zoek een werkwoord" />
+          <ul className="mt-2 grid max-h-64 grid-cols-1 gap-1 overflow-y-auto rounded-xl border border-line bg-bg p-2 sm:grid-cols-2">
+            {filtered.map((v) => (
+              <li key={v.inf}>
+                <label className="flex min-h-11 cursor-pointer items-center gap-2 rounded-lg px-2 hover:bg-surface-2">
+                  <input type="checkbox" className="h-5 w-5 accent-[var(--primary)]" checked={choice.verbs.includes(v.inf)} onChange={() => s.setChoice(lang, { verbs: toggle(choice.verbs, v.inf) })} />
+                  <span lang={lang} className="font-semibold">{v.inf}</span>
+                  <span className="truncate text-sm text-ink-soft">{v.nl}</span>
+                </label>
+              </li>
+            ))}
+          </ul>
+        </Step>
 
-      <Step
-        n={2}
-        title="Welke tijd?"
-        status={`${choice.tenses.length} gekozen`}
-        right={<SelectAll label="tijden" allOn={choice.tenses.length === engine.tenses.length} noneOn={choice.tenses.length === 0}
-          onAll={() => s.setChoice(lang, { tenses: engine.tenses.map((t) => t.id) })} onNone={() => s.setChoice(lang, { tenses: [] })} />}
-      >
-        <div className="flex flex-wrap gap-2">
-          {engine.tenses.map((t) => {
-            const st = perTense.get(t.id);
-            return (
-              <Chip key={t.id} on={choice.tenses.includes(t.id)} onClick={() => s.setChoice(lang, { tenses: toggle(choice.tenses, t.id) })}>
-                {t.label}
-                {st && st.total > 0 && <span className="ml-1.5 text-xs opacity-80">{Math.round((st.ok / st.total) * 100)}%</span>}
-              </Chip>
-            );
-          })}
+        <div className="flex flex-col gap-4">
+          <Step
+            n={2}
+            title="Welke tijden?"
+            status={tenseStatus}
+            right={<SelectAll label="tijden" allOn={choice.tenses.length === engine.tenses.length} noneOn={choice.tenses.length === 0}
+              onAll={() => s.setChoice(lang, { tenses: engine.tenses.map((t) => t.id) })} onNone={() => s.setChoice(lang, { tenses: [] })} />}
+          >
+            <div className="flex flex-wrap gap-2">
+              {engine.tenses.map((t) => {
+                const st = perTense.get(t.id);
+                return (
+                  <Chip key={t.id} on={choice.tenses.includes(t.id)} onClick={() => s.setChoice(lang, { tenses: toggle(choice.tenses, t.id) })}>
+                    {t.label}
+                    {st && st.total > 0 && <span className="ml-1.5 text-xs opacity-80">{Math.round((st.ok / st.total) * 100)}%</span>}
+                  </Chip>
+                );
+              })}
+            </div>
+          </Step>
+
+          <Step
+            n={3}
+            title="Wie?"
+            status={personStatus}
+            right={<SelectAll label="personen" allOn={choice.persons.length === 6} noneOn={choice.persons.length === 0}
+              onAll={() => s.setChoice(lang, { persons: [0, 1, 2, 3, 4, 5] })} onNone={() => s.setChoice(lang, { persons: [] })} />}
+          >
+            <div className="flex flex-wrap gap-2">
+              {engine.persons.map((p, i) => (
+                <Chip key={p} on={choice.persons.includes(i)} onClick={() => s.setChoice(lang, { persons: toggle(choice.persons, i) })}>
+                  {p}
+                </Chip>
+              ))}
+            </div>
+          </Step>
         </div>
-      </Step>
+      </div>
 
-      <Step n={3} title="Hoe wil je oefenen?">
-        <div role="radiogroup" aria-label="Oefenvorm" className="grid grid-cols-2 gap-2">
+      <Step n={4} title="Hoe wil je oefenen?">
+        <div role="radiogroup" aria-label="Oefenvorm" className="grid grid-cols-2 gap-2 lg:grid-cols-4">
           {modes.map((m) => (
             <button
               key={m.id}
@@ -214,45 +221,22 @@ export function VerbsPage({ lang }: { lang: LanguageCode }) {
             </div>
           </div>
         )}
+        <label className="mt-4 flex items-center gap-3 font-semibold">
+          Aantal vragen
+          <select value={s.count} onChange={(e) => s.set({ count: Number(e.target.value) })} className="h-11 rounded-[var(--radius-control)] border border-line bg-surface px-3">
+            {[10, 15, 20, 30, 50].map((n) => (
+              <option key={n}>{n}</option>
+            ))}
+          </select>
+        </label>
       </Step>
-
-      <details className="group rounded-[var(--radius-card)] border border-line bg-surface px-4 py-1">
-        <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 font-semibold">
-          <ChevronDown size={18} aria-hidden="true" className="transition-transform group-open:rotate-180" />
-          Meer opties: personen en aantal vragen
-        </summary>
-        <div className="flex flex-col gap-4 pt-2 pb-3">
-          <div>
-            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-              <h3 className="font-bold">Personen</h3>
-              <SelectAll label="personen" allOn={choice.persons.length === 6} noneOn={choice.persons.length === 0}
-                onAll={() => s.setChoice(lang, { persons: [0, 1, 2, 3, 4, 5] })} onNone={() => s.setChoice(lang, { persons: [] })} />
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {engine.persons.map((p, i) => (
-                <Chip key={p} on={choice.persons.includes(i)} onClick={() => s.setChoice(lang, { persons: toggle(choice.persons, i) })}>
-                  {p}
-                </Chip>
-              ))}
-            </div>
-          </div>
-          <label className="flex items-center gap-3 font-semibold">
-            Aantal vragen
-            <select value={s.count} onChange={(e) => s.set({ count: Number(e.target.value) })} className="h-11 rounded-[var(--radius-control)] border border-line bg-surface px-3">
-              {[10, 15, 20, 30, 50].map((n) => (
-                <option key={n}>{n}</option>
-              ))}
-            </select>
-          </label>
-        </div>
-      </details>
 
       <div className="sticky bottom-[calc(env(safe-area-inset-bottom)+80px)] z-10 rounded-[var(--radius-card)] border border-line bg-surface/95 p-3 pr-[76px] shadow-soft backdrop-blur lg:bottom-4 lg:pr-3">
         {pool.length === 0 ? (
           <p role="alert" className="mb-2 text-sm font-semibold text-danger">Kies minstens één werkwoord, tijd en persoon.</p>
         ) : (
           <p className="mb-2 text-sm text-ink-soft">
-            {s.mode === 'rijtje' ? 'Rijtjes' : `${nQuestions} vragen`} · {choice.verbs.length} {choice.verbs.length === 1 ? 'werkwoord' : 'werkwoorden'} · {tenseNames.slice(0, 2).join(', ')}{tenseNames.length > 2 ? ` +${tenseNames.length - 2}` : ''}
+            {s.mode === 'rijtje' ? 'Rijtjes' : `${nQuestions} vragen`} · {verbStatus} werkwoorden · {tenseNames.length === engine.tenses.length ? 'alle tijden' : tenseNames.slice(0, 2).join(', ') + (tenseNames.length > 2 ? ` +${tenseNames.length - 2}` : '')}
             {s.mode !== 'rijtje' && pool.length < s.count && <span className="block">Met deze keuze zijn er {pool.length} verschillende vragen. Je krijgt ze allemaal één keer.</span>}
           </p>
         )}
