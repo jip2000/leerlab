@@ -31,6 +31,8 @@ test('grammatica: uitleg lezen en een ronde oefenen', async ({ page }) => {
 
 test('naamvallen kiezen: Duits zonder Genitiv', async ({ page }) => {
   await page.goto('/#/grammatica/de');
+  // De naamvallen kies je zodra je een onderwerp met naamvallen aanklikt.
+  await page.getByRole('button', { name: /^(✓ )?Naamvallen$/ }).click();
   const chooser = page.getByRole('group', { name: 'Naamvallen' });
   for (const n of ['Nominativ', 'Akkusativ', 'Dativ', 'Genitiv']) await expect(chooser.getByRole('button', { name: new RegExp(n) })).toHaveAttribute('aria-pressed', 'true');
   await chooser.getByRole('button', { name: /Genitiv/ }).click();
@@ -53,7 +55,7 @@ test('naamvallen kiezen: Duits zonder Genitiv', async ({ page }) => {
 
 test('leerpad: begin hier, daarna ga verder', async ({ page }) => {
   await page.goto('/#/grammatica/fr');
-  await expect(page.getByRole('heading', { name: 'Overige grammatica' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Uitleg lezen' })).toBeVisible();
   const begin = page.getByRole('link', { name: /Begin hier/ });
   await expect(begin).toBeVisible();
   await expect(page.getByText(/0 van \d+ onderwerpen gehaald/)).toBeVisible();

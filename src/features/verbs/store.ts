@@ -3,11 +3,14 @@ import { persist } from 'zustand/middleware';
 import type { LanguageCode } from '@/data/languages';
 import type { VerbMode, VerbQuestion } from './trainer';
 import type { Level } from './levels';
+import type { MixItem } from '@/features/grammar/mix';
 
 interface Choice {
   verbs: string[];
   tenses: string[];
   persons: number[];
+  /** Wat je wilt oefenen: 'werkwoorden' en/of grammatica-onderwerpen (id's). */
+  topics?: string[];
 }
 
 interface VerbStore {
@@ -20,6 +23,8 @@ interface VerbStore {
   choices: Partial<Record<LanguageCode, Choice>>;
   /** De lopende oefening (niet bewaard bij herladen). */
   questions: VerbQuestion[];
+  /** Lopende gemixte ronde (werkwoorden + grammatica), niet bewaard bij herladen. */
+  mix: MixItem[];
   set: (patch: Partial<Omit<VerbStore, 'set' | 'setChoice'>>) => void;
   setChoice: (lang: LanguageCode, c: Partial<Choice>) => void;
 }
@@ -33,6 +38,7 @@ export const useVerbStore = create<VerbStore>()(
       level: 1,
       choices: {},
       questions: [],
+      mix: [],
       set: (patch) => set(patch),
       setChoice: (lang, c) => {
         const cur = get().choices[lang] ?? { verbs: [], tenses: [], persons: [0, 1, 2, 3, 4, 5] };

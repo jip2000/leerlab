@@ -16,6 +16,7 @@ import { checkAnswer } from '@/lib/check';
 import { celebrate, fireworks } from '@/lib/confetti';
 import { HomeButton, WellDone } from '@/components/ui/WellDone';
 import { insertAtCursor } from '@/lib/insert';
+import { useEnterToContinue } from '@/lib/enter';
 import { useSettings, type CheckRules } from '@/lib/settings';
 import type { VerbEngine } from '@/features/verbs/types';
 import type { LanguageCode } from '@/data/languages';
@@ -150,6 +151,7 @@ function SingleExercise({ ctx, q, sentence, onDone }: { ctx: Ctx; q: VerbQuestio
   const level = useVerbStore((st) => st.level);
   const s = sentence ? levelSentence(lang, engine.sentence(q.verb, q.tense, q.person), q, level) : undefined;
   useEffect(() => (result ? next.current?.focus() : input.current?.focus()), [result]);
+  useEnterToContinue(!!result, () => result && onDone(result.ok));
   const check = () => {
     const r = checkAnswer(value, engine.answer(q.verb, q.tense, q.person), rules);
     const ok = r.result === 'goed';
@@ -213,6 +215,9 @@ function RowExercise({ ctx, q, onDone }: { ctx: Ctx; q: VerbQuestion; onDone: (o
   const [values, setValues] = useState<string[]>(['', '', '', '', '', '']);
   const [checked, setChecked] = useState<boolean[] | null>(null);
   const [active, setActive] = useState<HTMLInputElement | null>(null);
+  const next = useRef<HTMLButtonElement>(null);
+  useEffect(() => { if (checked) next.current?.focus(); }, [checked]);
+  useEnterToContinue(!!checked, () => checked && onDone(checked.every(Boolean)));
   const check = () => {
     const r = [0, 1, 2, 3, 4, 5].map((p) => !persons.includes(p) || checkAnswer(values[p]!, engine.answer(q.verb, q.tense, p), rules).result === 'goed');
     play(r.every(Boolean) ? 'goed' : 'fout');
@@ -248,7 +253,7 @@ function RowExercise({ ctx, q, onDone }: { ctx: Ctx; q: VerbQuestion; onDone: (o
         {checked ? (
           <>
             {engine.explain(q.verb, q.tense, 0) && <p className="rounded-xl bg-surface-2 p-3 text-sm">💡 {engine.explain(q.verb, q.tense, 0)}</p>}
-            <Button size="lg" className="justify-center" onClick={() => onDone(checked.every(Boolean))}>Volgende</Button>
+            <Button ref={next} size="lg" className="justify-center" onClick={() => onDone(checked.every(Boolean))}>Volgende</Button>
           </>
         ) : (
           <Button type="submit" size="lg" className="justify-center">Nakijken</Button>
@@ -268,6 +273,9 @@ function ReverseExercise({ ctx, q, onDone }: { ctx: Ctx; q: VerbQuestion; onDone
   const [tense, setTense] = useState('');
   const [person, setPerson] = useState('');
   const [result, setResult] = useState<boolean | null>(null);
+  const next = useRef<HTMLButtonElement>(null);
+  useEffect(() => { if (result !== null) next.current?.focus(); }, [result]);
+  useEnterToContinue(result !== null, () => result !== null && onDone(result));
   const check = () => {
     // Goed als jouw keuze precies deze vorm oplevert (sommige vormen horen bij meer personen).
     const ok = !!verb && !!tense && person !== '' && engine.conjugate(verb, tense)[Number(person)] === shown;
@@ -301,7 +309,7 @@ function ReverseExercise({ ctx, q, onDone }: { ctx: Ctx; q: VerbQuestion; onDone
           <Verdict kind={result ? 'goed' : 'fout'}>
             {!result && <p>Het is: <strong lang={lang}>{q.verb}</strong>, {engine.tenses.find((t) => t.id === q.tense)?.label}, {engine.persons[q.person]}.</p>}
           </Verdict>
-          <Button size="lg" className="justify-center" onClick={() => onDone(result)}>Volgende</Button>
+          <Button ref={next} size="lg" className="justify-center" onClick={() => onDone(result)}>Volgende</Button>
         </>
       )}
     </>

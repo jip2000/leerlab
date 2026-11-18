@@ -7,10 +7,11 @@ import { useAccount, type Plan } from '@/features/account/store';
 
 export const PLUS_ON = import.meta.env.VITE_PLUS_AAN === 'true';
 
-export type Feature = 'scannen' | 'werkwoorden' | 'grammatica-oefenen' | 'planner' | 'slim-herhalen' | 'statistieken';
+export type Feature = 'scannen' | 'grammatica-foto' | 'werkwoorden' | 'grammatica-oefenen' | 'planner' | 'slim-herhalen' | 'statistieken';
 
 export const plusFeatures: Record<Feature, string> = {
   scannen: 'Foto van je boek scannen → flitskaartjes',
+  'grammatica-foto': 'Foto van je grammaticaboek → oefeningen klaargezet',
   werkwoorden: 'Werkwoordtrainer voor 7 talen',
   'grammatica-oefenen': 'Alle grammatica-oefeningen (gratis: de eerste 2 onderwerpen per taal)',
   planner: 'Planner met automatisch leerschema',

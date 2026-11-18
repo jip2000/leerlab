@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { BookOpen, ChevronRight, PenLine } from 'lucide-react';
+import { BookOpen, Camera, ChevronRight, PenLine } from 'lucide-react';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BackLink } from '@/components/ui/BackLink';
 import { LanguageBadge } from '@/components/ui/LanguageBadge';
@@ -13,6 +13,7 @@ import { VerbsPage } from '@/pages/VerbsPage';
 import { cn } from '@/lib/cn';
 import { casesOf } from '@/features/grammar/cases';
 import { CaseChooser } from '@/features/grammar/components/CaseChooser';
+import { explanationTopicIds } from '@/features/grammar/tenseLinks';
 
 
 /**
@@ -31,19 +32,30 @@ export function GrammarPage() {
         <BackLink to="/grammatica">Alle talen</BackLink>
         <PageHeader
           title={`${lang.flag} ${lang.name}`}
-          intro={hasVerbs ? 'Kies een of meer tijden, stel daaronder de rest in en druk op Start.' : 'Volg het leerpad: eerst de uitleg, dan oefenen.'}
+          intro={hasVerbs ? 'Kies bovenaan wat je wilt oefenen, daarna in welke tijden, en druk op Start.' : 'Volg het leerpad: eerst de uitleg, dan oefenen.'}
         />
+        <Link
+          to={`/grammatica/${lang.code}/foto`}
+          className="mb-8 flex items-center gap-4 rounded-[var(--radius-card)] border-2 border-dashed border-primary bg-primary-soft/50 p-4 transition-colors hover:bg-primary-soft"
+        >
+          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-primary text-on-primary"><Camera size={24} aria-hidden="true" /></span>
+          <span className="flex-1">
+            <span className="block text-lg font-extrabold">Foto van je boek → oefeningen</span>
+            <span className="block text-sm text-ink-soft">Maak een foto van de grammatica die je moet leren. Woordwerk zoekt uit wat het is en zet het klaar om te oefenen.</span>
+          </span>
+          <ChevronRight size={22} className="shrink-0 text-ink-soft" aria-hidden="true" />
+        </Link>
         {hasVerbs && (
           <section aria-labelledby="ww-kop" className="mb-10">
-            <h2 id="ww-kop" className="mb-3 flex items-center gap-2 text-xl font-extrabold"><PenLine size={22} aria-hidden="true" /> Werkwoorden en tijden</h2>
+            <h2 id="ww-kop" className="mb-3 flex items-center gap-2 text-xl font-extrabold"><PenLine size={22} aria-hidden="true" /> Oefenen</h2>
             <PlusGate feature="werkwoorden">
               <VerbsPage lang={lang.code} />
             </PlusGate>
           </section>
         )}
         <section aria-labelledby="gr-kop">
-          <h2 id="gr-kop" className="mb-3 flex items-center gap-2 text-xl font-extrabold"><BookOpen size={22} aria-hidden="true" /> {hasVerbs ? 'Overige grammatica' : 'Grammatica'}</h2>
-          {casesOf(lang.code).length > 0 && <CaseChooser lang={lang.code} className="mb-5" />}
+          <h2 id="gr-kop" className="mb-3 flex items-center gap-2 text-xl font-extrabold"><BookOpen size={22} aria-hidden="true" /> {hasVerbs ? 'Uitleg lezen' : 'Grammatica'}</h2>
+          {!hasVerbs && casesOf(lang.code).length > 0 && <CaseChooser lang={lang.code} className="mb-5" />}
           <TopicList code={lang.code} skipTenses={hasVerbs} />
         </section>
       </>
@@ -109,9 +121,9 @@ function TopicList({ code, skipTenses }: { code: LanguageCode; skipTenses?: bool
   const progress = useLiveQuery(() => db.grammarProgress.where('lang').equals(code).toArray(), [code]);
   const score = new Map((progress ?? []).map((p) => [p.topicId, p.score]));
   // Leerpad: de onderwerpen in volgorde (makkelijk → moeilijk); zonder uitleg laten we ze weg.
-  // Tijden staan al bovenaan bij de werkwoorden; die laten we hier weg.
-  const isTense = (id: string) => !!getTopic(code, id)?.tenses;
-  const all = lang.grammarTopics.filter((t) => !(skipTenses && isTense(t.id)));
+  // De uitleg van elke tijd staat al bovenaan bij die tijd; die laten we hier weg.
+  const skip = skipTenses ? explanationTopicIds(code) : new Set<string>();
+  const all = lang.grammarTopics.filter((t) => !skip.has(t.id));
   const path = all.filter((t) => getTopic(code, t.id));
   const later = all.length - path.length;
   const done = path.filter((t) => (score.get(t.id) ?? 0) >= 80).length;

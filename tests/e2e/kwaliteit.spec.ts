@@ -3,7 +3,7 @@ import AxeBuilder from '@axe-core/playwright';
 
 const pages = [
   '/', '/lijsten', '/lijsten/nieuw', '/lijsten/importeren', '/oefenen', '/grammatica', '/grammatica/fr', '/grammatica/fr/subjonctif',
-  '/grammatica/la/declinaties', '/grammatica/de', '/nieuwe-taal', '/scannen', '/videos', '/planner', '/statistieken', '/instellingen', '/lijsten/start/start-sv-eten',
+  '/grammatica/la/declinaties', '/grammatica/de', '/grammatica/de/foto', '/nieuwe-taal', '/scannen', '/videos', '/planner', '/statistieken', '/instellingen', '/lijsten/start/start-sv-eten',
   '/account', '/plus', '/privacy',
 ];
 

@@ -84,6 +84,7 @@ export const deVerbs: DeVerb[] = [
   { inf: 'fliegen', nl: 'vliegen', aux: 'sein', praet: 'flog', pp: 'geflogen' },
   { inf: 'bitten', nl: 'vragen, verzoeken', praet: 'bat', pp: 'gebeten' },
   { inf: 'heißen', nl: 'heten', praet: 'hieß', pp: 'geheißen' },
+  { inf: 'waschen', nl: 'wassen', du: 'wäschst', er: 'wäscht', praet: 'wusch', pp: 'gewaschen' },
   // Scheidbaar (sterk)
   { inf: 'aufstehen', nl: 'opstaan', prefix: 'auf', aux: 'sein', praet: 'stand', pp: 'gestanden' },
   { inf: 'anfangen', nl: 'beginnen', prefix: 'an', du: 'fängst', er: 'fängt', praet: 'fing', pp: 'gefangen' },
@@ -113,4 +114,11 @@ export const deVerbs: DeVerb[] = [
   { inf: 'telefonieren', nl: 'telefoneren' },
   { inf: 'einkaufen', nl: 'boodschappen doen', prefix: 'ein' },
   { inf: 'aufräumen', nl: 'opruimen', prefix: 'auf' },
+  { inf: 'legen', nl: 'leggen' },
+  { inf: 'stellen', nl: 'zetten (rechtop)' },
+  { inf: 'suchen', nl: 'zoeken' },
+  { inf: 'putzen', nl: 'poetsen' },
+  { inf: 'setzen', nl: 'zetten; sich setzen: gaan zitten' },
+  { inf: 'freuen', nl: 'blij maken; sich freuen: zich verheugen' },
+  { inf: 'interessieren', nl: 'interesseren' },
 ];

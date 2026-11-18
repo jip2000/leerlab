@@ -6,6 +6,7 @@ import { shuffled } from '@/features/practice/engine';
 import { AnswerDiff, Verdict } from '@/features/practice/components/Feedback';
 import { checkAnswer, splitAlternatives } from '@/lib/check';
 import { insertAtCursor } from '@/lib/insert';
+import { useEnterToContinue } from '@/lib/enter';
 import { useSettings } from '@/lib/settings';
 import { play } from '@/lib/sounds';
 import { cn } from '@/lib/cn';
@@ -35,6 +36,7 @@ export function ExerciseView({ ex, lang, onDone }: { ex: Exercise; lang: Languag
   const tiles = useMemo(() => (ex.type === 'order' ? shuffled(ex.words.map((w, i) => ({ w, i }))) : []), [ex]);
 
   useEffect(() => (result ? next.current?.focus() : input.current?.focus()), [result]);
+  useEnterToContinue(!!result, () => result && onDone(result.ok));
 
   const finish = (ok: boolean, expected: string, rowsOk?: boolean[]) => {
     play(ok ? 'goed' : 'fout');

@@ -47,6 +47,8 @@ export const router = createHashRouter([
       { path: 'oefenen/:id', element: <SessionPage /> },
       { path: 'grammatica', lazy: () => import('@/pages/GrammarPage').then((m) => ({ Component: m.GrammarPage })) },
       { path: 'grammatica/:taal', lazy: () => import('@/pages/GrammarPage').then((m) => ({ Component: m.GrammarPage })) },
+      { path: 'grammatica/:taal/foto', lazy: () => import('@/pages/GrammarPhotoPage').then((m) => ({ Component: () => gated('grammatica-foto', <m.GrammarPhotoPage />) })) },
+      { path: 'grammatica/:taal/oefenen', lazy: () => import('@/pages/MixSessionPage').then((m) => ({ Component: () => gated('werkwoorden', <m.MixSessionPage />) })) },
       { path: 'grammatica/:taal/:onderwerp', lazy: () => import('@/pages/GrammarTopicPage').then((m) => ({ Component: m.GrammarTopicPage })) },
       // Werkwoorden zit nu bij Grammatica (tabblad per taal); oude links sturen we door.
       { path: 'werkwoorden', element: <VerbsRedirect /> },

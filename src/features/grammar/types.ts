@@ -43,6 +43,8 @@ export interface TopicContent {
   parts?: { id: string; label: string; hint?: string }[];
   /** Bij een onderwerp over werkwoordstijden: welke tijden (id's van de werkwoordmotor). */
   tenses?: string[];
+  /** Bij een onderwerp over een groep werkwoorden (scheidbaar, modaal …): welke werkwoorden. */
+  verbFilter?: (inf: string, tags: string[]) => boolean;
 }
 
 export type GrammarContent = Partial<Record<LanguageCode, TopicContent[]>>;
