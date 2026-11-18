@@ -94,6 +94,7 @@ export function AccountPage() {
               </p>
             </div>
             {PLUS_ON && plan !== 'plus' && <ButtonLink to="/plus"><Sparkles size={18} aria-hidden="true" /> Bekijk Plus</ButtonLink>}
+            {PLUS_ON && plan === 'plus' && <ButtonLink to="/plus" variant="secondary">Abonnement</ButtonLink>}
           </Card>
 
           {conflict && (

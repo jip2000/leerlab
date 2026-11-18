@@ -18,6 +18,12 @@ export const plusFeatures: Record<Feature, string> = {
   statistieken: 'Uitgebreide statistieken en grafieken',
 };
 
+/**
+ * Prijzen zoals ze op de site staan. De echte prijs staat in Stripe (STRIPE_PRIJS_MAAND/JAAR):
+ * pas ze altijd samen aan.
+ */
+export const PRIJS = { maand: '€2,99', jaar: '€19,99' } as const;
+
 /** Aantal grammatica-onderwerpen per taal waarmee je gratis mag oefenen. */
 export const FREE_GRAMMAR_TOPICS = 2;
 

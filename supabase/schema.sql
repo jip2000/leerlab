@@ -10,6 +10,10 @@ create table if not exists public.profiles (
   created_at timestamptz not null default now()
 );
 
+-- 1b. Koppeling met Stripe (betalen voor Plus). Alleen de server vult dit in.
+alter table public.profiles add column if not exists stripe_customer_id text unique;
+alter table public.profiles add column if not exists stripe_subscription_id text;
+
 -- 2. Synchronisatie: per gebruiker één back-up van al zijn gegevens
 create table if not exists public.backups (
   user_id uuid primary key references auth.users on delete cascade,
@@ -23,7 +27,8 @@ alter table public.backups enable row level security;
 
 drop policy if exists "eigen profiel lezen" on public.profiles;
 create policy "eigen profiel lezen" on public.profiles for select using (auth.uid() = id);
--- Let op: gebruikers mogen hun eigen plan NIET wijzigen. Dat doet later alleen de betaalkoppeling (service role).
+-- Let op: gebruikers mogen hun eigen plan NIET wijzigen. Dat doet alleen de betaalkoppeling
+-- (supabase/functions/stripe-webhook, met de service role).
 
 drop policy if exists "eigen back-up lezen" on public.backups;
 create policy "eigen back-up lezen" on public.backups for select using (auth.uid() = user_id);

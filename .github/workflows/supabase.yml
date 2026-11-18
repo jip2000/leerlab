@@ -1,0 +1,37 @@
+# Zet de serverfuncties voor betalen (map supabase/functions) op Supabase,
+# samen met de Stripe-sleutels. Draait alleen als SUPABASE_PROJECT_REF is ingesteld.
+# Instellen: zie docs/stappenplan.md, deel 4.
+name: Betalen (Supabase-functies)
+
+on:
+  push:
+    branches: [main]
+    paths: ['supabase/functions/**', '.github/workflows/supabase.yml']
+  workflow_dispatch:
+
+jobs:
+  functies:
+    if: ${{ vars.SUPABASE_PROJECT_REF != '' }}
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      PROJECT: ${{ vars.SUPABASE_PROJECT_REF }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Sleutels zetten
+        run: |
+          supabase secrets set --project-ref "$PROJECT" \
+            STRIPE_SECRET_KEY="${{ secrets.STRIPE_SECRET_KEY }}" \
+            STRIPE_WEBHOOK_SECRET="${{ secrets.STRIPE_WEBHOOK_SECRET }}" \
+            STRIPE_PRIJS_MAAND="${{ vars.STRIPE_PRIJS_MAAND }}" \
+            STRIPE_PRIJS_JAAR="${{ vars.STRIPE_PRIJS_JAAR }}" \
+            SITE_URL="${{ vars.VITE_SITE_URL || format('https://{0}.github.io/{1}/', github.repository_owner, github.event.repository.name) }}"
+      - name: Functies plaatsen
+        run: |
+          supabase functions deploy plus-betalen --project-ref "$PROJECT"
+          supabase functions deploy plus-beheren --project-ref "$PROJECT"
+          # Stripe logt niet in bij ons: deze controleert zelf de handtekening van Stripe.
+          supabase functions deploy stripe-webhook --project-ref "$PROJECT" --no-verify-jwt
