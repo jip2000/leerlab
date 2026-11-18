@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
+import { WoordenTabs } from '@/components/layout/WoordenTabs';
 import { useNavigate, useSearchParams } from 'react-router';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { CircleCheckBig, Ear, GalleryHorizontalEnd, GraduationCap, Keyboard, ListChecks, Play, Puzzle, Trash2, Zap, type LucideIcon } from 'lucide-react';
-import { PageHeader } from '@/components/ui/PageHeader';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Button } from '@/components/ui/Button';
 import { ButtonLink } from '@/components/ui/ButtonLink';
@@ -73,12 +73,12 @@ export function PracticePage() {
   if (lists.length === 0) {
     return (
       <>
-        <PageHeader title="Oefenen" />
+        <WoordenTabs />
         <EmptyState
           icon={<GalleryHorizontalEnd size={24} />}
           title="Eerst een lijst nodig"
           text="Maak een woordenlijst of sla een startlijst op. Daarna kun je hier oefenen."
-          action={<ButtonLink to="/lijsten">Naar Mijn lijsten</ButtonLink>}
+          action={<ButtonLink to="/lijsten">Naar Mijn woordenlijsten</ButtonLink>}
         />
       </>
     );
@@ -102,7 +102,7 @@ export function PracticePage() {
 
   return (
     <>
-      <PageHeader title="Oefenen" intro="Kies wat en hoe je wilt oefenen." />
+      <WoordenTabs />
 
       {open && (
         <div className="mb-6 flex flex-wrap items-center gap-3 rounded-[var(--radius-card)] bg-primary-soft p-4">

@@ -41,8 +41,8 @@ export const useVerbStore = create<VerbStore>()(
     }),
     {
       name: 'woordwerk-werkwoorden',
-      // Versie 2: standaard staat alles aan; oude keuzes (10 werkwoorden, 1 tijd) vergeten we één keer.
-      version: 2,
+      // Versie 3: je kiest eerst zelf de tijd(en); alle werkwoorden staan standaard aan.
+      version: 3,
       migrate: (old) => ({ ...(old as object), choices: {} }) as unknown as VerbStore,
       partialize: (s) => ({ lang: s.lang, mode: s.mode, count: s.count, level: s.level, choices: s.choices }),
     },

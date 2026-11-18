@@ -14,8 +14,8 @@ async function maakLijst(page: Page) {
 }
 
 async function start(page: Page, modus: string, husselen = false) {
-  await page.getByRole('link', { name: 'Oefenen' }).filter({ visible: true }).first().click();
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Oefenen');
+  await page.getByRole('link', { name: /^Oefenen/ }).filter({ visible: true }).first().click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Woorden oefenen');
   await page.getByRole('radio', { name: new RegExp(`^${modus}`) }).click();
   if (!husselen) await page.getByRole('switch', { name: 'Husselen' }).click();
   await page.getByRole('button', { name: /Start met 5 woorden/ }).click();
@@ -165,7 +165,7 @@ test('spatie op de flitskaart draait hem één keer om', async ({ page }) => {
   await page.getByLabel(/Plak hier je woorden/).fill('la mer = de zee\nle chat = de kat');
   await page.getByLabel('Titel van de nieuwe lijst').fill('X');
   await page.getByRole('button', { name: /Lijst opslaan/ }).click();
-  await page.getByRole('link', { name: 'Oefenen' }).filter({ visible: true }).first().click();
+  await page.getByRole('link', { name: /^Oefenen/ }).filter({ visible: true }).first().click();
   await page.getByRole('button', { name: /Start met/ }).click();
   // Focus op de kaart zelf (zoals na een tik), dan spatie.
   await page.getByRole('button', { name: /Vraag:/ }).focus();

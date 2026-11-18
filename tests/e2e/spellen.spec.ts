@@ -11,7 +11,7 @@ async function maakLijst(page: Page) {
 }
 
 async function start(page: Page, modus: RegExp) {
-  await page.getByRole('link', { name: 'Oefenen' }).filter({ visible: true }).first().click();
+  await page.getByRole('link', { name: /^Oefenen/ }).filter({ visible: true }).first().click();
   await page.getByRole('radio', { name: modus }).click();
   await page.getByRole('switch', { name: 'Husselen' }).click();
   await page.getByRole('button', { name: /Start met 4 woorden/ }).click();

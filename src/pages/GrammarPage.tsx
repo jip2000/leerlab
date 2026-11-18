@@ -1,10 +1,10 @@
-import { Link, useParams, useSearchParams } from 'react-router';
+import { Link, useParams } from 'react-router';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { BookOpen, ChevronRight, PenLine } from 'lucide-react';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BackLink } from '@/components/ui/BackLink';
 import { LanguageBadge } from '@/components/ui/LanguageBadge';
-import { languages, type LanguageCode } from '@/data/languages';
+import { getLanguage, isExtraTaal, languages, ookOpSchool, schoolTalen, type LanguageCode } from '@/data/languages';
 import { getTopic } from '@/data/grammar';
 import { db } from '@/db/db';
 import { verbEngines } from '@/features/verbs/registry';
@@ -14,123 +14,106 @@ import { cn } from '@/lib/cn';
 import { casesOf } from '@/features/grammar/cases';
 import { CaseChooser } from '@/features/grammar/components/CaseChooser';
 
-const sorted = [...languages].sort((a, b) => a.grammarPriority - b.grammarPriority);
-
-type Deel = 'uitleg' | 'werkwoorden';
 
 /**
- * Grammatica & werkwoorden: één plek per taal.
- * #/grammatica            → kies een taal
- * #/grammatica/fr         → tabblad "Grammatica"
- * #/grammatica/fr?deel=werkwoorden → tabblad "Werkwoorden"
+ * Grammatica & werkwoorden: één pagina per taal.
+ * #/grammatica     → kies een taal (schooltalen groot bovenaan, daarna extra talen)
+ * #/grammatica/fr  → eerst tijden kiezen en werkwoorden oefenen, daaronder de overige grammatica
  */
 export function GrammarPage() {
   const { taal } = useParams();
-  const [params, setParams] = useSearchParams();
   const lang = languages.find((l) => l.code === (taal as LanguageCode));
 
   if (lang) {
     const hasVerbs = !!verbEngines[lang.code];
-    const deel: Deel = hasVerbs && params.get('deel') === 'werkwoorden' ? 'werkwoorden' : 'uitleg';
-    const engine = verbEngines[lang.code];
-    const nTopics = lang.grammarTopics.filter((t) => getTopic(lang.code, t.id)).length;
-    const tabs: { id: Deel; label: string; sub: string; icon: typeof BookOpen }[] = [
-      { id: 'uitleg', label: 'Grammatica', sub: `Leerpad met ${nTopics} onderwerpen`, icon: BookOpen },
-      ...(engine ? [{ id: 'werkwoorden' as const, label: 'Werkwoorden', sub: `${engine.verbs.length} werkwoorden · ${engine.tenses.length} tijden`, icon: PenLine }] : []),
-    ];
     return (
       <>
         <BackLink to="/grammatica">Alle talen</BackLink>
         <PageHeader
           title={`${lang.flag} ${lang.name}`}
-          intro={hasVerbs ? 'Wat wil je doen?' : 'Volg het leerpad: eerst de uitleg, dan oefenen.'}
+          intro={hasVerbs ? 'Kies een of meer tijden, stel daaronder de rest in en druk op Start.' : 'Volg het leerpad: eerst de uitleg, dan oefenen.'}
         />
-        {tabs.length > 1 && (
-          <div role="tablist" aria-label="Onderdeel" className="mb-6 grid grid-cols-2 gap-3">
-            {tabs.map(({ id, label, sub, icon: Icon }) => (
-              <button
-                key={id}
-                type="button"
-                role="tab"
-                id={`tab-${id}`}
-                aria-selected={deel === id}
-                aria-controls="deel-paneel"
-                onClick={() => setParams(id === 'werkwoorden' ? { deel: id } : {}, { replace: true })}
-                className={cn(
-                  'flex flex-col items-start gap-1 rounded-[var(--radius-card)] border-2 p-4 text-left transition-colors sm:flex-row sm:items-center sm:gap-3',
-                  deel === id ? 'border-primary bg-primary-soft' : 'border-line bg-surface hover:border-primary',
-                )}
-              >
-                <span className={cn('grid h-11 w-11 shrink-0 place-items-center rounded-xl', deel === id ? 'bg-primary text-on-primary' : 'bg-surface-2 text-ink-soft')}>
-                  <Icon size={22} aria-hidden="true" />
-                </span>
-                <span>
-                  <span className="block text-lg font-extrabold">{label}</span>
-                  <span className="block text-sm text-ink-soft">{sub}</span>
-                </span>
-              </button>
-            ))}
-          </div>
-        )}
-        <div id="deel-paneel" role={tabs.length > 1 ? 'tabpanel' : undefined} aria-labelledby={tabs.length > 1 ? `tab-${deel}` : undefined}>
-          {deel === 'werkwoorden' ? (
+        {hasVerbs && (
+          <section aria-labelledby="ww-kop" className="mb-10">
+            <h2 id="ww-kop" className="mb-3 flex items-center gap-2 text-xl font-extrabold"><PenLine size={22} aria-hidden="true" /> Werkwoorden en tijden</h2>
             <PlusGate feature="werkwoorden">
               <VerbsPage lang={lang.code} />
             </PlusGate>
-          ) : (
-            <>
-              {casesOf(lang.code).length > 0 && <CaseChooser lang={lang.code} className="mb-5" />}
-              <TopicList code={lang.code} />
-            </>
-          )}
-        </div>
+          </section>
+        )}
+        <section aria-labelledby="gr-kop">
+          <h2 id="gr-kop" className="mb-3 flex items-center gap-2 text-xl font-extrabold"><BookOpen size={22} aria-hidden="true" /> {hasVerbs ? 'Overige grammatica' : 'Grammatica'}</h2>
+          {casesOf(lang.code).length > 0 && <CaseChooser lang={lang.code} className="mb-5" />}
+          <TopicList code={lang.code} skipTenses={hasVerbs} />
+        </section>
       </>
     );
   }
 
-  const main = sorted.filter((l) => l.grammarPriority === 1);
-  const rest = sorted.filter((l) => l.grammarPriority !== 1);
+  const school = schoolTalen.map(getLanguage);
+  const ook = ookOpSchool.map(getLanguage);
+  const extra = languages.filter((l) => isExtraTaal(l.code));
+  const sub = (code: LanguageCode) => (verbEngines[code] ? 'Grammatica en werkwoorden' : 'Grammatica');
   return (
     <>
       <PageHeader title="Grammatica & werkwoorden" intro="Welke taal leer je? Kies hem hieronder." />
-      <h2 className="mb-2 text-sm font-bold tracking-wide text-ink-soft uppercase">Veel gekozen</h2>
-      <ul className="mb-7 grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {main.map((l) => (
-          <li key={l.code}>
-            <Link to={`/grammatica/${l.code}`} className="flex h-full flex-col items-center gap-2 rounded-[var(--radius-card)] border-2 border-line bg-surface px-3 py-5 text-center transition-colors hover:border-primary">
-              <LanguageBadge code={l.code} />
-              <span className="text-lg font-extrabold">{l.name}</span>
-              <span className="text-sm text-ink-soft">{verbEngines[l.code] ? 'Grammatica en werkwoorden' : 'Grammatica'}</span>
-            </Link>
-          </li>
-        ))}
-      </ul>
-      <h2 className="mb-2 text-sm font-bold tracking-wide text-ink-soft uppercase">Meer talen</h2>
-      <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-        {rest.map((l) => (
-          <li key={l.code}>
-            <Link to={`/grammatica/${l.code}`} className="flex min-h-14 items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-2.5 transition-colors hover:border-primary">
-              <LanguageBadge code={l.code} />
-              <span className="flex-1">
-                <span className="block font-bold">{l.name}</span>
-                <span className="block text-sm text-ink-soft">{verbEngines[l.code] ? 'Grammatica en werkwoorden' : 'Grammatica'}</span>
-              </span>
-              <ChevronRight size={18} className="text-ink-soft" aria-hidden="true" />
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <section aria-labelledby="school-kop" className="mb-8 rounded-[28px] border-2 border-primary/40 bg-primary-soft/40 p-4 sm:p-5">
+        <h2 id="school-kop" className="mb-3 text-lg font-extrabold">⭐ Talen op school</h2>
+        <ul className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {school.map((l) => (
+            <li key={l.code}>
+              <Link to={`/grammatica/${l.code}`} className="flex h-full flex-col items-center gap-2 rounded-[var(--radius-card)] border-2 border-line bg-surface px-3 py-5 text-center shadow-soft transition-colors hover:border-primary">
+                <span className="text-3xl" aria-hidden="true">{l.flag}</span>
+                <span className="text-xl font-extrabold">{l.name}</span>
+                <span className="text-sm text-ink-soft">{sub(l.code)}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <h3 className="mt-4 mb-2 text-sm font-bold text-ink-soft">Ook op school</h3>
+        <ul className="grid gap-2 sm:grid-cols-3">
+          {ook.map((l) => (
+            <li key={l.code}>
+              <Link to={`/grammatica/${l.code}`} className="flex min-h-14 items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-2.5 transition-colors hover:border-primary">
+                <LanguageBadge code={l.code} />
+                <span className="flex-1">
+                  <span className="block font-bold">{l.name}</span>
+                  <span className="block text-sm text-ink-soft">{sub(l.code)}</span>
+                </span>
+                <ChevronRight size={18} className="text-ink-soft" aria-hidden="true" />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section aria-labelledby="extra-kop">
+        <h2 id="extra-kop" className="mb-1 text-lg font-extrabold">🌍 Extra talen</h2>
+        <p className="mb-3 text-sm text-ink-soft">Talen die je meestal niet op school krijgt. Nieuw in een taal? Kijk ook bij <Link to="/nieuwe-taal" className="font-semibold text-primary-ink underline underline-offset-2">Nieuwe taal proberen</Link>.</p>
+        <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+          {extra.map((l) => (
+            <li key={l.code}>
+              <Link to={`/grammatica/${l.code}`} className="flex min-h-12 items-center gap-2.5 rounded-2xl border border-line bg-surface px-3 py-2 transition-colors hover:border-primary">
+                <LanguageBadge code={l.code} />
+                <span className="font-semibold">{l.name}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
     </>
   );
 }
 
-function TopicList({ code }: { code: LanguageCode }) {
+function TopicList({ code, skipTenses }: { code: LanguageCode; skipTenses?: boolean }) {
   const lang = languages.find((l) => l.code === code)!;
   const progress = useLiveQuery(() => db.grammarProgress.where('lang').equals(code).toArray(), [code]);
   const score = new Map((progress ?? []).map((p) => [p.topicId, p.score]));
   // Leerpad: de onderwerpen in volgorde (makkelijk → moeilijk); zonder uitleg laten we ze weg.
-  const path = lang.grammarTopics.filter((t) => getTopic(code, t.id));
-  const later = lang.grammarTopics.length - path.length;
+  // Tijden staan al bovenaan bij de werkwoorden; die laten we hier weg.
+  const isTense = (id: string) => !!getTopic(code, id)?.tenses;
+  const all = lang.grammarTopics.filter((t) => !(skipTenses && isTense(t.id)));
+  const path = all.filter((t) => getTopic(code, t.id));
+  const later = all.length - path.length;
   const done = path.filter((t) => (score.get(t.id) ?? 0) >= 80).length;
   const next = path.find((t) => (score.get(t.id) ?? 0) < 80);
   const status = (id: string) => {

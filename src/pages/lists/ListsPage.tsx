@@ -1,14 +1,12 @@
 import { useMemo, useState } from 'react';
+import { WoordenTabs } from '@/components/layout/WoordenTabs';
 import { Link } from 'react-router';
-import { BookMarked, ChevronRight, FolderPlus, Library, Plus, Upload } from 'lucide-react';
-import { PageHeader } from '@/components/ui/PageHeader';
+import { BookMarked, ChevronRight, FolderPlus, Globe, Library, Plus, Upload } from 'lucide-react';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ButtonLink } from '@/components/ui/ButtonLink';
 import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Field';
-import { LanguageBadge } from '@/components/ui/LanguageBadge';
 import { getLanguage, type LanguageCode } from '@/data/languages';
-import { starterLists } from '@/data/starter';
 import type { BookInfo, WordList } from '@/db/types';
 import { useFolders, useLists, useWordCounts } from '@/features/lists/hooks';
 import { createFolder } from '@/features/lists/repo';
@@ -16,7 +14,6 @@ import { bookKey, yearLevelLabel } from '@/features/lists/books';
 import { folderIcon } from '@/features/lists/folderIcons';
 import { ListCard } from '@/features/lists/components/ListCard';
 import { FolderForm } from '@/features/lists/components/FolderForm';
-import { cn } from '@/lib/cn';
 import { sortLists, type Sort } from '@/features/lists/sort';
 
 
@@ -60,9 +57,7 @@ export function ListsPage() {
 
   return (
     <>
-      <PageHeader
-        title="Mijn lijsten"
-        intro="Kies je boek en hoofdstuk, of maak een eigen lijst."
+      <WoordenTabs
         actions={
           <>
             <ButtonLink to="/lijsten/importeren" variant="secondary">
@@ -197,52 +192,14 @@ export function ListsPage() {
   );
 }
 
-/** Ingebouwde themalijsten voor talen die je meestal niet op school krijgt. */
+/** Verwijzing naar het vakje "Nieuwe taal proberen". */
 function StarterSection() {
-  const langs = [...new Set(starterLists.map((s) => s.lang))];
-  const [lang, setLang] = useState<LanguageCode>(langs[0]!);
   return (
-    <Section title="Een nieuwe taal proberen">
-      <p className="mb-3 max-w-[60ch] text-ink-soft">
-        Startlijsten met de eerste woorden voor talen die je meestal niet op school krijgt.
-      </p>
-      <div className="mb-3 flex gap-2 overflow-x-auto pb-1" role="tablist" aria-label="Taal">
-        {langs.map((code) => (
-          <button
-            key={code}
-            type="button"
-            role="tab"
-            aria-selected={lang === code}
-            onClick={() => setLang(code)}
-            className={cn(
-              'h-11 shrink-0 rounded-full border px-4 font-semibold',
-              lang === code ? 'border-primary bg-primary-soft text-primary-ink' : 'border-line bg-surface text-ink-soft',
-            )}
-          >
-            {getLanguage(code).name}
-          </button>
-        ))}
-      </div>
-      <div role="tabpanel">
-      <ul className="grid gap-2 sm:grid-cols-3">
-        {starterLists
-          .filter((s) => s.lang === lang)
-          .map((s) => (
-            <li key={s.id}>
-              <Link
-                to={`/lijsten/start/${s.id}`}
-                className="flex min-h-16 items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-3 transition-colors hover:border-primary"
-              >
-                <LanguageBadge code={s.lang} />
-                <span className="flex-1">
-                  <span className="block font-bold">{s.theme}</span>
-                  <span className="block text-sm text-ink-soft">{s.words.length} woorden</span>
-                </span>
-              </Link>
-            </li>
-          ))}
-      </ul>
-      </div>
+    <Section title="Een nieuwe taal proberen?">
+      <p className="mb-3 max-w-[60ch] text-ink-soft">Kant-en-klare startlijsten voor talen die je niet op school krijgt, zoals Zweeds, Italiaans of Pools.</p>
+      <ButtonLink to="/nieuwe-taal" variant="secondary">
+        <Globe size={18} aria-hidden="true" /> Naar Nieuwe taal proberen
+      </ButtonLink>
     </Section>
   );
 }

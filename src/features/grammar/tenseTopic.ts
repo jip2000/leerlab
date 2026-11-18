@@ -32,6 +32,7 @@ export function tenseTopic(o: Options): TopicContent {
   });
   return {
     id: o.id,
+    tenses: o.tenses,
     blocks: [...o.blocks, ...tables],
     exercises: () => {
       // Alleen werkwoorden die in deze tijden ook echt vormen hebben (pouvoir heeft geen impératif).

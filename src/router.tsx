@@ -52,6 +52,7 @@ export const router = createHashRouter([
       { path: 'werkwoorden', element: <VerbsRedirect /> },
       { path: 'werkwoorden/oefenen', lazy: () => import('@/pages/VerbSessionPage').then((m) => ({ Component: () => gated('werkwoorden', <m.VerbSessionPage />) })) },
       { path: 'scannen', lazy: () => import('@/pages/ScanPage').then((m) => ({ Component: () => gated('scannen', <m.ScanPage />) })) },
+      { path: 'nieuwe-taal', lazy: () => import('@/pages/NewLanguagePage').then((m) => ({ Component: m.NewLanguagePage })) },
       { path: 'videos', lazy: () => import('@/pages/VideosPage').then((m) => ({ Component: m.VideosPage })) },
       { path: 'videos/:id', lazy: () => import('@/pages/VideoPage').then((m) => ({ Component: m.VideoPage })) },
       { path: 'planner', lazy: () => import('@/pages/PlannerPage').then((m) => ({ Component: () => gated('planner', <m.PlannerPage />) })) },

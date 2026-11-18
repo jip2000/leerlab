@@ -53,7 +53,7 @@ test('naamvallen kiezen: Duits zonder Genitiv', async ({ page }) => {
 
 test('leerpad: begin hier, daarna ga verder', async ({ page }) => {
   await page.goto('/#/grammatica/fr');
-  await expect(page.getByRole('tab', { name: /Grammatica/ })).toHaveAttribute('aria-selected', 'true');
+  await expect(page.getByRole('heading', { name: 'Overige grammatica' })).toBeVisible();
   const begin = page.getByRole('link', { name: /Begin hier/ });
   await expect(begin).toBeVisible();
   await expect(page.getByText(/0 van \d+ onderwerpen gehaald/)).toBeVisible();

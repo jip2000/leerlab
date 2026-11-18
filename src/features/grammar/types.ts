@@ -41,6 +41,8 @@ export interface TopicContent {
   exercises: Exercise[] | (() => Exercise[]);
   /** Onderdelen die je los aan of uit kunt zetten, bijv. "voorzetsels + Dativ". */
   parts?: { id: string; label: string; hint?: string }[];
+  /** Bij een onderwerp over werkwoordstijden: welke tijden (id's van de werkwoordmotor). */
+  tenses?: string[];
 }
 
 export type GrammarContent = Partial<Record<LanguageCode, TopicContent[]>>;

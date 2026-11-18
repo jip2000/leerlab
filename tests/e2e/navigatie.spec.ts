@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
 
 const pages: { label: string; short?: string; heading: string; more: boolean }[] = [
-  { label: 'Mijn lijsten', heading: 'Mijn lijsten', more: false },
-  { label: 'Oefenen', heading: 'Oefenen', more: false },
+  { label: 'Woorden oefenen', short: 'Woorden', heading: 'Woorden oefenen', more: false },
   { label: 'Grammatica & werkwoorden', short: 'Grammatica', heading: 'Grammatica & werkwoorden', more: false },
+  { label: 'Nieuwe taal proberen', short: 'Nieuwe taal', heading: 'Nieuwe taal proberen', more: false },
   { label: 'Foto scannen', heading: 'Foto scannen', more: true },
   { label: "Video's", heading: "Video's", more: true },
   { label: 'Planner', heading: 'Planner', more: true },
@@ -25,7 +25,7 @@ test('je kunt naar alle pagina’s en terug naar Home', async ({ page, isMobile 
       await nav.getByRole('button', { name: 'Meer' }).click();
       await page.getByRole('dialog', { name: "Meer pagina's" }).getByRole('link', { name: p.label }).click();
     } else {
-      await nav.getByRole('link', { name: isMobile && p.label === 'Mijn lijsten' ? 'Lijsten' : isMobile && p.short ? p.short : p.label }).click();
+      await nav.getByRole('link', { name: isMobile && p.short ? p.short : p.label, exact: true }).click();
     }
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(p.heading);
   }

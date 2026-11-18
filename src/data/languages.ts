@@ -270,6 +270,13 @@ export const languages: Language[] = [
 
 const byCode = new Map(languages.map((l) => [l.code, l]));
 
+/** Talen die op de middelbare school het meest voorkomen: groot en bovenaan. */
+export const schoolTalen: LanguageCode[] = ['en', 'fr', 'de', 'es'];
+/** Ook op school (gymnasium, en Nederlands). */
+export const ookOpSchool: LanguageCode[] = ['la', 'grc', 'nl'];
+/** Alle andere talen: "Nieuwe taal proberen" / "Extra talen". */
+export const isExtraTaal = (code: LanguageCode) => !schoolTalen.includes(code) && !ookOpSchool.includes(code);
+
 export function getLanguage(code: LanguageCode): Language {
   const lang = byCode.get(code);
   if (!lang) throw new Error(`Onbekende taal: ${code}`);

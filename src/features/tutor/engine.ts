@@ -44,7 +44,7 @@ const GREETINGS: [RegExp, string][] = [
   [/^\/lijsten/, 'Je bent bij je lijsten. Vraag me bijvoorbeeld hoe je woorden plakt of een lijst deelt.'],
   [/^\/oefenen/, 'Je bent bij Oefenen. Vraag me welke manier van oefenen bij jou past.'],
   [/^\/werkwoorden/, 'Je bent bij de werkwoordtrainer. Vraag me hoe de oefenvormen werken.'],
-  [/^\/grammatica/, 'Je bent bij Grammatica & werkwoorden. Lees de uitleg, oefen, of open het tabblad Werkwoorden.'],
+  [/^\/grammatica/, 'Je bent bij Grammatica & werkwoorden. Klik een of meer tijden aan om werkwoorden te oefenen, of kies een onderwerp hieronder.'],
   [/^\/scannen/, 'Tip: leg je boek plat, zorg voor goed licht en snij alleen de woordjes bij.'],
   [/^\/planner/, 'Zet je toets in de planner, dan krijg je elke dag een stukje om te leren.'],
 ];

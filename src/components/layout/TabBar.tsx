@@ -3,7 +3,7 @@ import { NavLink, useLocation } from 'react-router';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { Ellipsis, X } from 'lucide-react';
 import { cn } from '@/lib/cn';
-import { navItems } from './nav';
+import { isNavActive, navItems } from './nav';
 
 const tabClass = (active: boolean) =>
   cn(
@@ -18,7 +18,7 @@ export function TabBar() {
   const reduce = useReducedMotion();
   const tabs = navItems.filter((i) => i.tab);
   const more = navItems.filter((i) => !i.tab);
-  const moreActive = more.some((i) => pathname.startsWith(i.path));
+  const moreActive = more.some((i) => isNavActive(i, pathname));
 
   return (
     <>
@@ -27,10 +27,13 @@ export function TabBar() {
         className="tabbar fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface/95 px-2 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
       >
         <ul className="mx-auto flex max-w-xl">
-          {tabs.map(({ path, label, short, icon: Icon }) => (
+          {tabs.map((item) => {
+            const { path, label, short, icon: Icon } = item;
+            const isActive = isNavActive(item, pathname);
+            return (
             <li key={path} className="flex flex-1">
-              <NavLink to={path} end={path === '/'} className={({ isActive }) => tabClass(isActive)}>
-                {({ isActive }) => (
+              <NavLink to={path} end={path === '/'} aria-current={isActive ? 'page' : undefined} className={tabClass(isActive)}>
+                {(
                   <>
                     <span className={cn('grid h-7 w-12 place-items-center rounded-full transition-colors', isActive && 'bg-primary-soft')}>
                       <Icon size={21} strokeWidth={2.2} aria-hidden="true" />
@@ -40,7 +43,8 @@ export function TabBar() {
                 )}
               </NavLink>
             </li>
-          ))}
+            );
+          })}
           <li className="flex flex-1">
             <button
               type="button"

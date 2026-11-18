@@ -106,8 +106,8 @@ test('een lijst delen via een link en die bij een klasgenoot openen', async ({ p
 });
 
 test('een startlijst Zweeds opslaan', async ({ page }) => {
-  await page.goto('/#/lijsten');
-  await page.getByRole('tab', { name: 'Zweeds' }).click();
+  await page.goto('/#/nieuwe-taal');
+  await page.getByRole('button', { name: 'Zweeds' }).click();
   await page.getByRole('link', { name: /Eten en drinken/ }).click();
   await expect(page.getByText('ett bröd')).toBeVisible();
   await page.getByRole('button', { name: 'Opslaan in mijn lijsten' }).click();
@@ -135,7 +135,7 @@ test('plaatje bij een woord: zichtbaar in de lijst en op de flitskaart', async (
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Dieren');
   await expect(page.locator('main ul img').first()).toBeVisible();
 
-  await page.getByRole('link', { name: 'Oefenen' }).filter({ visible: true }).first().click();
+  await page.getByRole('link', { name: /^Oefenen/ }).filter({ visible: true }).first().click();
   await page.getByRole('button', { name: /Start met 1 woord/ }).click();
   await expect(page.locator('main button img').first()).toBeVisible();
 });
