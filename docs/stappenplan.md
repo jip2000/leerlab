@@ -1,5 +1,9 @@
 # Stappenplan: naam, inloggen, live zetten en betalen
 
+> **Stand van zaken:** deel 2 (inloggen) en deel 3 (Cloudflare + woordwerk.online) zijn klaar,
+> en de bezoekersteller staat aan (woordwerk6969.goatcounter.com). Deel 1 (hernoemen) is niet meer nodig.
+> Volgende stap: **deel 4, betalen met Stripe.** Waar hieronder `woordwerk.pages.dev` staat, gebruik je nu `https://woordwerk.online/`.
+
 Woordwerk werkt nu al, gratis en zonder account. Met deze stappen zet je de rest aan.
 De code is klaar: jij maakt alleen accounts aan en plakt sleutels op de goede plek.
 Doe de delen **op volgorde**. Elk deel kun je los afmaken en later verder.

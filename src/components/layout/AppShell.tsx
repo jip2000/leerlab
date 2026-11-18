@@ -18,6 +18,7 @@ import { navItems } from './nav';
 import { Toaster } from '@/components/ui/Toaster';
 import { TutorChat } from '@/features/tutor/TutorChat';
 import { Rondleiding } from '@/features/onboarding/Rondleiding';
+import { VerhuisMelding } from '@/features/verhuizing/VerhuisMelding';
 
 /** Het "frame" om elke pagina: zijbalk, bovenbalk, tabbalk en een zachte overgang. */
 export function AppShell() {
@@ -73,6 +74,7 @@ export function AppShell() {
           id="inhoud"
           className="mx-auto w-full max-w-5xl flex-1 px-4 pt-5 pb-[calc(env(safe-area-inset-bottom)+96px)] sm:px-6 lg:px-8 lg:pt-2 lg:pb-12"
         >
+          <VerhuisMelding />
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={location.pathname}
