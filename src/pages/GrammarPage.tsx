@@ -5,7 +5,7 @@ import { PageHeader } from '@/components/ui/PageHeader';
 import { BackLink } from '@/components/ui/BackLink';
 import { LanguageBadge } from '@/components/ui/LanguageBadge';
 import { languages, type LanguageCode } from '@/data/languages';
-import { getTopic, grammar } from '@/data/grammar';
+import { getTopic } from '@/data/grammar';
 import { db } from '@/db/db';
 import { verbEngines } from '@/features/verbs/registry';
 import { PlusGate } from '@/features/account/PlusGate';
@@ -21,8 +21,8 @@ type Deel = 'uitleg' | 'werkwoorden';
 /**
  * Grammatica & werkwoorden: één plek per taal.
  * #/grammatica            → kies een taal
- * #/grammatica/fr         → tabblad "Uitleg & oefeningen"
- * #/grammatica/fr?deel=werkwoorden → tabblad "Werkwoorden trainen"
+ * #/grammatica/fr         → tabblad "Grammatica"
+ * #/grammatica/fr?deel=werkwoorden → tabblad "Werkwoorden"
  */
 export function GrammarPage() {
   const { taal } = useParams();
@@ -33,15 +33,15 @@ export function GrammarPage() {
     const hasVerbs = !!verbEngines[lang.code];
     const deel: Deel = hasVerbs && params.get('deel') === 'werkwoorden' ? 'werkwoorden' : 'uitleg';
     const tabs: { id: Deel; label: string; icon: typeof BookOpen }[] = [
-      { id: 'uitleg', label: 'Uitleg & oefeningen', icon: BookOpen },
-      ...(hasVerbs ? [{ id: 'werkwoorden' as const, label: 'Werkwoorden trainen', icon: PenLine }] : []),
+      { id: 'uitleg', label: 'Grammatica', icon: BookOpen },
+      ...(hasVerbs ? [{ id: 'werkwoorden' as const, label: 'Werkwoorden', icon: PenLine }] : []),
     ];
     return (
       <>
         <BackLink to="/grammatica">Alle talen</BackLink>
         <PageHeader
           title={`${lang.flag} ${lang.name}`}
-          intro={hasVerbs ? 'Lees de uitleg bij een onderwerp, of train meteen je werkwoorden.' : 'Kies een onderwerp: eerst de uitleg, dan oefenen.'}
+          intro={deel === 'werkwoorden' ? 'Kies in 3 stappen wat je wilt oefenen en druk op Start.' : 'Kies een onderwerp. Je leest eerst de uitleg en daarna oefen je.'}
         />
         {tabs.length > 1 && (
           <div role="tablist" aria-label="Onderdeel" className="mb-6 grid grid-cols-2 gap-1 rounded-2xl bg-surface-2 p-1 sm:inline-grid sm:min-w-[440px]">
@@ -81,29 +81,37 @@ export function GrammarPage() {
     );
   }
 
+  const main = sorted.filter((l) => l.grammarPriority === 1);
+  const rest = sorted.filter((l) => l.grammarPriority !== 1);
   return (
     <>
-      <PageHeader title="Grammatica & werkwoorden" intro="Kies een taal. Daar vind je de uitleg met oefeningen én de werkwoordtrainer." />
+      <PageHeader title="Grammatica & werkwoorden" intro="Welke taal leer je? Kies hem hieronder." />
+      <h2 className="mb-2 text-sm font-bold tracking-wide text-ink-soft uppercase">Veel gekozen</h2>
+      <ul className="mb-7 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {main.map((l) => (
+          <li key={l.code}>
+            <Link to={`/grammatica/${l.code}`} className="flex h-full flex-col items-center gap-2 rounded-[var(--radius-card)] border-2 border-line bg-surface px-3 py-5 text-center transition-colors hover:border-primary">
+              <LanguageBadge code={l.code} />
+              <span className="text-lg font-extrabold">{l.name}</span>
+              <span className="text-sm text-ink-soft">{verbEngines[l.code] ? 'Grammatica en werkwoorden' : 'Grammatica'}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+      <h2 className="mb-2 text-sm font-bold tracking-wide text-ink-soft uppercase">Meer talen</h2>
       <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-        {sorted.map((l) => {
-          const n = grammar[l.code]?.length ?? 0;
-          const verbs = !!verbEngines[l.code];
-          return (
-            <li key={l.code}>
-              <Link to={`/grammatica/${l.code}`} className="flex min-h-16 items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-3 transition-colors hover:border-primary">
-                <LanguageBadge code={l.code} />
-                <span className="flex-1">
-                  <span className="block font-bold">{l.name}</span>
-                  <span className="block text-sm text-ink-soft">
-                    {n ? `${n} onderwerpen` : `${l.grammarTopics.length} onderwerpen, uitleg volgt`}
-                    {verbs && ' · werkwoorden'}
-                  </span>
-                </span>
-                <ChevronRight size={18} className="text-ink-soft" aria-hidden="true" />
-              </Link>
-            </li>
-          );
-        })}
+        {rest.map((l) => (
+          <li key={l.code}>
+            <Link to={`/grammatica/${l.code}`} className="flex min-h-14 items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-2.5 transition-colors hover:border-primary">
+              <LanguageBadge code={l.code} />
+              <span className="flex-1">
+                <span className="block font-bold">{l.name}</span>
+                <span className="block text-sm text-ink-soft">{verbEngines[l.code] ? 'Grammatica en werkwoorden' : 'Grammatica'}</span>
+              </span>
+              <ChevronRight size={18} className="text-ink-soft" aria-hidden="true" />
+            </Link>
+          </li>
+        ))}
       </ul>
     </>
   );
@@ -113,37 +121,38 @@ function TopicList({ code }: { code: LanguageCode }) {
   const lang = languages.find((l) => l.code === code)!;
   const progress = useLiveQuery(() => db.grammarProgress.where('lang').equals(code).toArray(), [code]);
   const score = new Map((progress ?? []).map((p) => [p.topicId, p.score]));
+  // Onderwerpen zonder uitleg laten we weg; tijden (gemaakt met de werkwoordmotor) apart.
+  const ready = lang.grammarTopics.map((t) => ({ ...t, content: getTopic(code, t.id) })).filter((t) => t.content);
+  const groups = [
+    { title: 'Regels', items: ready.filter((t) => typeof t.content!.exercises !== 'function') },
+    { title: 'Werkwoordstijden', items: ready.filter((t) => typeof t.content!.exercises === 'function') },
+  ].filter((g) => g.items.length > 0);
+  const later = lang.grammarTopics.length - ready.length;
   return (
-    <ul className="grid gap-2 sm:grid-cols-2">
-      {lang.grammarTopics.map((t) => {
-        const has = !!getTopic(code, t.id);
-        const s = score.get(t.id);
-        const inner = (
-          <>
-            <span className="min-w-0 flex-1">
-              <span className="block font-semibold">{t.title}</span>
-              {!has && <span className="block text-sm text-ink-soft">Uitleg volgt nog</span>}
-            </span>
-            {has && (
-              <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-sm font-bold ${s === undefined ? 'text-ink-soft' : s >= 80 ? 'bg-primary-soft text-primary-ink' : 'bg-marker/50'}`}>
-                {s === undefined ? 'nieuw' : `${s}%`}
-              </span>
-            )}
-            {has && <ChevronRight size={18} className="text-ink-soft" aria-hidden="true" />}
-          </>
-        );
-        return (
-          <li key={t.id}>
-            {has ? (
-              <Link to={`/grammatica/${code}/${t.id}`} className="flex min-h-14 items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-3 transition-colors hover:border-primary">
-                {inner}
-              </Link>
-            ) : (
-              <div className="flex min-h-14 items-center gap-3 rounded-2xl border border-dashed border-line px-4 py-3 opacity-70">{inner}</div>
-            )}
-          </li>
-        );
-      })}
-    </ul>
+    <div className="flex flex-col gap-6">
+      {groups.map((g) => (
+        <section key={g.title}>
+          {groups.length > 1 && <h2 className="mb-2 text-lg font-bold">{g.title}</h2>}
+          <ul className="grid gap-2 sm:grid-cols-2">
+            {g.items.map((t) => {
+              const s = score.get(t.id);
+              return (
+                <li key={t.id}>
+                  <Link to={`/grammatica/${code}/${t.id}`} className="flex min-h-14 items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-3 transition-colors hover:border-primary">
+                    <span className="min-w-0 flex-1 font-semibold">{t.title}</span>
+                    <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-sm font-bold ${s === undefined ? 'text-ink-soft' : s >= 80 ? 'bg-primary-soft text-primary-ink' : 'bg-marker/50'}`}>
+                      {s === undefined ? 'nieuw' : `${s}%`}
+                    </span>
+                    <ChevronRight size={18} className="text-ink-soft" aria-hidden="true" />
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ))}
+      {ready.length === 0 && <p className="text-ink-soft">De uitleg voor deze taal komt eraan.</p>}
+      {later > 0 && ready.length > 0 && <p className="text-sm text-ink-soft">Er komen nog {later} onderwerpen bij.</p>}
+    </div>
   );
 }

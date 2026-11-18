@@ -1,14 +1,35 @@
 /// <reference types="vitest/config" />
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import { fileURLToPath, URL } from 'node:url';
 
-export default defineConfig({
-  // './' zodat de site ook werkt in een submap, zoals GitHub Pages (/leerlab/).
+/**
+ * robots.txt en sitemap.xml maken met het echte adres van de site (VITE_SITE_URL).
+ * Zo kloppen ze altijd, ook na een andere naam of een eigen domein.
+ */
+function siteFiles(siteUrl: string): Plugin {
+  const url = siteUrl.endsWith('/') ? siteUrl : `${siteUrl}/`;
+  return {
+    name: 'woordwerk-site-bestanden',
+    apply: 'build',
+    generateBundle() {
+      this.emitFile({ type: 'asset', fileName: 'robots.txt', source: `User-agent: *\nAllow: /\n\nSitemap: ${url}sitemap.xml\n` });
+      this.emitFile({
+        type: 'asset',
+        fileName: 'sitemap.xml',
+        source: `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url>\n    <loc>${url}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>1.0</priority>\n  </url>\n</urlset>\n`,
+      });
+    },
+  };
+}
+
+export default defineConfig(({ mode }) => ({
+  // './' zodat de site ook werkt in een submap, zoals GitHub Pages (/woordwerk/).
   base: './',
   plugins: [
+    siteFiles(loadEnv(mode, process.cwd(), 'VITE_').VITE_SITE_URL ?? ''),
     react(),
     tailwindcss(),
     // Offline werken: een service worker bewaart de hele site in de browser.
@@ -43,4 +64,4 @@ export default defineConfig({
     include: ['tests/unit/**/*.test.ts', 'tests/unit/**/*.test.tsx'],
     environment: 'node',
   },
-});
+}));

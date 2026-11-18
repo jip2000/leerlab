@@ -6,7 +6,7 @@ Antwoorden op de startvragen (zie `opdracht.md`, hoofdstuk 17).
 |---|---|
 | Naam van de site | **Woordwerk** |
 | Hoofdkleur | **Fris groen** (mint/smaragd): vrolijk en kalm |
-| Code bewaren | GitHub, repository **leerlab** |
+| Code bewaren | GitHub, repository **woordwerk** |
 | Online zetten | Gratis hosting (GitHub Pages of vergelijkbaar), geen server |
 | Lettertype | **Plus Jakarta Sans** (Google Fonts) |
 
