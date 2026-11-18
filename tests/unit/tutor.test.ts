@@ -33,7 +33,7 @@ describe('hulp-tutor', () => {
   });
   it('kennisbank: unieke ids en alleen bestaande pagina’s', () => {
     expect(new Set(knowledge.map((k) => k.id)).size).toBe(knowledge.length);
-    const pages = ['/', '/lijsten', '/lijsten/nieuw', '/lijsten/importeren', '/oefenen', '/werkwoorden', '/grammatica', '/scannen', '/videos', '/planner', '/statistieken', '/instellingen', '/account', '/plus', '/privacy'];
+    const pages = ['/', '/lijsten', '/lijsten/nieuw', '/lijsten/importeren', '/oefenen', '/werkwoorden', '/grammatica', '/nieuwe-taal', '/scannen', '/videos', '/planner', '/statistieken', '/instellingen', '/account', '/plus', '/privacy'];
     for (const k of knowledge) for (const a of k.actions ?? []) expect(pages, k.id).toContain(a.to);
   });
 });

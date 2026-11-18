@@ -110,3 +110,29 @@ test('in een zin: nooit dezelfde vraag, en moeilijke zinnen', async ({ page }) =
     // Foute vragen komen pas aan het eind terug; die tellen we hier niet.
   }
 });
+
+test('extra taal: Pools via Nieuwe taal proberen, werkwoorden oefenen', async ({ page }) => {
+  await page.goto('/#/nieuwe-taal');
+  await page.getByRole('button', { name: 'Pools' }).click();
+  await page.getByRole('link', { name: /Naar Pools/ }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Pools');
+  await page.getByRole('button', { name: tijd('czas teraźniejszy') }).click();
+  await page.getByRole('button', { name: 'Alle werkwoorden uitvinken' }).click();
+  await page.getByLabel('Zoek een werkwoord').fill('być');
+  await page.getByRole('checkbox').first().check();
+  await page.getByRole('button', { name: 'Alle personen uitvinken' }).click();
+  await page.getByRole('button', { name: 'my', exact: true }).click();
+  await page.getByRole('button', { name: 'Start' }).click();
+  await page.getByLabel('Jouw antwoord').fill('jesteśmy');
+  await page.getByRole('button', { name: 'Controleren' }).click();
+  await expect(page.getByText('Goed!')).toBeVisible();
+});
+
+test('talenkiezer: schooltalen bovenaan, extra talen eronder', async ({ page }) => {
+  await page.goto('/#/grammatica');
+  const school = page.getByRole('region', { name: /Talen op school/ });
+  for (const t of ['Engels', 'Frans', 'Duits', 'Spaans', 'Latijn', 'Oudgrieks']) await expect(school.getByRole('link', { name: new RegExp(t) })).toBeVisible();
+  const extra = page.getByRole('region', { name: /Extra talen/ });
+  await expect(extra.getByRole('link', { name: /Zweeds/ })).toBeVisible();
+  await expect(extra.getByRole('link', { name: /Frans/ })).toHaveCount(0);
+});

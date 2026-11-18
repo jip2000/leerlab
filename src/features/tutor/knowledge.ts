@@ -87,7 +87,7 @@ export const knowledge: KnowledgeItem[] = [
     actions: [{ label: 'Instellingen', to: '/instellingen' }] },
   { id: 'andere-talen', keywords: ['zweeds', 'pools', 'italiaans', 'portugees', 'russisch', 'turks', 'nieuwe taal', 'startlijst', 'andere taal'],
     answer: 'Voor talen die je meestal niet op school krijgt, staan er startlijsten (begroeten, getallen, eten) bij Nieuwe taal proberen in het menu.',
-    actions: [{ label: 'Startlijsten', to: '/lijsten' }] },
+    actions: [{ label: 'Nieuwe taal proberen', to: '/nieuwe-taal' }] },
   { id: 'account', keywords: ['account', 'inloggen', 'aanmelden', 'registreren', 'wachtwoord', 'uitloggen', 'synchroniseren', 'ander apparaat'],
     answer: 'Een account is niet verplicht. Met een account staan je lijsten en voortgang op al je apparaten: log in op je telefoon én je laptop. Wachtwoord vergeten? Kies op de accountpagina "Wachtwoord vergeten".',
     actions: [{ label: 'Account', to: '/account' }] },
