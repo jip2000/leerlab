@@ -25,6 +25,8 @@ export interface Settings {
   rondleidingGezien: boolean;
   /** Welke naamvallen je per taal wilt leren (id's uit grammar/cases.ts). Niets = alles. */
   naamvallen: Partial<Record<LanguageCode, string[]>>;
+  /** Welke onderdelen per onderwerp (sleutel "taal:onderwerp"). Niets = alles. */
+  onderdelen: Record<string, string[]>;
   nakijkregels: CheckRules;
 }
 
@@ -42,6 +44,7 @@ export const defaultSettings: Settings = {
   dagdoel: { type: 'minuten', aantal: 10 },
   rondleidingGezien: false,
   naamvallen: {},
+  onderdelen: {},
   nakijkregels: {
     ignoreCase: true,
     ignoreAccents: false,

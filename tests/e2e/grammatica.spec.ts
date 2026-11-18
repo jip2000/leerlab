@@ -31,25 +31,20 @@ test('grammatica: uitleg lezen en een ronde oefenen', async ({ page }) => {
 
 test('naamvallen kiezen: Duits zonder Genitiv', async ({ page }) => {
   await page.goto('/#/grammatica/de');
-  await expect(page.getByRole('button', { name: /Naamvallen: alle 4/ })).toBeVisible();
-  await page.getByRole('button', { name: /Aanpassen/ }).click();
   const chooser = page.getByRole('group', { name: 'Naamvallen' });
   for (const n of ['Nominativ', 'Akkusativ', 'Dativ', 'Genitiv']) await expect(chooser.getByRole('button', { name: new RegExp(n) })).toHaveAttribute('aria-pressed', 'true');
   await chooser.getByRole('button', { name: /Genitiv/ }).click();
   await expect(chooser.getByRole('button', { name: /Genitiv/ })).toHaveAttribute('aria-pressed', 'false');
 
-  await page.getByRole('link', { name: /^Naamvallen/ }).click();
+  await page.getByRole('link', { name: /Naamvallen/ }).first().click();
   await expect(page.getByRole('rowheader', { name: 'Dativ', exact: true }).first()).toBeVisible();
   await expect(page.getByRole('rowheader', { name: 'Genitiv', exact: true })).toHaveCount(0);
   // Keuze is ook hier te zien en blijft bewaard.
-  await expect(page.getByRole('button', { name: /Naamvallen: Nominativ, Akkusativ, Dativ/ })).toBeVisible();
-  await page.getByRole('button', { name: /Aanpassen/ }).click();
   await expect(page.getByRole('group', { name: 'Naamvallen' }).getByRole('button', { name: /Genitiv/ })).toHaveAttribute('aria-pressed', 'false');
   await page.reload();
   await expect(page.getByRole('rowheader', { name: 'Genitiv', exact: true })).toHaveCount(0);
 
   // Minstens één naamval blijft aan.
-  await page.getByRole('button', { name: /Aanpassen/ }).click();
   const g = page.getByRole('group', { name: 'Naamvallen' });
   for (const n of ['Nominativ', 'Akkusativ', 'Dativ']) await g.getByRole('button', { name: new RegExp(n) }).click();
   await expect(g.getByRole('button', { name: /Dativ/ })).toHaveAttribute('aria-pressed', 'true');
@@ -65,4 +60,16 @@ test('leerpad: begin hier, daarna ga verder', async ({ page }) => {
   await begin.click();
   await expect(page.getByRole('tab', { name: /Uitleg lezen/ })).toHaveAttribute('aria-selected', 'true');
   await expect(page.getByRole('button', { name: 'Ga oefenen' })).toBeVisible();
+});
+
+test('voorzetsels: alleen de wisselvoorzetsels oefenen', async ({ page }) => {
+  await page.goto('/#/grammatica/de/voorzetsels');
+  const delen = page.getByRole('group', { name: 'Onderdelen' });
+  for (const n of [/Akkusativ/, /\+ Dativ/, /Samentrekkingen/]) await delen.getByRole('button', { name: n }).click();
+  await expect(delen.getByRole('button', { name: /Wisselvoorzetsels/ })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByRole('table', { name: 'Samentrekkingen' })).toHaveCount(0); // tabel weg
+  await expect(page.getByText('an, auf, hinter, in, neben, über, unter, vor, zwischen')).toBeVisible();
+  await page.getByRole('button', { name: 'Ga oefenen' }).click();
+  // 6 wissel-oefeningen; elke vraag gaat over wo?/wohin? of auf/an/unter
+  await expect(page.getByText('0/6')).toBeVisible();
 });

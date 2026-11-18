@@ -12,28 +12,31 @@ import type { Block, Exercise, TopicContent } from './types';
 export interface Case {
   id: string;
   label: string;
+  /** Zoals op school, bijv. "1e naamval". */
+  nr?: string;
   /** Hoe de naamval in tabellen kan heten (kleine letters), bijv. 'akk' of 'acc.'. */
   short: string[];
 }
 
 const latijns = (extra: Case[] = []): Case[] => [
-  { id: 'nom', label: 'nominativus', short: ['nominativus', 'nom'] },
-  { id: 'gen', label: 'genitivus', short: ['genitivus', 'gen'] },
-  { id: 'dat', label: 'dativus', short: ['dativus', 'dat'] },
-  { id: 'acc', label: 'accusativus', short: ['accusativus', 'acc'] },
+  { id: 'nom', nr: '1e naamval', label: 'nominativus', short: ['nominativus', 'nom'] },
+  { id: 'gen', nr: '2e naamval', label: 'genitivus', short: ['genitivus', 'gen'] },
+  { id: 'dat', nr: '3e naamval', label: 'dativus', short: ['dativus', 'dat'] },
+  { id: 'acc', nr: '4e naamval', label: 'accusativus', short: ['accusativus', 'acc'] },
   ...extra,
 ];
 
 export const casesByLang: Partial<Record<LanguageCode, Case[]>> = {
+  // Volgorde zoals op Nederlandse scholen: 1e = Nominativ, 2e = Genitiv, 3e = Dativ, 4e = Akkusativ.
   de: [
-    { id: 'nom', label: 'Nominativ', short: ['nominativ', 'nom'] },
-    { id: 'akk', label: 'Akkusativ', short: ['akkusativ', 'akk'] },
-    { id: 'dat', label: 'Dativ', short: ['dativ', 'dat'] },
-    { id: 'gen', label: 'Genitiv', short: ['genitiv', 'gen'] },
+    { id: 'nom', nr: '1e naamval', label: 'Nominativ', short: ['nominativ', 'nom'] },
+    { id: 'gen', nr: '2e naamval', label: 'Genitiv', short: ['genitiv', 'gen'] },
+    { id: 'dat', nr: '3e naamval', label: 'Dativ', short: ['dativ', 'dat'] },
+    { id: 'akk', nr: '4e naamval', label: 'Akkusativ', short: ['akkusativ', 'akk'] },
   ],
   la: latijns([
-    { id: 'abl', label: 'ablativus', short: ['ablativus', 'abl'] },
-    { id: 'voc', label: 'vocativus', short: ['vocativus', 'voc'] },
+    { id: 'abl', nr: '5e naamval', label: 'ablativus', short: ['ablativus', 'abl'] },
+    { id: 'voc', nr: '6e naamval', label: 'vocativus', short: ['vocativus', 'voc'] },
   ]),
   grc: latijns(),
 };

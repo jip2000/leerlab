@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router';
-import { BookOpen, Dumbbell } from 'lucide-react';
+import { Dumbbell } from 'lucide-react';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BackLink } from '@/components/ui/BackLink';
 import { Button } from '@/components/ui/Button';
@@ -23,6 +23,8 @@ import { FREE_GRAMMAR_TOPICS, usePlusAccess } from '@/lib/plan';
 import { PlusGate } from '@/features/account/PlusGate';
 import { filterBlocks, filterExercises, selectedCases, topicUsesCases } from '@/features/grammar/cases';
 import { CaseChooser } from '@/features/grammar/components/CaseChooser';
+import { PartChooser } from '@/features/grammar/components/PartChooser';
+import { filterBlocksByPart, filterExercisesByPart, partKey, selectedParts } from '@/features/grammar/parts';
 
 const ROUND = 8;
 
@@ -37,7 +39,12 @@ export function GrammarTopicPage() {
   const [round, setRound] = useState(0);
   const savedCases = useSettings((s) => s.naamvallen);
   const on = useMemo(() => selectedCases(lang, savedCases), [lang, savedCases]);
-  const exercises = useMemo(() => (topic ? shuffled(filterExercises(lang, exercisesOf(topic), on)).slice(0, ROUND) : []), [topic, round, on]);
+  const savedParts = useSettings((s) => (topic ? s.onderdelen[partKey(lang, topic.id)] : undefined));
+  const parts = useMemo(() => (topic ? selectedParts(topic, savedParts) : new Set<string>()), [topic, savedParts]);
+  const exercises = useMemo(
+    () => (topic ? shuffled(filterExercises(lang, filterExercisesByPart(exercisesOf(topic), parts), on)).slice(0, ROUND) : []),
+    [topic, round, on, parts],
+  );
   const [index, setIndex] = useState(0);
   const [good, setGood] = useState(0);
   const before = useRef<Profile | null>(null);
@@ -90,7 +97,6 @@ export function GrammarTopicPage() {
             onClick={() => (t === 'oefenen' && tab !== 'oefenen' ? void start() : setTab(t))}
             className={cn('flex h-11 items-center gap-2 rounded-xl px-5 font-semibold', tab === t ? 'bg-surface shadow-soft' : 'text-ink-soft')}
           >
-            {t === 'uitleg' ? <BookOpen size={18} aria-hidden="true" /> : <Dumbbell size={18} aria-hidden="true" />}
             <span className="grid h-6 w-6 place-items-center rounded-full bg-primary text-xs text-on-primary" aria-hidden="true">{t === 'uitleg' ? 1 : 2}</span>
             {t === 'uitleg' ? 'Uitleg lezen' : 'Oefenen'}
           </button>
@@ -99,8 +105,11 @@ export function GrammarTopicPage() {
 
       {tab === 'uitleg' && (
         <>
-          {topicUsesCases(lang, topic) && <CaseChooser lang={lang} className="mb-5" />}
-          <Blocks blocks={filterBlocks(lang, topic.blocks, on)} lang={lang} />
+          <div className="mb-5 grid gap-3 lg:grid-cols-2">
+            <PartChooser lang={lang} topic={topic} />
+            {topicUsesCases(lang, topic) && <CaseChooser lang={lang} />}
+          </div>
+          <Blocks blocks={filterBlocks(lang, filterBlocksByPart(topic.blocks, parts), on)} lang={lang} />
           <div className="mt-6 flex flex-wrap items-center gap-3 rounded-[var(--radius-card)] border-2 border-primary bg-primary-soft p-4">
             <p className="flex-1 font-semibold">Klaar met lezen? Oefen nu {ROUND} vragen over dit onderwerp.</p>
             <Button size="lg" icon={<Dumbbell size={20} aria-hidden="true" />} onClick={() => void start()}>
@@ -117,7 +126,7 @@ export function GrammarTopicPage() {
       {tab === 'oefenen' && (plusOk || getLanguage(lang).grammarTopics.findIndex((t) => t.id === topic.id) < FREE_GRAMMAR_TOPICS) && (
         <div className="mx-auto max-w-lg">
           {exercises.length === 0 ? (
-            <p className="rounded-2xl bg-surface-2 p-5 text-center font-semibold">Met de naamvallen die je gekozen hebt, zijn er hier geen oefeningen. Zet er bij de uitleg één bij.</p>
+            <p className="rounded-2xl bg-surface-2 p-5 text-center font-semibold">Met wat je gekozen hebt, zijn er hier geen oefeningen. Zet bij de uitleg nog een naamval of onderdeel aan.</p>
           ) : !done ? (
             <>
               <div className="mb-4 flex items-center gap-3">

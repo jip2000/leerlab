@@ -6,7 +6,7 @@ const naamvallen = getTopic('de', 'naamvallen')!;
 
 describe('naamvallen kiezen', () => {
   it('niets gekozen = alles aan', () => {
-    expect([...selectedCases('de', {})]).toEqual(['nom', 'akk', 'dat', 'gen']);
+    expect([...selectedCases('de', {})]).toEqual(['nom', 'gen', 'dat', 'akk']); // schoolvolgorde 1e-4e
     expect([...selectedCases('de', { de: [] })]).toHaveLength(4);
     expect([...selectedCases('de', { de: ['akk', 'onzin'] })]).toEqual(['akk']);
   });
@@ -25,7 +25,7 @@ describe('naamvallen kiezen', () => {
     for (const e of ex) {
       const c = casesOfExercise('de', e);
       expect(c.length === 0 || c.some((x) => on.has(x))).toBe(true);
-      if (e.type === 'table') expect(e.rows.map((r) => r.label)).toEqual(['Nominativ', 'Akkusativ']);
+      if (e.type === 'table') expect(e.rows.map((r) => r.label).every((l) => ['Nominativ', 'Akkusativ'].includes(l))).toBe(true);
     }
     expect(ex.some((e) => e.type === 'gap' && e.answer === 'des')).toBe(false);
     expect(ex.some((e) => e.type === 'gap' && e.answer === 'den')).toBe(true);
@@ -62,5 +62,27 @@ describe('naamvallen kiezen', () => {
     expect(topicUsesCases('de', naamvallen)).toBe(true);
     expect(topicUsesCases('de', getTopic('de', 'woordvolgorde')!)).toBe(false);
     expect(topicUsesCases('fr', naamvallen)).toBe(false); // Frans heeft geen naamvallen
+  });
+});
+
+import { filterBlocksByPart, filterExercisesByPart, selectedParts } from '@/features/grammar/parts';
+
+describe('onderdelen per onderwerp', () => {
+  const vz = getTopic('de', 'voorzetsels')!;
+  it('standaard alles aan, en elk onderdeel heeft genoeg oefeningen', () => {
+    expect([...selectedParts(vz, undefined)]).toEqual(['akk', 'dat', 'wissel', 'samen']);
+    for (const p of vz.parts!) expect(filterExercisesByPart(exercisesOf(vz), new Set([p.id])).length).toBeGreaterThanOrEqual(5);
+  });
+  it('alleen wisselvoorzetsels: andere uitleg en oefeningen weg', () => {
+    const on = new Set(['wissel']);
+    expect(filterBlocksByPart(vz.blocks, on).every((b) => !b.part || b.part === 'wissel')).toBe(true);
+    expect(filterExercisesByPart(exercisesOf(vz), on).every((e) => e.part === 'wissel')).toBe(true);
+  });
+  it('elke oefening in een onderwerp met onderdelen hoort bij een bestaand onderdeel', () => {
+    for (const id of ['naamvallen', 'voorzetsels', 'adjektivdeklination']) {
+      const t = getTopic('de', id)!;
+      const ids = t.parts!.map((p) => p.id);
+      for (const e of exercisesOf(t)) expect(ids).toContain(e.part);
+    }
   });
 });

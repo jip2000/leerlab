@@ -4,11 +4,15 @@
  */
 import type { LanguageCode } from '@/data/languages';
 
-export type Block =
+export type Block = (
   | { type: 'text'; text: string }
   | { type: 'table'; head: string[]; rows: string[][]; caption?: string }
   | { type: 'examples'; items: [string, string][] } // [vreemde taal, vertaling]
-  | { type: 'tip'; text: string };
+  | { type: 'tip'; text: string }
+) & {
+  /** Hoort bij dit onderdeel van het onderwerp (zie TopicContent.parts). */
+  part?: string;
+};
 
 export type Exercise = (
   /** Gat in een zin: "Je ___ au cinéma." */
@@ -26,6 +30,8 @@ export type Exercise = (
 ) & {
   /** Over welke naamval(len) de oefening gaat (zie cases.ts). Leeg laten = we zoeken het zelf uit de tekst. */
   cases?: string[];
+  /** Onderdeel van het onderwerp waar deze oefening bij hoort (zie TopicContent.parts). */
+  part?: string;
 };
 
 export interface TopicContent {
@@ -33,6 +39,8 @@ export interface TopicContent {
   blocks: Block[];
   /** Vaste oefeningen, of een functie die ze maakt (bijv. met de werkwoordmotor). */
   exercises: Exercise[] | (() => Exercise[]);
+  /** Onderdelen die je los aan of uit kunt zetten, bijv. "voorzetsels + Dativ". */
+  parts?: { id: string; label: string; hint?: string }[];
 }
 
 export type GrammarContent = Partial<Record<LanguageCode, TopicContent[]>>;
