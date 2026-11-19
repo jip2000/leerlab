@@ -111,7 +111,11 @@ export const ruEngine = tableEngine({
     ru('работать', 'werken', 'работаю, работаешь, работает, работаем, работаете, работают', ruPast('работал', 'работали'), true),
   ],
   explain: (v, tense) =>
-    tense === 'proshedshee' ? 'Verleden tijd: mannelijk -л, vrouwelijk -ла, meervoud -ли (voor alle personen).' : v.inf === 'быть' ? undefined : undefined,
+    tense === 'proshedshee'
+      ? 'Verleden tijd: mannelijk -л, vrouwelijk -ла, meervoud -ли (voor alle personen).'
+      : v.tags?.includes('regelmatig')
+        ? 'Nu: stam + -ю/-у, -ешь, -ет, -ем, -ете, -ют/-ут (of -ишь, -ит, -им, -ите, -ят).'
+        : `${v.inf} is onregelmatig: leer dit rijtje uit je hoofd.`,
 });
 
 /* ───────────────────────── FINS ───────────────────────── */

@@ -21,8 +21,10 @@ async function verwerk(sub: Stripe.Subscription) {
   const userId = sub.metadata?.user_id;
   const update = { plan, plus_tot, stripe_customer_id: klant, stripe_subscription_id: sub.id };
   const q = userId ? db.from('profiles').update(update).eq('id', userId) : db.from('profiles').update(update).eq('stripe_customer_id', klant);
-  const { error } = await q;
+  const { data, error } = await q.select('id');
   if (error) throw error;
+  // Geen account gevonden: fout teruggeven, dan probeert Stripe het later opnieuw (en zie je het in de logs).
+  if (!data?.length) throw new Error(`Geen account voor abonnement ${sub.id} (klant ${klant})`);
   console.log(`abonnement ${sub.id}: ${sub.status} → ${plan}`);
 }
 

@@ -38,6 +38,7 @@ export function VerbSessionPage() {
   const [rewards, setRewards] = useState<Rewards | undefined>();
   const before = useRef<Profile | null>(null);
   const last = useRef(Date.now());
+  const busy = useRef(false);
   const total = initial.length;
   const back = `/grammatica/${lang}?deel=werkwoorden`;
   const ctx: Ctx = { engine, lang, rules, initial };
@@ -52,15 +53,21 @@ export function VerbSessionPage() {
 
   const answer = async (correct: boolean, retry = true) => {
     if (!q) return;
-    const now = Date.now();
-    await recordAnswer({ correct, xp: correct ? XP_VERB : 1, seconds: Math.min(now - last.current, 60_000) / 1000 });
-    last.current = now;
-    const first = !results.some((r) => r.q === q);
-    if (first) await recordVerb(lang, q, correct);
-    setResults((r) => (first ? [...r, { q, correct }] : r));
-    // Fout (behalve bij "rijtje"): komt nog één keer terug aan het eind.
-    setQueue((qs) => [...qs.slice(1), ...(!correct && retry && first ? [q] : [])]);
-    if (first) setDone((d) => d + 1);
+    if (busy.current) return; // al bezig met deze vraag (dubbel Enter of dubbelklik)
+    busy.current = true;
+    try {
+      const now = Date.now();
+      await recordAnswer({ correct, xp: correct ? XP_VERB : 1, seconds: Math.min(now - last.current, 60_000) / 1000 });
+      last.current = now;
+      const first = !results.some((r) => r.q === q);
+      if (first) await recordVerb(lang, q, correct);
+      setResults((r) => (first ? [...r, { q, correct }] : r));
+      // Fout (behalve bij "rijtje"): komt nog één keer terug aan het eind.
+      setQueue((qs) => [...qs.slice(1), ...(!correct && retry && first ? [q] : [])]);
+      if (first) setDone((d) => d + 1);
+    } finally {
+      busy.current = false;
+    }
   };
 
   useEffect(() => {

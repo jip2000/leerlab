@@ -199,7 +199,7 @@ export function VerbsPage({ lang }: { lang: LanguageCode }) {
     }
     const mix = await prepareMix(lang);
     if (mix.length === 0) return toast('Met deze keuze zijn er geen oefeningen. Kies nog iets anders aan.');
-    s.set({ mix, lang });
+    s.set({ mix, lang, mixLang: lang });
     navigate(`/grammatica/${lang}/oefenen`);
   };
 

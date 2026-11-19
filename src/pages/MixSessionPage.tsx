@@ -42,7 +42,10 @@ export function MixSessionPage() {
   const { taal } = useParams();
   const lang = taal as LanguageCode;
   const navigate = useNavigate();
-  const items = useVerbStore((s) => s.mix);
+  const stored = useVerbStore((s) => s.mix);
+  const mixLang = useVerbStore((s) => s.mixLang);
+  // Een ronde van een andere taal (bijv. via Terug in de browser) hoort hier niet.
+  const items = mixLang === lang ? stored : [];
   const setStore = useVerbStore((s) => s.set);
   const dagdoel = useSettings((s) => s.dagdoel);
   const [index, setIndex] = useState(0);
@@ -51,6 +54,7 @@ export function MixSessionPage() {
   const [round, setRound] = useState(0);
   const before = useRef<Profile | null>(null);
   const last = useRef(Date.now());
+  const busy = useRef(false);
   const back = `/grammatica/${lang}`;
   const titles = new Map(practiceTopics(lang).map((t) => [t.id, t.title]));
 
@@ -65,22 +69,28 @@ export function MixSessionPage() {
   const item = items[index];
 
   const answered = async (ok: boolean) => {
-    const now = Date.now();
-    await recordAnswer({ correct: ok, xp: ok ? 10 : 1, seconds: Math.min(now - last.current, 60_000) / 1000 });
-    last.current = now;
-    if (item?.q) await recordVerb(lang, item.q, ok);
-    if (!ok && item) setWrong((w) => [...w, item]);
-    const newGood = good + (ok ? 1 : 0);
-    setGood(newGood);
-    if (index + 1 >= items.length) {
-      const pct = Math.round((newGood / items.length) * 100);
-      await db.sessions.add({ id: newId(), type: `grammatica-mix-${lang}`, listIds: [], startedAt: now, endedAt: now, score: pct, answers: [] });
-      const r = await finishRewards(before.current ?? (await getProfile()), { mode: 'grammatica', total: items.length, percentage: pct }, XP_FINISH, dagdoel);
-      fireworks();
-      if (pct === 100 || r.badges.length) celebrate(pct === 100);
-      for (const b of r.badges) toast(`${b.emoji} Nieuwe badge: ${b.title}`);
+    if (busy.current) return; // al bezig met deze vraag (dubbel Enter of dubbelklik)
+    busy.current = true;
+    try {
+      const now = Date.now();
+      await recordAnswer({ correct: ok, xp: ok ? 10 : 1, seconds: Math.min(now - last.current, 60_000) / 1000 });
+      last.current = now;
+      if (item?.q) await recordVerb(lang, item.q, ok);
+      if (!ok && item) setWrong((w) => [...w, item]);
+      const newGood = good + (ok ? 1 : 0);
+      setGood(newGood);
+      if (index + 1 >= items.length) {
+        const pct = Math.round((newGood / items.length) * 100);
+        await db.sessions.add({ id: newId(), type: `grammatica-mix-${lang}`, listIds: [], startedAt: now, endedAt: now, score: pct, answers: [] });
+        const r = await finishRewards(before.current ?? (await getProfile()), { mode: 'grammatica', total: items.length, percentage: pct }, XP_FINISH, dagdoel);
+        fireworks();
+        if (pct === 100 || r.badges.length) celebrate(pct === 100);
+        for (const b of r.badges) toast(`${b.emoji} Nieuwe badge: ${b.title}`);
+      }
+      setIndex((i) => i + 1);
+    } finally {
+      busy.current = false;
     }
-    setIndex((i) => i + 1);
   };
 
   const again = async () => {

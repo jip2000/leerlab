@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { Camera, RotateCcw, Sparkles } from 'lucide-react';
 import { PageHeader } from '@/components/ui/PageHeader';
@@ -37,6 +37,8 @@ export function GrammarPhotoPage() {
   const [photos, setPhotos] = useState<string[]>([]);
   const [progress, setProgress] = useState<{ p: number; status: string; photo: number }>({ p: 0, status: '', photo: 0 });
   const [result, setResult] = useState<PhotoAnalysis | null>(null);
+  // Voorbeeldjes van de foto's weer vrijgeven (geheugen).
+  useEffect(() => () => photos.forEach((u) => URL.revokeObjectURL(u)), [photos]);
 
   const read = async (files: File[]) => {
     if (!files.length) return;

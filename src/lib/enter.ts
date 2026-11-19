@@ -9,11 +9,14 @@ export function useEnterToContinue(active: boolean, onNext: () => void) {
   next.current = onNext;
   useEffect(() => {
     if (!active) return;
+    let fired = false; // één keer per vraag: twee keer snel Enter slaat geen vraag over
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== 'Enter' || e.repeat || e.isComposing || e.defaultPrevented) return;
       const tag = (e.target as HTMLElement | null)?.tagName;
       if (tag === 'BUTTON' || tag === 'A' || tag === 'TEXTAREA') return;
       e.preventDefault();
+      if (fired) return;
+      fired = true;
       next.current();
     };
     // Pas na déze toetsaanslag luisteren: de Enter van "Nakijken" telt niet ook als "Volgende".

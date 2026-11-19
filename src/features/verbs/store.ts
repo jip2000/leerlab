@@ -25,6 +25,8 @@ interface VerbStore {
   questions: VerbQuestion[];
   /** Lopende gemixte ronde (werkwoorden + grammatica), niet bewaard bij herladen. */
   mix: MixItem[];
+  /** Voor welke taal de gemixte ronde gemaakt is. */
+  mixLang?: LanguageCode;
   set: (patch: Partial<Omit<VerbStore, 'set' | 'setChoice'>>) => void;
   setChoice: (lang: LanguageCode, c: Partial<Choice>) => void;
 }

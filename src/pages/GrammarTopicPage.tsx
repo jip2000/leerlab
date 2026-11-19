@@ -49,6 +49,7 @@ export function GrammarTopicPage() {
   const [good, setGood] = useState(0);
   const before = useRef<Profile | null>(null);
   const last = useRef(Date.now());
+  const busy = useRef(false);
 
   if (!topic || !info) return <NotFoundPage />;
   const done = index >= exercises.length;
@@ -64,23 +65,29 @@ export function GrammarTopicPage() {
   };
 
   const answered = async (ok: boolean) => {
-    const now = Date.now();
-    await recordAnswer({ correct: ok, xp: ok ? 10 : 1, seconds: Math.min(now - last.current, 60_000) / 1000 });
-    last.current = now;
-    const newGood = good + (ok ? 1 : 0);
-    setGood(newGood);
-    if (index + 1 >= exercises.length) {
-      const pct = Math.round((newGood / exercises.length) * 100);
-      const id = `${lang}:${topic.id}`;
-      const prev = await db.grammarProgress.get(id);
-      await db.grammarProgress.put({ id, lang, topicId: topic.id, score: Math.max(pct, prev?.score ?? 0), lastAt: now });
-      await db.sessions.add({ id: newId(), type: `grammatica-${lang}`, listIds: [], startedAt: now, endedAt: now, score: pct, answers: [] });
-      const r = await finishRewards(before.current ?? (await getProfile()), { mode: 'grammatica', total: exercises.length, percentage: pct }, XP_FINISH, dagdoel);
-      fireworks();
-      if (pct === 100 || r.badges.length) celebrate(pct === 100);
-      for (const b of r.badges) toast(`${b.emoji} Nieuwe badge: ${b.title}`);
+    if (busy.current) return; // al bezig met deze vraag (dubbel Enter of dubbelklik)
+    busy.current = true;
+    try {
+      const now = Date.now();
+      await recordAnswer({ correct: ok, xp: ok ? 10 : 1, seconds: Math.min(now - last.current, 60_000) / 1000 });
+      last.current = now;
+      const newGood = good + (ok ? 1 : 0);
+      setGood(newGood);
+      if (index + 1 >= exercises.length) {
+        const pct = Math.round((newGood / exercises.length) * 100);
+        const id = `${lang}:${topic.id}`;
+        const prev = await db.grammarProgress.get(id);
+        await db.grammarProgress.put({ id, lang, topicId: topic.id, score: Math.max(pct, prev?.score ?? 0), lastAt: now });
+        await db.sessions.add({ id: newId(), type: `grammatica-${lang}`, listIds: [], startedAt: now, endedAt: now, score: pct, answers: [] });
+        const r = await finishRewards(before.current ?? (await getProfile()), { mode: 'grammatica', total: exercises.length, percentage: pct }, XP_FINISH, dagdoel);
+        fireworks();
+        if (pct === 100 || r.badges.length) celebrate(pct === 100);
+        for (const b of r.badges) toast(`${b.emoji} Nieuwe badge: ${b.title}`);
+      }
+      setIndex((i) => i + 1);
+    } finally {
+      busy.current = false;
     }
-    setIndex((i) => i + 1);
   };
 
   return (

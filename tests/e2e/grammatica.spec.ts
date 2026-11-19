@@ -92,3 +92,20 @@ test('der-Gruppe en ein-Gruppe: uitleg en oefenen in een gekozen tijd', async ({
   await expect(page).toHaveURL(/#\/grammatica\/de\/oefenen/);
   await expect(page.getByText(/(dieser|jeder|jener|solcher)[^)]*· Präteritum/)).toBeVisible();
 });
+
+test('twee keer snel Enter slaat geen vraag over', async ({ page }) => {
+  await page.goto('/#/grammatica/de');
+  await page.getByRole('button', { name: /^(✓ )?Passiv$/ }).click();
+  await page.getByLabel('Aantal vragen').selectOption('10');
+  await page.getByRole('button', { name: 'Start' }).click();
+  await expect(page.getByText(/^0\/\d+$/)).toBeVisible();
+  const input = page.getByLabel('Jouw antwoord');
+  if (await input.isVisible()) {
+    await input.fill('xxx');
+    await page.keyboard.press('Enter'); // nakijken
+    await expect(page.getByText(/Helaas, fout|Goed!/)).toBeVisible();
+    await page.keyboard.press('Enter'); // volgende
+    await page.keyboard.press('Enter'); // per ongeluk nog een keer
+    await expect(page.getByText(/^1\/\d+$/)).toBeVisible();
+  }
+});
