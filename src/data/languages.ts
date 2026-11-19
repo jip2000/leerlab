@@ -123,6 +123,7 @@ export const languages: Language[] = [
     speechLang: 'de-DE', ocrCode: 'deu', rtl: false, grammarPriority: 1,
     grammarTopics: [
       t('naamvallen', 'Naamvallen'),
+      t('der-ein-gruppe', 'der-Gruppe en ein-Gruppe'),
       t('voorzetsels', 'Voorzetsels en wisselvoorzetsels'),
       t('adjektivdeklination', 'Verbuiging bijvoeglijk naamwoord'),
       t('praesens', 'Präsens'),

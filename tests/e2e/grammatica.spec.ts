@@ -75,3 +75,20 @@ test('voorzetsels: alleen de wisselvoorzetsels oefenen', async ({ page }) => {
   // 6 wissel-oefeningen; elke vraag gaat over wo?/wohin? of auf/an/unter
   await expect(page.getByText('0/6')).toBeVisible();
 });
+
+test('der-Gruppe en ein-Gruppe: uitleg en oefenen in een gekozen tijd', async ({ page }) => {
+  // Uitleg met de tabellen
+  await page.goto('/#/grammatica/de/der-ein-gruppe');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('der-Gruppe en ein-Gruppe');
+  await expect(page.getByRole('table', { name: 'der-Gruppe: dieser' })).toBeVisible();
+  await expect(page.getByRole('table', { name: 'ein-Gruppe: mein' })).toBeVisible();
+
+  // Alleen de der-Gruppe, in het Präteritum
+  await page.goto('/#/grammatica/de');
+  await page.getByRole('button', { name: /^(✓ )?der-Gruppe en ein-Gruppe$/ }).click();
+  await page.getByRole('group', { name: 'Onderdelen' }).getByRole('button', { name: /ein-Gruppe/ }).click();
+  await page.getByRole('button', { name: /^(✓ )?Präteritum$/ }).click();
+  await page.getByRole('button', { name: 'Start' }).click();
+  await expect(page).toHaveURL(/#\/grammatica\/de\/oefenen/);
+  await expect(page.getByText(/(dieser|jeder|jener|solcher)[^)]*· Präteritum/)).toBeVisible();
+});

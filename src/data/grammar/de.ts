@@ -37,6 +37,45 @@ export const deGrammar: TopicContent[] = [
     ],
   },
   {
+    id: 'der-ein-gruppe',
+    parts: [
+      { id: 'der-gruppe', label: 'der-Gruppe', hint: 'der, dieser, jener, jeder, welcher, mancher, solcher' },
+      { id: 'ein-gruppe', label: 'ein-Gruppe', hint: 'ein, kein, mein, dein, sein, ihr, unser, euer, Ihr' },
+    ],
+    blocks: [
+      { type: 'text', part: 'der-gruppe', text: 'De **der-Gruppe** zijn woorden die precies zo verbuigen als **der, die, das**: **dieser** (deze/dit), **jener** (die/dat daar), **jeder** (ieder/elk), **welcher** (welk(e)), **mancher** (menig(e)), **solcher** (zulk(e)). Ze krijgen dezelfde uitgang als het lidwoord: der Mann → dies**er** Mann, den Mann → dies**en** Mann.' },
+      { type: 'table', part: 'der-gruppe', caption: 'der-Gruppe: dieser', head: ['', 'mannelijk', 'vrouwelijk', 'onzijdig', 'meervoud'], rows: [['Nominativ', 'dieser', 'diese', 'dieses', 'diese'], ['Genitiv', 'dieses', 'dieser', 'dieses', 'dieser'], ['Dativ', 'diesem', 'dieser', 'diesem', 'diesen'], ['Akkusativ', 'diesen', 'diese', 'dieses', 'diese']] },
+      { type: 'tip', part: 'der-gruppe', text: 'Truc: kijk naar het lidwoord. De laatste letter(s) zijn de uitgang: d**er** → dies**er**, d**en** → dies**en**, d**em** → dies**em**, d**as** → dies**es**. **jeder** heeft geen meervoud: dan gebruik je **alle** (alle Kinder).' },
+      { type: 'text', part: 'ein-gruppe', text: 'De **ein-Gruppe** zijn **ein**, **kein** en de bezittelijke voornaamwoorden **mein, dein, sein, ihr, unser, euer, ihr, Ihr**. Ze verbuigen zoals **ein**. Let op: in de **1e naamval mannelijk** en de **1e en 4e naamval onzijdig** hebben ze **geen uitgang**: mein Vater, mein Kind.' },
+      { type: 'table', part: 'ein-gruppe', caption: 'ein-Gruppe: mein', head: ['', 'mannelijk', 'vrouwelijk', 'onzijdig', 'meervoud'], rows: [['Nominativ', 'mein', 'meine', 'mein', 'meine'], ['Genitiv', 'meines', 'meiner', 'meines', 'meiner'], ['Dativ', 'meinem', 'meiner', 'meinem', 'meinen'], ['Akkusativ', 'meinen', 'meine', 'mein', 'meine']] },
+      { type: 'tip', part: 'ein-gruppe', text: '**ein** heeft geen meervoud: zeg keine Kinder of meine Kinder. Bij **euer** valt de e meestal weg als er een uitgang komt: eu**re** Mutter, eu**ren** Vater.' },
+      { type: 'tip', text: 'Het verschil in één zin: de der-Gruppe heeft **altijd** een uitgang (dieser Mann), de ein-Gruppe **niet altijd** (mein Mann). Daarom krijgt een bijvoeglijk naamwoord na ein/mein soms de uitgang die het lidwoord mist: mein alt**er** Mann, ein klein**es** Kind.' },
+    ],
+    exercises: [
+      // der-Gruppe
+      { type: 'table', part: 'der-gruppe', title: 'dieser (mannelijk) in alle naamvallen', rows: [{ label: 'Nominativ', answer: 'dieser' }, { label: 'Genitiv', answer: 'dieses' }, { label: 'Dativ', answer: 'diesem' }, { label: 'Akkusativ', answer: 'diesen' }] },
+      { type: 'table', part: 'der-gruppe', title: 'jede (vrouwelijk) in alle naamvallen', rows: [{ label: 'Nominativ', answer: 'jede' }, { label: 'Genitiv', answer: 'jeder' }, { label: 'Dativ', answer: 'jeder' }, { label: 'Akkusativ', answer: 'jede' }] },
+      { type: 'gap', part: 'der-gruppe', sentence: 'Ich kenne ___ Mann nicht.', answer: 'diesen', hint: 'dieser', explain: 'Lijdend voorwerp, mannelijk: diesen (zoals den).', cases: ['akk'] },
+      { type: 'gap', part: 'der-gruppe', sentence: '___ Buch gefällt dir?', answer: 'Welches', hint: 'welcher', explain: 'Onderwerp, onzijdig: welches (zoals das).', cases: ['nom'] },
+      { type: 'gap', part: 'der-gruppe', sentence: 'Ich gebe ___ Kind ein Geschenk.', answer: 'jedem', hint: 'jeder', explain: 'Aan wie? 3e naamval, onzijdig: jedem (zoals dem).', cases: ['dat'] },
+      { type: 'gap', part: 'der-gruppe', sentence: 'Mit ___ Leuten spreche ich nicht.', answer: 'solchen', hint: 'solcher', explain: 'mit + 3e naamval, meervoud: solchen (zoals den).', cases: ['dat'] },
+      { type: 'gap', part: 'der-gruppe', sentence: 'Das ist das Auto ___ Frau.', answer: 'jener', hint: 'jener', explain: 'Van wie? 2e naamval, vrouwelijk: jener (zoals der).', cases: ['gen'] },
+      { type: 'choice', part: 'der-gruppe', question: 'In ___ Stadt wohnst du?', options: ['welcher', 'welche', 'welchem', 'welchen'], answer: 0, explain: 'in + wo? → 3e naamval, vrouwelijk: welcher (zoals der).', cases: ['dat'] },
+      { type: 'gap', part: 'der-gruppe', sentence: '___ Schüler macht Fehler.', answer: 'Mancher', hint: 'mancher', explain: 'Onderwerp, mannelijk: mancher (zoals der).', cases: ['nom'] },
+      // ein-Gruppe
+      { type: 'table', part: 'ein-gruppe', title: 'mein (mannelijk) in alle naamvallen', rows: [{ label: 'Nominativ', answer: 'mein' }, { label: 'Genitiv', answer: 'meines' }, { label: 'Dativ', answer: 'meinem' }, { label: 'Akkusativ', answer: 'meinen' }] },
+      { type: 'table', part: 'ein-gruppe', title: 'unsere (vrouwelijk) in alle naamvallen', rows: [{ label: 'Nominativ', answer: 'unsere' }, { label: 'Genitiv', answer: 'unserer' }, { label: 'Dativ', answer: 'unserer' }, { label: 'Akkusativ', answer: 'unsere' }] },
+      { type: 'gap', part: 'ein-gruppe', sentence: 'Ich besuche ___ Großvater.', answer: 'meinen', hint: 'mein', explain: 'Lijdend voorwerp, mannelijk: meinen.', cases: ['akk'] },
+      { type: 'gap', part: 'ein-gruppe', sentence: 'Wir helfen ___ Nachbarin.', answer: 'unserer', hint: 'unser', explain: 'helfen + 3e naamval, vrouwelijk: unserer.', cases: ['dat'] },
+      { type: 'gap', part: 'ein-gruppe', sentence: 'Das ist das Fahrrad ___ Bruders.', answer: 'deines', hint: 'dein', explain: 'Van wie? 2e naamval, mannelijk: deines (+s bij Bruder).', cases: ['gen'] },
+      { type: 'gap', part: 'ein-gruppe', sentence: 'Hast du ___ Hund?', answer: 'keinen', hint: 'kein', explain: 'Lijdend voorwerp, mannelijk: keinen.', cases: ['akk'] },
+      { type: 'gap', part: 'ein-gruppe', sentence: '___ Kind spielt im Garten.', answer: 'Ihr', hint: 'ihr = haar', explain: 'Onderwerp, onzijdig: geen uitgang → ihr.', cases: ['nom'] },
+      { type: 'choice', part: 'ein-gruppe', question: 'Ich spreche mit ___ Eltern. (euer)', options: ['euren', 'eure', 'euer', 'eurem'], answer: 0, explain: 'mit + 3e naamval, meervoud: euren (de e van euer valt weg).', cases: ['dat'] },
+      { type: 'gap', part: 'ein-gruppe', sentence: 'Er schreibt ___ Freundin einen Brief.', answer: 'seiner', hint: 'sein', explain: 'Aan wie? 3e naamval, vrouwelijk: seiner.', cases: ['dat'] },
+      { type: 'fix', part: 'ein-gruppe', sentence: 'Das ist meine Vater.', answer: 'Das ist mein Vater.', explain: 'Vater is mannelijk: in de 1e naamval heeft mein geen uitgang.', cases: ['nom'] },
+    ],
+  },
+  {
     id: 'voorzetsels',
     parts: [
       { id: 'akk', label: 'Voorzetsels + Akkusativ', hint: 'durch, für, gegen, ohne, um' },

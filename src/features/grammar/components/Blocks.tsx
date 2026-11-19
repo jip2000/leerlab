@@ -31,7 +31,8 @@ export function Blocks({ blocks, lang }: { blocks: Block[]; lang: LanguageCode }
             );
           case 'table':
             return (
-              <div key={i} className="overflow-x-auto rounded-2xl border border-line bg-surface">
+              // tabIndex + naam: op een smal scherm kun je een brede tabel ook met het toetsenbord opzij scrollen.
+              <div key={i} tabIndex={0} role="region" aria-label={b.caption ?? 'Tabel'} className="overflow-x-auto rounded-2xl border border-line bg-surface focus-visible:outline-2 focus-visible:outline-primary">
                 <table className="w-full text-left text-[15px]">
                   {b.caption && <caption className="px-4 pt-3 text-left font-bold">{b.caption}</caption>}
                   <thead>

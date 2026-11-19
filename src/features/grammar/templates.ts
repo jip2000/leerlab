@@ -67,6 +67,25 @@ export const sentenceTemplates: Partial<Record<LanguageCode, Record<string, Sent
       T({ p: 1, verb: 'fahren', middle: 'jeden Tag ___ Arbeit', answer: 'zur', hint: 'zu + der', explain: 'zu + der = zur.', part: 'samen', cases: ['dat'] }),
       T({ p: 4, verb: 'treffen', middle: 'eure Freunde ___ Bahnhof', answer: 'am', hint: 'an + dem', explain: 'an + dem = am.', part: 'samen', cases: ['dat'] }),
     ],
+    'der-ein-gruppe': [
+      // der-Gruppe: zelfde uitgang als der/die/das
+      T({ p: 0, verb: 'kaufen', middle: '___ Pullover', answer: 'diesen', hint: 'dieser', explain: 'Lijdend voorwerp, mannelijk: diesen (zoals den).', part: 'der-gruppe', cases: ['akk'] }),
+      T({ p: 3, verb: 'helfen', middle: '___ Schüler', answer: 'jedem', hint: 'jeder', explain: 'helfen + 3e naamval, mannelijk: jedem (zoals dem).', part: 'der-gruppe', cases: ['dat'] }),
+      T({ p: 2, subject: '___ Mädchen', verb: 'spielen', middle: 'Fußball', answer: 'Dieses', hint: 'dieser', explain: 'Onderwerp, onzijdig: dieses (zoals das).', part: 'der-gruppe', cases: ['nom'] }),
+      T({ p: 1, verb: 'wohnen', middle: 'in ___ Straße', answer: 'dieser', hint: 'dieser, wo?', explain: 'in + wo? → 3e naamval, vrouwelijk: dieser (zoals der).', part: 'der-gruppe', cases: ['dat'] }),
+      T({ p: 0, verb: 'sprechen', middle: 'mit ___ Leuten', answer: 'solchen', hint: 'solcher', explain: 'mit + 3e naamval, meervoud: solchen (zoals den).', part: 'der-gruppe', cases: ['dat'] }),
+      T({ p: 4, verb: 'lesen', middle: '___ Buch', answer: 'jedes', hint: 'jeder', explain: 'Lijdend voorwerp, onzijdig: jedes (zoals das).', part: 'der-gruppe', cases: ['akk'] }),
+      T({ p: 5, subject: 'Die Touristen', verb: 'besuchen', middle: '___ Museum', answer: 'jenes', hint: 'jener', explain: 'Lijdend voorwerp, onzijdig: jenes (zoals das).', part: 'der-gruppe', cases: ['akk'] }),
+      // ein-Gruppe: zoals ein; soms zonder uitgang
+      T({ p: 0, verb: 'besuchen', middle: '___ Großvater', answer: 'meinen', hint: 'mein', explain: 'Lijdend voorwerp, mannelijk: meinen.', part: 'ein-gruppe', cases: ['akk'] }),
+      T({ p: 3, verb: 'helfen', middle: '___ Nachbarin', answer: 'unserer', hint: 'unser', explain: 'helfen + 3e naamval, vrouwelijk: unserer.', part: 'ein-gruppe', cases: ['dat'] }),
+      T({ p: 1, verb: 'suchen', middle: '___ Schlüssel', answer: 'deinen', hint: 'dein', explain: 'Lijdend voorwerp, mannelijk: deinen.', part: 'ein-gruppe', cases: ['akk'] }),
+      T({ p: 2, verb: 'schreiben', middle: '___ Freundin einen Brief', answer: 'seiner', hint: 'sein', explain: 'Aan wie? 3e naamval, vrouwelijk: seiner.', part: 'ein-gruppe', cases: ['dat'] }),
+      T({ p: 2, subject: '___ Kind', verb: 'spielen', middle: 'im Garten', answer: 'Ihr', hint: 'ihr = haar', explain: 'Onderwerp, onzijdig: geen uitgang → ihr.', part: 'ein-gruppe', cases: ['nom'] }),
+      T({ p: 4, verb: 'sprechen', middle: 'mit ___ Eltern', answer: 'euren', hint: 'euer', explain: 'mit + 3e naamval, meervoud: euren (de e van euer valt weg).', part: 'ein-gruppe', cases: ['dat'] }),
+      T({ p: 5, subject: 'Die Kinder', verb: 'haben', middle: '___ Zeit', answer: 'keine', hint: 'kein', explain: 'Lijdend voorwerp, vrouwelijk: keine.', part: 'ein-gruppe', cases: ['akk'] }),
+      T({ p: 0, verb: 'kaufen', middle: '___ Auto', answer: 'kein', hint: 'kein', explain: 'Lijdend voorwerp, onzijdig: geen uitgang → kein.', part: 'ein-gruppe', cases: ['akk'] }),
+    ],
     'reflexive-verben': [
       T({ p: 0, verb: 'freuen', middle: '___ auf die Ferien', answer: 'mich', hint: 'sich freuen', explain: 'ich → mich.', cases: ['akk'] }),
       T({ p: 1, verb: 'interessieren', middle: '___ für Musik', answer: 'dich', hint: 'sich interessieren', explain: 'du → dich.', cases: ['akk'] }),

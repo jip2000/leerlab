@@ -188,14 +188,23 @@ export function analysePhotoText(lang: LanguageCode, raw: string): PhotoAnalysis
   for (const t of all) {
     if (skip.has(t.id)) continue;
     const title = titleOf(t.id);
-    const phrase = norm(title.replace(/\(.*?\)/g, ' ')).trim();
+    // De hele naam, of een stuk ervan ("ein-Gruppe" uit "der-Gruppe en ein-Gruppe").
+    const bare = title.replace(/\(.*?\)/g, ' ');
+    const phrases = [norm(bare).trim(), ...bare.split(/,| en | of | and /).map((x) => norm(x).trim()).filter((x) => x.length >= 8 && !STOP.has(x))];
     const titleTokens = new Set(tokens(title));
-    let score = phrase.length >= 5 && has(text, phrase) ? 6 : 0;
+    let score = phrases.some((p, i) => (i === 0 ? p.length >= 5 : true) && has(text, p)) ? 6 : 0;
     for (const w of titleTokens) if (score < 6 && w.length >= 7 && (df.get(w) ?? 0) === 1 && has(text, w)) score += 3;
     for (const w of tokenSets.get(t.id)!) if (!titleTokens.has(w) && (df.get(w) ?? 0) <= 2 && has(text, w)) score += 1;
     if (score >= 5) {
       // Onderdelen: welke hints (bijv. "durch, für, gegen") staan op de foto?
-      const parts = t.parts?.filter((p) => tokens(`${p.label} ${p.hint ?? ''}`).filter((w) => has(text, w)).length >= 2).map((p) => p.id);
+      // Alleen woorden die bij dát onderdeel horen (niet "Gruppe" of "Voorzetsels", die delen ze).
+      const own = (p: { label: string; hint?: string }) => new Set(tokens(`${p.label} ${p.hint ?? ''}`));
+      const parts = t.parts
+        ?.filter((p) => {
+          const others = new Set(t.parts!.filter((x) => x !== p).flatMap((x) => [...own(x)]));
+          return [...own(p)].filter((w) => !others.has(w) && has(text, w)).length >= 2;
+        })
+        .map((p) => p.id);
       out.topics.push({ id: t.id, title, score, parts: parts?.length ? parts : undefined });
     }
   }

@@ -138,3 +138,35 @@ describe('foto: geen valse onderwerpen', () => {
     expect(a.topics.map((t) => t.id)).toContain('passe-simple');
   });
 });
+
+describe('der-Gruppe en ein-Gruppe', () => {
+  it('het onderwerp is te kiezen, met twee onderdelen, en werkt in elke tijd', () => {
+    expect(practiceTopics('de').map((t) => t.id)).toContain('der-ein-gruppe');
+    expect(tenseUse('de', 'der-ein-gruppe')).toBe('sjablonen');
+    const mix = buildMix({
+      lang: 'de', topics: ['der-ein-gruppe'], tenses: ['perfekt'], verbs: [], persons: [0, 1, 2, 3, 4, 5], mode: 'zin', level: 2, count: 5,
+      cases: new Set(['nom', 'gen', 'dat', 'akk']), parts: () => new Set(['der-gruppe']),
+    });
+    expect(mix).toHaveLength(5);
+    for (const m of mix) {
+      expect(m.ex.part).toBe('der-gruppe');
+      expect(m.ex.type === 'gap' && m.ex.hint).toContain('Perfekt');
+    }
+  });
+
+  it('foto van een der-Gruppe-bladzijde', () => {
+    const a = analysePhotoText('de', `Die der-Gruppe: dieser, jener, jeder, welcher, mancher, solcher
+      Nominativ dieser diese dieses diese  Dativ diesem dieser diesem diesen  Akkusativ diesen diese dieses diese`);
+    const t = a.topics.find((x) => x.id === 'der-ein-gruppe');
+    expect(t).toBeDefined();
+    expect(t!.parts).toEqual(['der-gruppe']);
+  });
+
+  it('foto van een ein-Gruppe-bladzijde', () => {
+    const a = analysePhotoText('de', `Die ein-Gruppe: ein, kein, mein, dein, sein, ihr, unser, euer
+      Nominativ mein meine mein meine  Akkusativ meinen meine mein meine`);
+    const t = a.topics.find((x) => x.id === 'der-ein-gruppe');
+    expect(t).toBeDefined();
+    expect(t!.parts).toEqual(['ein-gruppe']);
+  });
+});
